@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29609.76
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PieceOfCake", "PieceOfCake\PieceOfCake.csproj", "{1A44E005-156A-4BFB-915F-358AD24CC0DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PieceOfCake", "PieceOfCake\PieceOfCake.csproj", "{1A44E005-156A-4BFB-915F-358AD24CC0DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PieceOfCake.Core", "PieceOfCake.Core\PieceOfCake.Core.csproj", "{703B0F3D-7D20-4851-9131-C14321B28E6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PieceOfCake.Core", "PieceOfCake.Core\PieceOfCake.Core.csproj", "{703B0F3D-7D20-4851-9131-C14321B28E6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PieceOfCake.Persistence", "PieceOfCake.Persistence\PieceOfCake.Persistence.csproj", "{C080E01A-A86F-4F91-85EB-F045159F61E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{703B0F3D-7D20-4851-9131-C14321B28E6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{703B0F3D-7D20-4851-9131-C14321B28E6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{703B0F3D-7D20-4851-9131-C14321B28E6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C080E01A-A86F-4F91-85EB-F045159F61E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C080E01A-A86F-4F91-85EB-F045159F61E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C080E01A-A86F-4F91-85EB-F045159F61E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C080E01A-A86F-4F91-85EB-F045159F61E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -3,7 +3,7 @@ using System;
 
 namespace PieceOfCake.Core.ValueObjects
 {
-    public class MeasureUnit
+    public class MeasureUnit : ValueObject<MeasureUnit>
     {
         private MeasureUnit(string name)
         {
@@ -12,12 +12,22 @@ namespace PieceOfCake.Core.ValueObjects
 
         public string Name { get; private set; }
 
-        public static Result <MeasureUnit> Create(string? name)
+        public static Result<MeasureUnit>Create(string? name)
         {
             if (string.IsNullOrWhiteSpace(name))
-                return Result.Fail<MeasureUnit>("Error");
+                return Result.Failure<MeasureUnit>("Error");
              
             return Result.Ok(new MeasureUnit(name));
+        }
+
+        protected override bool EqualsCore(MeasureUnit other)
+        {
+            return this.Name == other.Name;
+        }
+
+        protected override int GetHashCodeCore()
+        {
+            return this.Name.GetHashCode() ^ 617;
         }
     }
 }
