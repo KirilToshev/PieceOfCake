@@ -14,7 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace PieceOfCake
+namespace PieceOfCake.Api
 {
     public class Startup
     {

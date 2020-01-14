@@ -1,6 +1,6 @@
 using System;
 
-namespace PieceOfCake
+namespace PieceOfCake.Api
 {
     public class WeatherForecast
     {

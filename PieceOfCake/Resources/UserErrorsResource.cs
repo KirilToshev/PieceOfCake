@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Localization;
 using PieceOfCake.Core.Resources;
 
-namespace PieceOfCake.Resources
+namespace PieceOfCake.Api.Resources
 {
     public class UserErrorsResource : IUserErrorsResource
     {

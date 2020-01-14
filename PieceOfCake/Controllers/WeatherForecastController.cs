@@ -6,11 +6,11 @@ using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
-using PieceOfCake.Resources;
+using PieceOfCake.Api.Resources;
 using PieceOfCake.Core.ValueObjects;
 using PieceOfCake.Core.Resources;
 
-namespace PieceOfCake.Controllers
+namespace PieceOfCake.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
