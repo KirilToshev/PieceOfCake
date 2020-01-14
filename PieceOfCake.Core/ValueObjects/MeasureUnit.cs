@@ -1,5 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
-using System;
+using Microsoft.Extensions.Localization;
+using PieceOfCake.Core.Persistence;
+using PieceOfCake.Core.Resources;
 
 namespace PieceOfCake.Core.ValueObjects
 {
@@ -12,10 +14,10 @@ namespace PieceOfCake.Core.ValueObjects
 
         public string Name { get; private set; }
 
-        public static Result<MeasureUnit>Create(string? name)
+        public static Result<MeasureUnit>Create(string? name, IUserErrorsResource userErrors)
         {
             if (string.IsNullOrWhiteSpace(name))
-                return Result.Failure<MeasureUnit>("Error");
+                return Result.Failure<MeasureUnit>(string.Format(userErrors.NameIsMandatory, "Measure Unit"));
              
             return Result.Ok(new MeasureUnit(name));
         }
