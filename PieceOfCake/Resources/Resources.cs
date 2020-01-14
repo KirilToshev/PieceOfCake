@@ -1,0 +1,33 @@
+﻿using Microsoft.Extensions.Localization;
+using PieceOfCake.Core.Resources;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+
+namespace PieceOfCake.Api.Resources
+{
+    public class Resources : IResources
+    {
+        public Resources(
+            IStringLocalizer<UserErrors> userErrorsResource,
+            IStringLocalizer<CommonTerms> commonTermsResource
+            )
+        {
+            UserErrors = new UserErrors(userErrorsResource);
+            CommonTerms = new CommonTerms(commonTermsResource);
+        }
+
+        public IUserErrors UserErrors { get; private set; }
+
+        public ICommonTerms CommonTerms { get; private set; }
+
+        public string GenereteSentence(Expression<Func<IResources, string>> sentenceBaseExpression, params Expression<Func<IResources, string>>[] wordsExpressions)
+        {
+            var sentenceBase = sentenceBaseExpression.Compile().Invoke(this);
+            var words = wordsExpressions.Select(we => we.Compile().Invoke(this));
+            return string.Format(sentenceBase, words.ToArray());
+        }
+    }
+}

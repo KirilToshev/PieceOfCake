@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using PieceOfCake.Core.Resources;
 
 namespace PieceOfCake.Api
 {
@@ -36,6 +37,8 @@ namespace PieceOfCake.Api
                 options.AddSupportedCultures("en-US", "bg-BG");
                 options.AddSupportedUICultures("en-US", "bg-BG");
             });
+
+            services.AddSingleton<IResources, Resources.Resources>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

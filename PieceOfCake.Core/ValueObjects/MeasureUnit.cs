@@ -14,10 +14,10 @@ namespace PieceOfCake.Core.ValueObjects
 
         public string Name { get; private set; }
 
-        public static Result<MeasureUnit>Create(string? name, IUserErrorsResource userErrors)
+        public static Result<MeasureUnit>Create(string? name, IResources resources)
         {
             if (string.IsNullOrWhiteSpace(name))
-                return Result.Failure<MeasureUnit>(string.Format(userErrors.NameIsMandatory, "Measure Unit"));
+                return Result.Failure<MeasureUnit>(resources.GenereteSentence(x => x.UserErrors.NameIsMandatory, x => x.CommonTerms.MeasureUnit));
              
             return Result.Ok(new MeasureUnit(name));
         }

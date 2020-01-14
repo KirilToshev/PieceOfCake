@@ -1,6 +1,6 @@
 ﻿namespace PieceOfCake.Core.Resources
 {
-    public interface IUserErrorsResource
+    public interface IUserErrors
     {
         public string NameIsMandatory { get; }
     }

@@ -3,11 +3,11 @@ using PieceOfCake.Core.Resources;
 
 namespace PieceOfCake.Api.Resources
 {
-    public class UserErrorsResource : IUserErrorsResource
+    public class UserErrors : IUserErrors
     {
-        private readonly IStringLocalizer<UserErrorsResource> _localizer;
+        private readonly IStringLocalizer<UserErrors> _localizer;
 
-        public UserErrorsResource(IStringLocalizer<UserErrorsResource> localizer)
+        public UserErrors(IStringLocalizer<UserErrors> localizer)
         {
             _localizer = localizer;
         }
