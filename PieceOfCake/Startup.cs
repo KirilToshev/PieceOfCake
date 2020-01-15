@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using PieceOfCake.Core.Common;
 using PieceOfCake.Core.Resources;
 
 namespace PieceOfCake.Api
@@ -33,9 +34,9 @@ namespace PieceOfCake.Api
             services.AddLocalization();
             services.Configure<RequestLocalizationOptions>(options =>
             {
-                options.DefaultRequestCulture = new RequestCulture("en-US", "en-US");
-                options.AddSupportedCultures("en-US", "bg-BG");
-                options.AddSupportedUICultures("en-US", "bg-BG");
+                options.DefaultRequestCulture = new RequestCulture(Common.SupportedLanguages[0]);
+                options.AddSupportedCultures(Common.SupportedLanguages);
+                options.AddSupportedUICultures(Common.SupportedLanguages);
             });
 
             services.AddSingleton<IResources, Resources.Resources>();

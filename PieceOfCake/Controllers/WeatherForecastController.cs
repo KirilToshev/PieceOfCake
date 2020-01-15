@@ -22,21 +22,21 @@ namespace PieceOfCake.Api.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
-        private readonly IResources _resourceAggregator;
+        private readonly IResources _resources;
 
         public WeatherForecastController(
             ILogger<WeatherForecastController> logger,
-            IResources resourceAggregator
+            IResources resources
             )
         {
             _logger = logger;
-            _resourceAggregator = resourceAggregator;
+            _resources = resources;
         }
 
         [HttpGet]
         public void Get()
         {
-            var test = MeasureUnit.Create("", _resourceAggregator);
+            var test = MeasureUnit.Create("", _resources);
             var a = 1;
         }
 

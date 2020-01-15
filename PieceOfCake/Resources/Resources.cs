@@ -1,10 +1,8 @@
 ﻿using Microsoft.Extensions.Localization;
 using PieceOfCake.Core.Resources;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace PieceOfCake.Api.Resources
 {
