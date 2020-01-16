@@ -1,10 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
-using Microsoft.Extensions.Localization;
-using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
 using System.ComponentModel.DataAnnotations;
 
-namespace PieceOfCake.Core.ValueObjects
+namespace PieceOfCake.Core.Entities
 {
     public class MeasureUnit : ValueObject<MeasureUnit>
     {
