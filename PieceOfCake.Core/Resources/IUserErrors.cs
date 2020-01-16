@@ -3,5 +3,6 @@
     public interface IUserErrors
     {
         public string NameIsMandatory { get; }
+        public string NameExceedsMaxLength { get; }
     }
 }

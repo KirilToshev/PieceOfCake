@@ -26,5 +26,13 @@ namespace PieceOfCake.UnitTests.ValueObjects
             Assert.IsTrue(measureUnit.IsFailure);
             Assert.AreEqual("Measure Unit must have name.", measureUnit.Error);
         }
+
+        [Test]
+        public void Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit()
+        {
+            var measureUnit = MeasureUnit.Create(new string('|', 51), _resources);
+            Assert.IsTrue(measureUnit.IsFailure);
+            Assert.AreEqual("Measure Unit name should not exceed 50 symbols.", measureUnit.Error);
+        }
     }
 }

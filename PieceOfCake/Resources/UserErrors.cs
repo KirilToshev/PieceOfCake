@@ -14,6 +14,8 @@ namespace PieceOfCake.Api.Resources
 
         public string NameIsMandatory { get => GetString(nameof(NameIsMandatory)); }
 
+        public string NameExceedsMaxLength { get => GetString(nameof(NameExceedsMaxLength)); }
+
         private string GetString(string name) => _localizer[name];
     }
 }

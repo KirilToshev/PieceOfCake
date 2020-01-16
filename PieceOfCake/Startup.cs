@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PieceOfCake.Core.Common;
 using PieceOfCake.Core.Resources;
+using PieceOfCake.Persistence;
 
 namespace PieceOfCake.Api
 {
@@ -30,6 +32,9 @@ namespace PieceOfCake.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<PocDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("PocDbContext")));
+
             services.AddControllers();
             services.AddLocalization();
             services.Configure<RequestLocalizationOptions>(options =>
