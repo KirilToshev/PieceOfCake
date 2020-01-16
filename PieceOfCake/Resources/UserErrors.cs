@@ -16,6 +16,8 @@ namespace PieceOfCake.Api.Resources
 
         public string NameExceedsMaxLength { get => GetString(nameof(NameExceedsMaxLength)); }
 
+        public string NameAlreadyExists { get => GetString(nameof(NameAlreadyExists)); }
+
         private string GetString(string name) => _localizer[name];
     }
 }
