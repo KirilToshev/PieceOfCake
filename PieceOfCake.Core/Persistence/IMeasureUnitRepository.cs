@@ -1,4 +1,4 @@
-﻿using PieceOfCake.Core.ValueObjects;
+﻿using PieceOfCake.Core.Entities;
 
 namespace PieceOfCake.Core.Persistence
 {

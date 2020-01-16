@@ -1,8 +1,13 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
+using PieceOfCake.Core.Entities;
+using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
 using PieceOfCake.Core.ValueObjects;
+using System;
+using System.Linq.Expressions;
 
 namespace PieceOfCake.UnitTests.ValueObjects
 {
@@ -17,6 +22,10 @@ namespace PieceOfCake.UnitTests.ValueObjects
             services.AddResources();
             var serviceProvider = services.BuildServiceProvider();
             _resources = serviceProvider.GetService<IResources>();
+            var moq = new Mock<IMeasureUnitRepository>()
+                .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
+                .Returns(x => )
+                
         }
 
         [Test]

@@ -15,8 +15,8 @@ namespace PieceOfCake.Core.Persistence
         /// <param name="includes"></param>
         /// <returns></returns>
         List<TEntity> Get(
-            Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            Expression<Func<TEntity, bool>>? filter = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
             params Expression<Func<TEntity, object>>[] includes);
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace PieceOfCake.Core.Persistence
         /// <param name="includes"></param>
         /// <returns></returns>
         TEntity GetFirstOrDefault(
-            Expression<Func<TEntity, bool>> filter = null,
+            Expression<Func<TEntity, bool>>? filter = null,
             params Expression<Func<TEntity, object>>[] includes);
 
         /// <summary>

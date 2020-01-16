@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using PieceOfCake.Api.Resources;
-using PieceOfCake.Core.ValueObjects;
+using PieceOfCake.Core.Entities;
 using PieceOfCake.Core.Resources;
 using PieceOfCake.Core.Persistence;
 
@@ -53,14 +53,14 @@ namespace PieceOfCake.Api.Controllers
         [HttpPost]
         public void Post(string name)
         {
-            var test = MeasureUnit.Create("", _resources);
+            var test = MeasureUnit.Create("", _resources, _unitOfWork);
             var a = 1;
         }
 
         [HttpDelete]
         public void Delete(int id)
         {
-            var test = MeasureUnit.Create("", _resources);
+            var test = MeasureUnit.Create("", _resources, _unitOfWork);
             var a = 1;
         }
     }
