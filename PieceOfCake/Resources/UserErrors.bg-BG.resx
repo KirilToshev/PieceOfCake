@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NameAlreadyExists" xml:space="preserve">
-    <value>Запис с име {0} вече съществува в базата данни.</value>
+    <value>Запис с име {0} вече съществува.</value>
   </data>
   <data name="NameExceedsMaxLength" xml:space="preserve">
     <value>Името на {0} не трябва да надвишава {1} символа.</value>
