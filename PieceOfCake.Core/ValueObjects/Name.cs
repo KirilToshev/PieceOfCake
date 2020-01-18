@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace PieceOfCake.Core.ValueObjects
 {
-    public class Name
+    public class Name : ValueObject<Name>
     {
         private readonly string _value;
 
@@ -25,6 +25,16 @@ namespace PieceOfCake.Core.ValueObjects
                 return Result.Failure<Name>(resources.GenereteSentence(x => x.UserErrors.NameExceedsMaxLength, entityName, x => maxLength.ToString()));
 
             return Result.Success(new Name(name));
+        }
+
+        protected override bool EqualsCore(Name other)
+        {
+            return _value.Equals(other._value);
+        }
+
+        protected override int GetHashCodeCore()
+        {
+            return _value.GetHashCode() ^ 583;
         }
     }
 }
