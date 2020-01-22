@@ -1,7 +1,9 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 
 namespace PieceOfCake.Core.Entities
 {
@@ -20,21 +22,27 @@ namespace PieceOfCake.Core.Entities
         [MaxLength(NAME_MAX_LENGHT)]
         public string Name { get; private set; }
 
-        public static Result<MeasureUnit>Create(string? name, IResources resources, IUnitOfWork unitOfWork)
+        public static Result<MeasureUnit> Create(string? name, IResources resources, IUnitOfWork unitOfWork)
         {
-            var nameResult = ValueObjects.Name.Create(name, resources, x => x.CommonTerms.MeasureUnit, NAME_MAX_LENGHT);
-            if (nameResult.IsFailure)
-                return nameResult.ConvertFailure<MeasureUnit>();
-
-            var measureUnit = unitOfWork.MeasureUnitRepository.GetFirstOrDefault(x => x.Name == name);
-            if (measureUnit != null)
-                return Result.Failure<MeasureUnit>(resources.GenereteSentence(x => x.UserErrors.NameAlreadyExists, x => measureUnit.Name));
-
-            return Result.Ok(new MeasureUnit(nameResult.Value));
+            return CommonNameValidation(name, resources, unitOfWork,
+                validName =>
+                {
+                    return Result.Success(new MeasureUnit(validName));
+                });
         }
 
         public Result<MeasureUnit> Update(string? name, IResources resources, IUnitOfWork unitOfWork)
         {
+            return CommonNameValidation(name, resources, unitOfWork,
+                validName =>
+                {
+                    this.Name = validName;
+                    return Result.Success(this);
+                });
+        }
+
+        private static Result<MeasureUnit> CommonNameValidation(string? name, IResources resources, IUnitOfWork unitOfWork, Func<string, Result<MeasureUnit>> returnStatement)
+        {
             var nameResult = ValueObjects.Name.Create(name, resources, x => x.CommonTerms.MeasureUnit, NAME_MAX_LENGHT);
             if (nameResult.IsFailure)
                 return nameResult.ConvertFailure<MeasureUnit>();
@@ -43,9 +51,7 @@ namespace PieceOfCake.Core.Entities
             if (measureUnit != null)
                 return Result.Failure<MeasureUnit>(resources.GenereteSentence(x => x.UserErrors.NameAlreadyExists, x => measureUnit.Name));
 
-            this.Name = nameResult.Value;
-
-            return Result.Ok(this);
+            return returnStatement.Invoke(nameResult.Value);
         }
 
         protected override bool EqualsCore(MeasureUnit other)
