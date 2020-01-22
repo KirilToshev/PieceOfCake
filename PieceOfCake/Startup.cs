@@ -45,7 +45,7 @@ namespace PieceOfCake.Api
                 options.AddSupportedUICultures(Common.SupportedLanguages);
             });
 
-            services.AddSingleton<IResources, Resources.Resources>();
+            services.AddSingleton<IResources, Resources>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
         }
 

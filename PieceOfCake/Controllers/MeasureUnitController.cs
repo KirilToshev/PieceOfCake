@@ -4,11 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
-using PieceOfCake.Api.Resources;
-using PieceOfCake.Core.Entities;
 using PieceOfCake.Core.Resources;
+using PieceOfCake.Core.Entities;
 using PieceOfCake.Core.Persistence;
 
 namespace PieceOfCake.Api.Controllers
@@ -17,11 +15,6 @@ namespace PieceOfCake.Api.Controllers
     [Route("[controller]")]
     public class MeasureUnitController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly ILogger<MeasureUnitController> _logger;
         private readonly IResources _resources;
         private readonly IUnitOfWork _unitOfWork;
@@ -40,6 +33,7 @@ namespace PieceOfCake.Api.Controllers
         [HttpGet]
         public MeasureUnit Get(int id)
         {
+            var test = MeasureUnit.Create("", _resources, _unitOfWork);
             return _unitOfWork.MeasureUnitRepository.GetById(id);
         }
 
