@@ -2,6 +2,7 @@
 using PieceOfCake.Core.Persistence;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -19,7 +20,7 @@ namespace PieceOfCake.Persistence
             this.dbSet = context.Set<TEntity>();
         }
 
-        public List<TEntity> Get(
+        public IReadOnlyCollection<TEntity> Get(
             Expression<Func<TEntity, bool>>? filter = null, 
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, 
             params Expression<Func<TEntity, object>>[] includes)
@@ -35,7 +36,7 @@ namespace PieceOfCake.Persistence
             if (orderBy != null)
                 query = orderBy(query);
 
-            return query.ToList();
+            return query.AsNoTracking().ToList().AsReadOnly();
         }
 
         public virtual TEntity? GetById(object id)
@@ -56,12 +57,6 @@ namespace PieceOfCake.Persistence
         public virtual void Insert(TEntity entity)
         {
             dbSet.Add(entity);
-        }
-
-        public virtual void Delete(object id)
-        {
-            TEntity entityToDelete = dbSet.Find(id);
-            Delete(entityToDelete);
         }
 
         public virtual void Delete(TEntity entityToDelete)

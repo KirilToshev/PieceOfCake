@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -14,7 +15,7 @@ namespace PieceOfCake.Core.Persistence
         /// <param name="orderBy"></param>
         /// <param name="includes"></param>
         /// <returns></returns>
-        List<TEntity> Get(
+        IReadOnlyCollection<TEntity> Get(
             Expression<Func<TEntity, bool>>? filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
             params Expression<Func<TEntity, object>>[] includes);
@@ -55,12 +56,6 @@ namespace PieceOfCake.Core.Persistence
         /// </summary>
         /// <param name="entity"></param>
         void Update(TEntity entity);
-
-        /// <summary>
-        /// Delete entity from db by primary key
-        /// </summary>
-        /// <param name="id"></param>
-        void Delete(object id);
 
         /// <summary>
         /// Delete entity from db

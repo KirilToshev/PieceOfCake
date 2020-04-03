@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using PieceOfCake.BusinessRules;
+using PieceOfCake.Core.BusinessRules;
 using PieceOfCake.Core.Common;
 using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
@@ -47,6 +49,7 @@ namespace PieceOfCake.Api
 
             services.AddSingleton<IResources, Resources>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IMeasureUnitBr, MeasureUnitBr>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

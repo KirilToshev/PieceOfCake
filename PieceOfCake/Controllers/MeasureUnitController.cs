@@ -1,9 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using PieceOfCake.Core.Resources;
-using PieceOfCake.Core.Entities;
-using PieceOfCake.Core.Persistence;
+using PieceOfCake.Core.BusinessRules;
 
 namespace PieceOfCake.Api.Controllers
 {
@@ -12,57 +10,66 @@ namespace PieceOfCake.Api.Controllers
     public class MeasureUnitController : Controller
     {
         private readonly ILogger<MeasureUnitController> _logger;
-        private readonly IResources _resources;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMeasureUnitBr _measureUnitsBr;
 
         public MeasureUnitController(
             ILogger<MeasureUnitController> logger,
-            IResources resources,
-            IUnitOfWork unitOfWork)
+            IMeasureUnitBr measureUnitsBr
+            )
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _resources = resources ?? throw new ArgumentNullException(nameof(resources));
-            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            _measureUnitsBr = measureUnitsBr ?? throw new ArgumentNullException(nameof(measureUnitsBr));
         }
 
         [HttpGet]
         public IActionResult Get()
         {
-            var measureUnitsList = _unitOfWork.MeasureUnitRepository.Get();
-            return Ok(measureUnitsList);
+            var result = _measureUnitsBr.Get();
+            if (result.IsFailure)
+                return Error(result.Error);
+
+            return Ok(result.Value);
         }
 
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var measureUnit = _unitOfWork.MeasureUnitRepository.GetById(id);
-            if (measureUnit == null)
-            {
-                return Error("Move this to a separate layer");
-            }
 
-            return Ok(measureUnit);
+            var result = _measureUnitsBr.Get(id);
+            if (result.IsFailure)
+                return Error(result.Error);
+
+            return Ok(result.Value);
         }
 
         [HttpPut]
-        public void Put(int id, string name)
+        public IActionResult Put(int id, string name)
         {
-            var measureUnit = _unitOfWork.MeasureUnitRepository.GetById(id);
-            
+            var result = _measureUnitsBr.Update(id, name);
+            if (result.IsFailure)
+                return Error(result.Error);
+
+            return Ok(result.Value);
         }
 
         [HttpPost]
-        public void Post(string name)
+        public IActionResult Post(string name)
         {
-            var test = MeasureUnit.Create("", _resources, _unitOfWork);
-            var a = 1;
+            var result = _measureUnitsBr.Create(name);
+            if (result.IsFailure)
+                return Error(result.Error);
+
+            return Ok(result.Value);
         }
 
         [HttpDelete]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
-            var test = MeasureUnit.Create("", _resources, _unitOfWork);
-            var a = 1;
+            var result = _measureUnitsBr.Delete(id);
+            if (result.IsFailure)
+                return Error(result.Error);
+
+            return Ok();
         }
     }
 }

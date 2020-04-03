@@ -12,11 +12,15 @@ namespace PieceOfCake.Core.Resources
             _localizer = localizer;
         }
 
-        public string NameIsMandatory { get => GetString(nameof(NameIsMandatory)); }
+        public string NameIsMandatory => GetString(nameof(NameIsMandatory));
 
-        public string NameExceedsMaxLength { get => GetString(nameof(NameExceedsMaxLength)); }
+        public string NameExceedsMaxLength => GetString(nameof(NameExceedsMaxLength));
 
-        public string NameAlreadyExists { get => GetString(nameof(NameAlreadyExists)); }
+        public string NameAlreadyExists => GetString(nameof(NameAlreadyExists));
+
+        public string SequenceContainsNoElements => GetString(nameof(SequenceContainsNoElements));
+
+        public string IdNotFound => GetString(nameof(IdNotFound));
 
         private string GetString(string name) => _localizer[name];
     }
