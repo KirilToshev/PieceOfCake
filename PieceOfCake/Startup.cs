@@ -38,7 +38,10 @@ namespace PieceOfCake.Api
             services.AddDbContext<PocDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("PocDbContext")));
 
-            services.AddControllers();
+            services.AddControllers(setup => {
+                setup.ReturnHttpNotAcceptable = true;
+            }).AddXmlDataContractSerializerFormatters();
+
             services.AddLocalization();
             services.Configure<RequestLocalizationOptions>(options =>
             {
