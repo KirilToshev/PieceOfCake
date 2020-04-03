@@ -40,7 +40,9 @@ namespace PieceOfCake.Api
 
             services.AddControllers(setup => {
                 setup.ReturnHttpNotAcceptable = true;
-            }).AddXmlDataContractSerializerFormatters();
+            })
+            .AddNewtonsoftJson()
+            .AddXmlDataContractSerializerFormatters();
 
             services.AddLocalization();
             services.Configure<RequestLocalizationOptions>(options =>

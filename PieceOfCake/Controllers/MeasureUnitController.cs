@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PieceOfCake.Core.BusinessRules;
+using PieceOfCake.Core.Entities;
 
 namespace PieceOfCake.Api.Controllers
 {
@@ -22,42 +24,42 @@ namespace PieceOfCake.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public ActionResult<IReadOnlyCollection<MeasureUnit>> Get()
         {
             var result = _measureUnitsBr.Get();
             if (result.IsFailure)
-                return Error(result.Error);
+                return Error<IReadOnlyCollection<MeasureUnit>>(result.Error);
 
             return Ok(result.Value);
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public ActionResult<MeasureUnit> Get(int id)
         {
 
             var result = _measureUnitsBr.Get(id);
             if (result.IsFailure)
-                return Error(result.Error);
+                return Error<MeasureUnit>(result.Error);
 
             return Ok(result.Value);
         }
 
-        [HttpPut]
-        public IActionResult Put(int id, string name)
+        [HttpPut("{id}")]
+        public ActionResult<MeasureUnit> Put(int id, [FromBody]string name)
         {
             var result = _measureUnitsBr.Update(id, name);
             if (result.IsFailure)
-                return Error(result.Error);
+                return Error<MeasureUnit>(result.Error);
 
             return Ok(result.Value);
         }
 
         [HttpPost]
-        public IActionResult Post(string name)
+        public ActionResult<MeasureUnit> Post([FromBody]string name)
         {
             var result = _measureUnitsBr.Create(name);
             if (result.IsFailure)
-                return Error(result.Error);
+                return Error<MeasureUnit>(result.Error);
 
             return Ok(result.Value);
         }

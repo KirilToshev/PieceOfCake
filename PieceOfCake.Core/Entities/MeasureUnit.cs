@@ -27,7 +27,9 @@ namespace PieceOfCake.Core.Entities
             return CommonNameValidation(name, resources, unitOfWork,
                 validName =>
                 {
-                    return Result.Success(new MeasureUnit(validName));
+                    var entity = new MeasureUnit(validName);
+                    unitOfWork.MeasureUnitRepository.Insert(entity);
+                    return Result.Success(entity);
                 });
         }
 
@@ -37,6 +39,7 @@ namespace PieceOfCake.Core.Entities
                 validName =>
                 {
                     this.Name = validName;
+                    unitOfWork.MeasureUnitRepository.Update(this);
                     return Result.Success(this);
                 });
         }

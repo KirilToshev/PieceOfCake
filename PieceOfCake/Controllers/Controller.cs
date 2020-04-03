@@ -14,12 +14,17 @@ namespace PieceOfCake.Api.Controllers
             return BadRequest(Envelope.Error(errorMessage));
         }
 
-        protected new IActionResult Ok()
+        protected ActionResult<T> Error<T>(string errorMessage)
+        {
+            return BadRequest(Envelope.Error(errorMessage));
+        }
+
+        public new OkObjectResult Ok()
         {
             return base.Ok(Envelope.Ok());
         }
 
-        protected new IActionResult Ok(object result)
+        public override OkObjectResult Ok(object result)
         {
             return base.Ok(Envelope.Ok(result));
         }

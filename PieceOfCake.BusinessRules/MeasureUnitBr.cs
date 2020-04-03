@@ -53,13 +53,15 @@ namespace PieceOfCake.BusinessRules
                     _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
 
             return measureUnit.Update(name, _resources, _unitOfWork)
-                .Tap(x => { _unitOfWork.SaveAsync(); });
+                .Tap(x => { _unitOfWork.Save(); });
         }
 
         public Result<MeasureUnit> Create(string name)
         {
             return MeasureUnit.Create(name, _resources, _unitOfWork)
-                .Tap(x => { _unitOfWork.SaveAsync(); });
+                .Tap(x => { 
+                    _unitOfWork.Save(); 
+                });
         }
 
         public Result Delete(int id)
