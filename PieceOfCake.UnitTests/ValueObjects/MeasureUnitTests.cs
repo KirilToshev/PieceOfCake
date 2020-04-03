@@ -36,10 +36,12 @@ namespace PieceOfCake.UnitTests.ValueObjects
                 .Returns((MeasureUnit)null);
         }
 
-        [Test]
-        public void Should_Return_User_Error_If_Created_Without_Name()
+        [TestCase("")]
+        [TestCase("  ")]
+        [TestCase(null)]
+        public void Should_Return_User_Error_If_Created_Without_Name(string measureUnitName)
         {
-            var measureUnit = MeasureUnit.Create("", _resources, _uowMock.Object);
+            var measureUnit = MeasureUnit.Create(measureUnitName, _resources, _uowMock.Object);
             Assert.IsTrue(measureUnit.IsFailure);
             Assert.AreEqual("Measure Unit must have name.", measureUnit.Error);
         }

@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
-using PieceOfCake.Api.Resources;
-using PieceOfCake.Core.Entities;
 using PieceOfCake.Core.Resources;
+using PieceOfCake.Core.Entities;
 using PieceOfCake.Core.Persistence;
-using PieceOfCake.Core.Extensions;
 
 namespace PieceOfCake.Api.Controllers
 {

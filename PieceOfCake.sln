@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PieceOfCake.Core", "PieceOf
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PieceOfCake.Persistence", "PieceOfCake.Persistence\PieceOfCake.Persistence.csproj", "{C080E01A-A86F-4F91-85EB-F045159F61E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PieceOfCake.UnitTests", "PieceOfCake.UnitTests\PieceOfCake.UnitTests.csproj", "{37C81BBC-6D31-40E8-9E4A-8E785915976F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PieceOfCake.UnitTests", "PieceOfCake.UnitTests\PieceOfCake.UnitTests.csproj", "{37C81BBC-6D31-40E8-9E4A-8E785915976F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

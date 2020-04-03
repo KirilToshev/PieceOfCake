@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace PieceOfCake.Api.Resources
+namespace PieceOfCake.Core.Resources
 {
     public class Resources : IResources
     {
