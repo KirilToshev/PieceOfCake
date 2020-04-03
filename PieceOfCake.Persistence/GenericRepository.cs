@@ -38,12 +38,12 @@ namespace PieceOfCake.Persistence
             return query.ToList();
         }
 
-        public virtual TEntity GetById(object id)
+        public virtual TEntity? GetById(object id)
         {
             return dbSet.Find(id);
         }
 
-        public virtual TEntity GetFirstOrDefault(Expression<Func<TEntity, bool>>? filter = null, params Expression<Func<TEntity, object>>[] includes)
+        public virtual TEntity? GetFirstOrDefault(Expression<Func<TEntity, bool>>? filter = null, params Expression<Func<TEntity, object>>[] includes)
         {
             IQueryable<TEntity> query = dbSet;
 

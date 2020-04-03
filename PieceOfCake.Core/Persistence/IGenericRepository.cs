@@ -32,7 +32,7 @@ namespace PieceOfCake.Core.Persistence
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        TEntity GetById(object id);
+        TEntity? GetById(object id);
 
         /// <summary>
         /// Get first or default entity by filter
@@ -40,7 +40,7 @@ namespace PieceOfCake.Core.Persistence
         /// <param name="filter"></param>
         /// <param name="includes"></param>
         /// <returns></returns>
-        TEntity GetFirstOrDefault(
+        TEntity? GetFirstOrDefault(
             Expression<Func<TEntity, bool>>? filter = null,
             params Expression<Func<TEntity, object>>[] includes);
 
