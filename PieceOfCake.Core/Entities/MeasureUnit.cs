@@ -1,26 +1,22 @@
 ﻿using CSharpFunctionalExtensions;
+using PieceOfCake.Core.Common;
 using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
+using PieceOfCake.Core.ValueObjects;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 
 namespace PieceOfCake.Core.Entities
 {
-    public class MeasureUnit : ValueObject<MeasureUnit>
+    public class MeasureUnit : Entity
     {
-        private const int NAME_MAX_LENGHT = 50;
-
-        private MeasureUnit(string name)
+        private MeasureUnit(Name name)
         {
             this.Name = name;
         }
 
-        [Key]
-        public int Id { get; protected set; }
-
-        [MaxLength(NAME_MAX_LENGHT)]
-        public string Name { get; private set; }
+        public Name Name { get; private set; }
 
         public static Result<MeasureUnit> Create(string? name, IResources resources, IUnitOfWork unitOfWork)
         {
@@ -44,9 +40,9 @@ namespace PieceOfCake.Core.Entities
                 });
         }
 
-        private static Result<MeasureUnit> CommonNameValidation(string? name, IResources resources, IUnitOfWork unitOfWork, Func<string, Result<MeasureUnit>> returnStatement)
+        private static Result<MeasureUnit> CommonNameValidation(string? name, IResources resources, IUnitOfWork unitOfWork, Func<Name, Result<MeasureUnit>> returnCallback)
         {
-            var nameResult = ValueObjects.Name.Create(name, resources, x => x.CommonTerms.MeasureUnit, NAME_MAX_LENGHT);
+            var nameResult = Name.Create(name, resources, x => x.CommonTerms.MeasureUnit, Constants.NAME_MAX_LENGHT);
             if (nameResult.IsFailure)
                 return nameResult.ConvertFailure<MeasureUnit>();
 
@@ -54,17 +50,7 @@ namespace PieceOfCake.Core.Entities
             if (measureUnit != null)
                 return Result.Failure<MeasureUnit>(resources.GenereteSentence(x => x.UserErrors.NameAlreadyExists, x => measureUnit.Name));
 
-            return returnStatement.Invoke(nameResult.Value);
-        }
-
-        protected override bool EqualsCore(MeasureUnit other)
-        {
-            return this.Name == other.Name;
-        }
-
-        protected override int GetHashCodeCore()
-        {
-            return this.Name.GetHashCode() ^ 617;
+            return returnCallback.Invoke(nameResult.Value);
         }
     }
 }

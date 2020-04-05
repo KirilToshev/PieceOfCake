@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PieceOfCake.Core.Persistence;
+using PieceOfCake.Core.Resources;
 using PieceOfCake.Core.ValueObjects;
 using PieceOfCake.Persistence.Repositories;
 using System;
@@ -12,9 +13,9 @@ namespace PieceOfCake.Persistence
         private readonly PocDbContext _context;
         private IMeasureUnitRepository? _measureUnitRepository;
 
-        public UnitOfWork(DbContextOptions<PocDbContext> options)
+        public UnitOfWork(DbContextOptions<PocDbContext> options, IResources resources)
         {
-            _context = new PocDbContext(options);
+            _context = new PocDbContext(options, resources);
         }
         
         public IMeasureUnitRepository MeasureUnitRepository

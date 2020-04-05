@@ -9,6 +9,11 @@ namespace PieceOfCake.Core.ValueObjects
     {
         private readonly string _value;
 
+        protected Name()
+        {
+            _value = string.Empty;
+        }
+
         private Name(string name)
         {
             _value = name;

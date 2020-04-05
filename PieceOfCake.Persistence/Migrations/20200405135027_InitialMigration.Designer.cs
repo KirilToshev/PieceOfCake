@@ -9,22 +9,22 @@ using PieceOfCake.Persistence;
 namespace PieceOfCake.Persistence.Migrations
 {
     [DbContext(typeof(PocDbContext))]
-    [Migration("20200116141313_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20200405135027_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.1")
+                .HasAnnotation("ProductVersion", "3.1.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("PieceOfCake.Core.ValueObjects.MeasureUnit", b =>
+            modelBuilder.Entity("PieceOfCake.Core.Entities.MeasureUnit", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
