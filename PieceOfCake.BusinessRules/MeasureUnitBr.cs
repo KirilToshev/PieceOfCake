@@ -53,7 +53,11 @@ namespace PieceOfCake.BusinessRules
                     _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
 
             return measureUnit.Update(name, _resources, _unitOfWork)
-                .Tap(x => { _unitOfWork.Save(); });
+                .Tap(x => 
+                {
+                    _unitOfWork.MeasureUnitRepository.Update(x);
+                    _unitOfWork.Save();
+                });
         }
 
         public Result<MeasureUnit> Create(string name)
@@ -67,9 +71,11 @@ namespace PieceOfCake.BusinessRules
 
         public Result Delete(long id)
         {
-            var test = _unitOfWork.MeasureUnitRepository.GetFirstOrDefault(x => x.Id == id);
             return this.Get(id)
-                .Tap(mu => _unitOfWork.MeasureUnitRepository.Delete(mu));
+                .Tap(mu => {
+                    _unitOfWork.MeasureUnitRepository.Delete(mu);
+                    _unitOfWork.Save();
+                });
         }
     }
 }

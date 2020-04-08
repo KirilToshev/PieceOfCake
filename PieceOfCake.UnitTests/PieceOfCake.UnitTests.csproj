@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -24,6 +23,10 @@
   <ItemGroup>
     <ProjectReference Include="..\PieceOfCake.Core\PieceOfCake.Core.csproj" />
     <ProjectReference Include="..\PieceOfCake\PieceOfCake.Api.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ValueObjects\" />
   </ItemGroup>
 
 </Project>

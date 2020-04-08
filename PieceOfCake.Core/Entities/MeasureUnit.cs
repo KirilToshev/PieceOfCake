@@ -35,7 +35,6 @@ namespace PieceOfCake.Core.Entities
                 validName =>
                 {
                     this.Name = validName;
-                    unitOfWork.MeasureUnitRepository.Update(this);
                     return Result.Success(this);
                 });
         }

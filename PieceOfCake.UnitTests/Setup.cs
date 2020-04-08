@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PieceOfCake.Core.Resources;
 using PieceOfCake.Core.Common;
-using PieceOfCake.Core.Resources;
 
 namespace PieceOfCake.UnitTests
 {
