@@ -7,9 +7,9 @@ namespace PieceOfCake.Core.BusinessRules
     public interface IMeasureUnitBr
     {
         Result<IReadOnlyCollection<MeasureUnit>> Get();
-        Result<MeasureUnit> Get(int id);
+        Result<MeasureUnit> Get(long id);
         Result<MeasureUnit> Create(string name);
-        Result<MeasureUnit> Update(int id, string name);
-        Result Delete(int id);
+        Result<MeasureUnit> Update(long id, string name);
+        Result Delete(long id);
     }
 }

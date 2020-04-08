@@ -33,7 +33,7 @@ namespace PieceOfCake.BusinessRules
             return Result.Success(measureUnits);
         }
 
-        public Result<MeasureUnit> Get(int id)
+        public Result<MeasureUnit> Get(long id)
         {
             var measureUnit = _unitOfWork.MeasureUnitRepository.GetById(id);
 
@@ -44,7 +44,7 @@ namespace PieceOfCake.BusinessRules
             return Result.Success(measureUnit);
         }
 
-        public Result<MeasureUnit> Update(int id, string? name)
+        public Result<MeasureUnit> Update(long id, string? name)
         {
             var measureUnit = _unitOfWork.MeasureUnitRepository.GetById(id);
 
@@ -59,13 +59,15 @@ namespace PieceOfCake.BusinessRules
         public Result<MeasureUnit> Create(string name)
         {
             return MeasureUnit.Create(name, _resources, _unitOfWork)
-                .Tap(x => { 
+                .Tap(x => {
+                    _unitOfWork.MeasureUnitRepository.Insert(x);
                     _unitOfWork.Save(); 
                 });
         }
 
-        public Result Delete(int id)
+        public Result Delete(long id)
         {
+            var test = _unitOfWork.MeasureUnitRepository.GetFirstOrDefault(x => x.Id == id);
             return this.Get(id)
                 .Tap(mu => _unitOfWork.MeasureUnitRepository.Delete(mu));
         }

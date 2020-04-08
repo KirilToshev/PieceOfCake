@@ -64,8 +64,8 @@ namespace PieceOfCake.Api.Controllers
             return Ok(result.Value);
         }
 
-        [HttpDelete]
-        public IActionResult Delete(int id)
+        [HttpDelete("{id}")]
+        public IActionResult Delete(long id)
         {
             var result = _measureUnitsBr.Delete(id);
             if (result.IsFailure)
