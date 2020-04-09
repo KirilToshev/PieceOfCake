@@ -2,6 +2,6 @@
 {
     public static class Constants
     {
-        public const int NAME_MAX_LENGHT = 50;
+        public const uint FIFTY = 50;
     }
 }

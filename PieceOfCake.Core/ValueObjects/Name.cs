@@ -21,13 +21,21 @@ namespace PieceOfCake.Core.ValueObjects
 
         public static implicit operator string(Name name) => name._value;
 
-        public static Result<Name> Create(string? name, IResources resources, Expression<Func<IResources, string>> entityName, int maxLength)
+        public static Result<Name> Create(string? name, IResources resources, Expression<Func<IResources, string?>> entityName, uint maxLength, uint? minLength = null)
         {
+            if (maxLength == 0)
+                throw new ArgumentOutOfRangeException(nameof(maxLength));
+            if (minLength.HasValue && maxLength < minLength)
+                throw new ArgumentOutOfRangeException($"{nameof(maxLength)} must be grater than {nameof(minLength)}");
+
             if (string.IsNullOrWhiteSpace(name))
                 return Result.Failure<Name>(resources.GenereteSentence(x => x.UserErrors.NameIsMandatory, entityName));
 
             if (name.Length > maxLength)
                 return Result.Failure<Name>(resources.GenereteSentence(x => x.UserErrors.NameExceedsMaxLength, entityName, x => maxLength.ToString()));
+
+            if (minLength.HasValue && name.Length < minLength)
+                return Result.Failure<Name>(resources.GenereteSentence(x => x.UserErrors.NameBelowMinLength, entityName, x => minLength.Value.ToString()));
 
             return Result.Success(new Name(name));
         }

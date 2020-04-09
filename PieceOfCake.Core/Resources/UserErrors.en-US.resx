@@ -123,6 +123,9 @@
   <data name="NameAlreadyExists" xml:space="preserve">
     <value>An entity with name {0} already exist.</value>
   </data>
+  <data name="NameBelowMinLength" xml:space="preserve">
+    <value>{0} name should be more than {1} symbols.</value>
+  </data>
   <data name="NameExceedsMaxLength" xml:space="preserve">
     <value>{0} name should not exceed {1} symbols.</value>
   </data>

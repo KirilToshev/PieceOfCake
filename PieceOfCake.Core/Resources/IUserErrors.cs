@@ -4,6 +4,7 @@
     {
         public string NameIsMandatory { get; }
         public string NameExceedsMaxLength { get; }
+        public string NameBelowMinLength { get; }
         public string NameAlreadyExists { get; }
         public string SequenceContainsNoElements { get; }
         public string IdNotFound { get; }

@@ -22,6 +22,8 @@ namespace PieceOfCake.Core.Resources
 
         public string IdNotFound => GetString(nameof(IdNotFound));
 
+        public string NameBelowMinLength => GetString(nameof(NameBelowMinLength));
+
         private string GetString(string name) => _localizer[name];
     }
 }

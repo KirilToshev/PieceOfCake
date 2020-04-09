@@ -123,6 +123,9 @@
   <data name="NameAlreadyExists" xml:space="preserve">
     <value>Запис с име {0} вече съществува.</value>
   </data>
+  <data name="NameBelowMinLength" xml:space="preserve">
+    <value>Името на {0} трябва да бъде не по-малко от {1} символа.</value>
+  </data>
   <data name="NameExceedsMaxLength" xml:space="preserve">
     <value>Името на {0} не трябва да надвишава {1} символа.</value>
   </data>

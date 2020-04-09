@@ -29,13 +29,25 @@ namespace PieceOfCake.Persistence
                 x.ToTable(nameof(MeasureUnit) + "s").HasKey(k => k.Id);
                 x.Property(p => p.Name)
                     .IsRequired()
-                    .HasMaxLength(Constants.NAME_MAX_LENGHT)
+                    .HasMaxLength((int)Constants.FIFTY)
                     .HasConversion(
                         x => (string)x,
-                        x => Name.Create(x, _resources, x => x.CommonTerms.MeasureUnit, Constants.NAME_MAX_LENGHT).Value);
+                        x => Name.Create(x, _resources, x => x.CommonTerms.MeasureUnit, Constants.FIFTY, null).Value);
+            });
+
+            modelBuilder.Entity<Product>(x =>
+            {
+                x.ToTable(nameof(Product) + "s").HasKey(k => k.Id);
+                //x.Property(p => p.Name)
+                //    .IsRequired()
+                //    .HasMaxLength((int)Constants.FIFTY)
+                //    .HasConversion(
+                //        x => (string)x,
+                //        x => Name.Create(x, _resources, x => x.CommonTerms.MeasureUnit, Constants.FIFTY, null).Value);
             });
         }
 
         public DbSet<MeasureUnit> MeasureUnits { get; set; }
+        public DbSet<Product> Products { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Common;
+using PieceOfCake.Core.Common.Validations;
 using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
 using PieceOfCake.Core.ValueObjects;
@@ -24,13 +25,14 @@ namespace PieceOfCake.Core.Entities
                 validName =>
                 {
                     var entity = new MeasureUnit(validName);
-                    unitOfWork.MeasureUnitRepository.Insert(entity);
                     return Result.Success(entity);
                 });
         }
 
         public Result<MeasureUnit> Update(string? name, IResources resources, IUnitOfWork unitOfWork)
         {
+            var validation = new NameValidation(unitOfWork, resources);
+            validation.IsUnique<MeasureUnit>(name, x => x.Name == name);
             return CommonNameValidation(name, resources, unitOfWork,
                 validName =>
                 {
@@ -41,7 +43,7 @@ namespace PieceOfCake.Core.Entities
 
         private static Result<MeasureUnit> CommonNameValidation(string? name, IResources resources, IUnitOfWork unitOfWork, Func<Name, Result<MeasureUnit>> returnCallback)
         {
-            var nameResult = Name.Create(name, resources, x => x.CommonTerms.MeasureUnit, Constants.NAME_MAX_LENGHT);
+            var nameResult = Name.Create(name, resources, x => x.CommonTerms.MeasureUnit, Constants.FIFTY);
             if (nameResult.IsFailure)
                 return nameResult.ConvertFailure<MeasureUnit>();
 
