@@ -72,6 +72,7 @@ namespace PieceOfCake.BusinessRules
         public Result Delete(long id)
         {
             return this.Get(id)
+                .OnFailure(() => _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()))
                 .Tap(mu => {
                     _unitOfWork.MeasureUnitRepository.Delete(mu);
                     _unitOfWork.Save();
