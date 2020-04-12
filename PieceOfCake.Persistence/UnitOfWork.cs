@@ -73,7 +73,8 @@ namespace PieceOfCake.Persistence
             GC.SuppressFinalize(this);
         }
 
-        public IGenericRepository<TEntity> GetRepositoryByType<TEntity>() where TEntity : Entity
+        //NOTE Left with no reason, just a cool way to get repositories by their generic type using reflection
+        private IGenericRepository<TEntity> GetRepositoryByType<TEntity>() where TEntity : Entity
         {
             var property = this.GetType().GetProperties()
                 .Where(x =>

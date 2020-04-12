@@ -1,5 +1,4 @@
-﻿using PieceOfCake.Core.Common;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace PieceOfCake.Core.Persistence
 {
@@ -11,6 +10,6 @@ namespace PieceOfCake.Core.Persistence
         void Save();
         Task<int> SaveAsync();
 
-        IGenericRepository<TEntity> GetRepositoryByType<TEntity>() where TEntity : Entity;
+        //IGenericRepository<TEntity> GetRepositoryByType<TEntity>() where TEntity : Entity;
     }
 }
