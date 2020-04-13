@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PieceOfCake.Persistence;
 
 namespace PieceOfCake.Persistence.Migrations
 {
     [DbContext(typeof(PocDbContext))]
-    partial class PocDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200413131040_Adding_Product")]
+    partial class Adding_Product
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

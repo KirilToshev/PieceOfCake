@@ -120,4 +120,7 @@
   <data name="MeasureUnit" xml:space="preserve">
     <value>Еденица за измерване</value>
   </data>
+  <data name="Product" xml:space="preserve">
+    <value>Продукт</value>
+  </data>
 </root>

@@ -11,7 +11,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PieceOfCake.Persistence", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PieceOfCake.UnitTests", "PieceOfCake.UnitTests\PieceOfCake.UnitTests.csproj", "{37C81BBC-6D31-40E8-9E4A-8E785915976F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PieceOfCake.BusinessRules", "PieceOfCake.BusinessRules\PieceOfCake.BusinessRules.csproj", "{0C1C9073-BCD2-4BE9-993E-8D33635274C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PieceOfCake.BusinessRules", "PieceOfCake.BusinessRules\PieceOfCake.BusinessRules.csproj", "{0C1C9073-BCD2-4BE9-993E-8D33635274C5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5CE40CCE-9316-4F9C-B3B3-9D2DA71FC68F}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

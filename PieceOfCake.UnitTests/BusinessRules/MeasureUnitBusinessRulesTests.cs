@@ -1,4 +1,5 @@
 using AutoFixture;
+using CSharpFunctionalExtensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -18,7 +19,8 @@ namespace PieceOfCake.UnitTests.BusinessRules
         private IResources _resources;
         private Mock<IUnitOfWork> _uowMock;
         private Mock<IMeasureUnitRepository> _measureUnitRepoMock;
-        private Fixture _fixture; 
+        private Fixture _fixture;
+        private Mock<MeasureUnit> _measureUnitMock;
 
         [SetUp]
         public void BeforeEachTest()
@@ -35,6 +37,7 @@ namespace PieceOfCake.UnitTests.BusinessRules
             _measureUnitRepoMock
                 .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
                 .Returns((MeasureUnit)null);
+            _measureUnitMock = new Mock<MeasureUnit>();
         }
 
         [Test]
@@ -59,7 +62,7 @@ namespace PieceOfCake.UnitTests.BusinessRules
             var id = _fixture.Create<long>();
             _measureUnitRepoMock
                 .Setup(x => x.GetById(id))
-                .Returns(MeasureUnit.Create(_fixture.Create<string>(), _resources, _uowMock.Object).Value);
+                .Returns(_measureUnitMock.Object);
 
             var sut = new MeasureUnitBr(_resources, _uowMock.Object);
 
@@ -88,19 +91,22 @@ namespace PieceOfCake.UnitTests.BusinessRules
         [Test]
         public void Update_Should_Succseed_If_Id_Is_Found()
         {
+            //Arrange
             var id = _fixture.Create<long>();
+            var updatedName = _fixture.Create<string>();
+            _measureUnitMock.Setup(x => x.Update(updatedName, It.IsAny<IResources>(), It.IsAny<IUnitOfWork>()))
+                .Returns(Result.Ok(_measureUnitMock.Object));
             _measureUnitRepoMock
                 .Setup(x => x.GetById(id))
-                .Returns(MeasureUnit.Create(_fixture.Create<string>(), _resources, _uowMock.Object).Value);
-
+                .Returns(_measureUnitMock.Object);
             var sut = new MeasureUnitBr(_resources, _uowMock.Object);
 
-            var updatedName = _fixture.Create<string>();
+            //Act
             var result = sut.Update(id, updatedName);
 
+            //Assert
             Assert.IsTrue(result.IsSuccess);
             Assert.IsNotNull(result.Value);
-            Assert.AreEqual(updatedName, (string)result.Value.Name);
         }
 
         [Test]
@@ -121,7 +127,7 @@ namespace PieceOfCake.UnitTests.BusinessRules
             var id = _fixture.Create<long>();
             _measureUnitRepoMock
                 .Setup(x => x.GetById(id))
-                .Returns(MeasureUnit.Create(_fixture.Create<string>(), _resources, _uowMock.Object).Value);
+                .Returns(_measureUnitMock.Object);
 
             var sut = new MeasureUnitBr(_resources, _uowMock.Object);
 

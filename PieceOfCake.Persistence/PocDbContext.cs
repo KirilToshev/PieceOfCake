@@ -38,12 +38,12 @@ namespace PieceOfCake.Persistence
             modelBuilder.Entity<Product>(x =>
             {
                 x.ToTable(nameof(Product) + "s").HasKey(k => k.Id);
-                //x.Property(p => p.Name)
-                //    .IsRequired()
-                //    .HasMaxLength((int)Constants.FIFTY)
-                //    .HasConversion(
-                //        x => (string)x,
-                //        x => Name.Create(x, _resources, x => x.CommonTerms.MeasureUnit, Constants.FIFTY, null).Value);
+                x.Property(p => p.Name)
+                    .IsRequired()
+                    .HasMaxLength((int)Constants.FIFTY)
+                    .HasConversion(
+                        x => (string)x,
+                        x => Name.Create(x, _resources, x => x.CommonTerms.Product, Constants.FIFTY, null).Value);
             });
         }
 

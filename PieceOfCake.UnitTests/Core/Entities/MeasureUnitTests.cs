@@ -10,7 +10,7 @@ using PieceOfCake.Core.ValueObjects;
 using System;
 using System.Linq.Expressions;
 
-namespace PieceOfCake.UnitTests.Entities
+namespace PieceOfCake.UnitTests.Core.Entities
 {
     public class MeasureUnitTests
     {

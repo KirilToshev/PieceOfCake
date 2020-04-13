@@ -3,14 +3,20 @@ using PieceOfCake.Core.Common;
 using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
 using PieceOfCake.Core.ValueObjects;
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
 
+//This is required to suppress warnings/errors in the default(empty) constructor
+//required by Moq to construct this object in the UnitTests
+#pragma warning disable 8618
 namespace PieceOfCake.Core.Entities
 {
     public class MeasureUnit : Entity
     {
+        #warning Sparation Of Concerns violation
+        //The default constructor is requred by Moq
+        protected MeasureUnit()
+        {
+        }
+
         private MeasureUnit(Name name)
         {
             this.Name = name;
@@ -32,7 +38,9 @@ namespace PieceOfCake.Core.Entities
             return Result.Success(entity);
         }
 
-        public Result<MeasureUnit> Update(string? name, IResources resources, IUnitOfWork unitOfWork)
+        #warning Sparation Of Concerns violation
+        //virtural keyword is required by Moq to be able to mock the method
+        public virtual Result<MeasureUnit> Update(string? name, IResources resources, IUnitOfWork unitOfWork)
         {
             var nameResult = Name.Create(name, resources, x => x.CommonTerms.MeasureUnit, Constants.FIFTY);
             if (nameResult.IsFailure)
