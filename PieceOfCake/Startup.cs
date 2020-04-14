@@ -55,6 +55,7 @@ namespace PieceOfCake.Api
             services.AddSingleton<IResources, Resources>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IMeasureUnitBusinessRules, MeasureUnitBusinessRules>();
+            services.AddTransient<IProductBusinessRules, ProductBusinessRules>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
