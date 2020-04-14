@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace PieceOfCake.Core.BusinessRules
 {
-    public interface IMeasureUnitBr
+    public interface IMeasureUnitBusinessRules
     {
         Result<IReadOnlyCollection<MeasureUnit>> Get();
         Result<MeasureUnit> Get(long id);

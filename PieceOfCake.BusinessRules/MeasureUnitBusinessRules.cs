@@ -9,12 +9,12 @@ using System.Linq;
 
 namespace PieceOfCake.BusinessRules
 {
-    public class MeasureUnitBr : IMeasureUnitBr
+    public class MeasureUnitBusinessRules : IMeasureUnitBusinessRules
     {
         private readonly IResources _resources;
         private readonly IUnitOfWork _unitOfWork;
 
-        public MeasureUnitBr(
+        public MeasureUnitBusinessRules(
             IResources resources,
             IUnitOfWork unitOfWork)
         {

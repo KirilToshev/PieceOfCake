@@ -14,7 +14,7 @@ namespace PieceOfCake.Core.Resources
 
         public string MeasureUnit { get => GetString(nameof(MeasureUnit)); }
 
-        public string Product { get => GetString(nameof(MeasureUnit)); }
+        public string Product { get => GetString(nameof(Product)); }
 
         private string GetString(string name) => _localizer[name];
     }

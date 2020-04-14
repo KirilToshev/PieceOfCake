@@ -22,7 +22,9 @@ namespace PieceOfCake.Core.Entities
             this.Name = name;
         }
 
-        public Name Name { get; private set; }
+#warning Sparation Of Concerns violation
+        //virtural keyword is required by Moq to be able to mock this method
+        public virtual Name Name { get; private set; }
 
         public static Result<Product> Create(string? name, IResources resources, IUnitOfWork unitOfWork)
         {
@@ -39,7 +41,7 @@ namespace PieceOfCake.Core.Entities
         }
 
 #warning Sparation Of Concerns violation
-        //virtural keyword is required by Moq to be able to mock the method
+        //virtural keyword is required by Moq to be able to mock this method
         public virtual Result<Product> Update(string? name, IResources resources, IUnitOfWork unitOfWork)
         {
             var nameResult = Name.Create(name, resources, x => x.CommonTerms.Product, Constants.FIFTY);

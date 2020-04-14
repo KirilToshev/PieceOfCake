@@ -5,21 +5,19 @@ using System.Linq.Expressions;
 
 namespace PieceOfCake.Core.ValueObjects
 {
-    public class Name : ValueObject<Name>
+    public class Name : ValueObject<Name, string>
     {
-        private readonly string _value;
-
         protected Name()
+            :base(string.Empty)
         {
-            _value = string.Empty;
         }
 
-        private Name(string name)
+        protected Name(string name)
+            :base(name)
         {
-            _value = name;
         }
 
-        public static implicit operator string(Name name) => name._value;
+        public static implicit operator string(Name name) => name.Value;
 
         public static Result<Name> Create(string? name, IResources resources, Expression<Func<IResources, string?>> entityName, uint maxLength, uint? minLength = null)
         {
@@ -38,16 +36,6 @@ namespace PieceOfCake.Core.ValueObjects
                 return Result.Failure<Name>(resources.GenereteSentence(x => x.UserErrors.NameBelowMinLength, entityName, x => minLength.Value.ToString()));
 
             return Result.Success(new Name(name));
-        }
-
-        protected override bool EqualsCore(Name other)
-        {
-            return _value.Equals(other._value);
-        }
-
-        protected override int GetHashCodeCore()
-        {
-            return _value.GetHashCode() ^ 583;
         }
     }
 }

@@ -12,11 +12,11 @@ namespace PieceOfCake.Api.Controllers
     public class MeasureUnitController : Controller
     {
         private readonly ILogger<MeasureUnitController> _logger;
-        private readonly IMeasureUnitBr _measureUnitsBr;
+        private readonly IMeasureUnitBusinessRules _measureUnitsBr;
 
         public MeasureUnitController(
             ILogger<MeasureUnitController> logger,
-            IMeasureUnitBr measureUnitsBr
+            IMeasureUnitBusinessRules measureUnitsBr
             )
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
