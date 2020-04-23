@@ -15,6 +15,7 @@ namespace PieceOfCake.Persistence
         private readonly PocDbContext _context;
         private IMeasureUnitRepository? _measureUnitRepository;
         private IProductRepository? _productRepository;
+        private IDishRepository? _dishRepository;
 
         public UnitOfWork(DbContextOptions<PocDbContext> options, IResources resources)
         {
@@ -40,6 +41,17 @@ namespace PieceOfCake.Persistence
                     _productRepository = new ProductRepository(_context);
 
                 return _productRepository;
+            }
+        }
+
+        public IDishRepository DishRepository
+        {
+            get
+            {
+                if (_dishRepository == null)
+                    _dishRepository = new DishRepository(_context);
+
+                return _dishRepository;
             }
         }
 

@@ -6,6 +6,7 @@ namespace PieceOfCake.Core.Persistence
     {
         IMeasureUnitRepository MeasureUnitRepository { get; }
         IProductRepository ProductRepository { get; }
+        IDishRepository DishRepository { get; }
 
         void Save();
         Task<int> SaveAsync();

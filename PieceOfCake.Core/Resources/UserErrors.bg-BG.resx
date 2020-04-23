@@ -132,6 +132,9 @@
   <data name="NameIsMandatory" xml:space="preserve">
     <value>{0} трябва има да име.</value>
   </data>
+  <data name="QuantityMustBeGraterThanZero" xml:space="preserve">
+    <value>Количеството трябва да надвишава 0.</value>
+  </data>
   <data name="SequenceContainsNoElements" xml:space="preserve">
     <value>Съдържанието на колекцията е празно.</value>
   </data>

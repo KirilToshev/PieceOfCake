@@ -132,6 +132,9 @@
   <data name="NameIsMandatory" xml:space="preserve">
     <value>{0} must have name.</value>
   </data>
+  <data name="QuantityMustBeGraterThanZero" xml:space="preserve">
+    <value>Quantity value must be grater than zero.</value>
+  </data>
   <data name="SequenceContainsNoElements" xml:space="preserve">
     <value>Sequence contains no elements.</value>
   </data>

@@ -8,5 +8,6 @@
         public string NameAlreadyExists { get; }
         public string SequenceContainsNoElements { get; }
         public string IdNotFound { get; }
+        public string QuantityMustBeGraterThanZero { get; }
     }
 }

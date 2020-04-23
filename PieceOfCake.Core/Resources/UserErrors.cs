@@ -24,6 +24,8 @@ namespace PieceOfCake.Core.Resources
 
         public string NameBelowMinLength => GetString(nameof(NameBelowMinLength));
 
+        public string QuantityMustBeGraterThanZero => GetString(nameof(QuantityMustBeGraterThanZero));
+
         private string GetString(string name) => _localizer[name];
     }
 }
