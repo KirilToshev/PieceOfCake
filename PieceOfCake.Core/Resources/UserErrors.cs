@@ -26,6 +26,10 @@ namespace PieceOfCake.Core.Resources
 
         public string QuantityMustBeGraterThanZero => GetString(nameof(QuantityMustBeGraterThanZero));
 
+        public string DescriptionExceedsMaxLength => GetString(nameof(DescriptionExceedsMaxLength));
+
+        public string DescriptionIsMandatory => GetString(nameof(DescriptionIsMandatory));
+
         private string GetString(string name) => _localizer[name];
     }
 }

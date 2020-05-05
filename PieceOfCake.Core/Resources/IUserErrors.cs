@@ -9,5 +9,7 @@
         public string SequenceContainsNoElements { get; }
         public string IdNotFound { get; }
         public string QuantityMustBeGraterThanZero { get; }
+        public string DescriptionExceedsMaxLength { get; }
+        public string DescriptionIsMandatory { get; }
     }
 }

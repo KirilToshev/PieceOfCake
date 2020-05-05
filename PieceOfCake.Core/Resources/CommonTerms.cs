@@ -12,9 +12,11 @@ namespace PieceOfCake.Core.Resources
             _localizer = localizer;
         }
 
-        public string MeasureUnit { get => GetString(nameof(MeasureUnit)); }
+        public string MeasureUnit => GetString(nameof(MeasureUnit));
 
-        public string Product { get => GetString(nameof(Product)); }
+        public string Product => GetString(nameof(Product));
+
+        public string Dish => GetString(nameof(Product));
 
         private string GetString(string name) => _localizer[name];
     }

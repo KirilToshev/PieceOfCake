@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DescriptionExceedsMaxLength" xml:space="preserve">
+    <value>Описанието на {0} трябва да бъде не по-малко от {1} символа.</value>
+  </data>
+  <data name="DescriptionIsMandatory" xml:space="preserve">
+    <value>Описанието на {0} е задължително.</value>
+  </data>
   <data name="IdNotFound" xml:space="preserve">
     <value>Елемент с идентификационен номер={0} не съществува.</value>
   </data>

@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DescriptionExceedsMaxLength" xml:space="preserve">
+    <value>{0} description should not exceed {1} symbols.</value>
+  </data>
+  <data name="DescriptionIsMandatory" xml:space="preserve">
+    <value>{0} must have description.</value>
+  </data>
   <data name="IdNotFound" xml:space="preserve">
     <value>Element with Id={0} does not exists.</value>
   </data>

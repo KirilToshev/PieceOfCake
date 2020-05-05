@@ -4,5 +4,6 @@
     {
         public string MeasureUnit { get; }
         public string Product { get; }
+        public string Dish { get; }
     }
 }

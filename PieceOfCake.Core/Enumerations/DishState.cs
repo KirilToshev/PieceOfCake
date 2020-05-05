@@ -4,6 +4,7 @@
     {
         Draft = 1,
         AwaitingApproval = 2,
-        Active = 3
+        Rejected = 3,
+        Active = 4
     }
 }

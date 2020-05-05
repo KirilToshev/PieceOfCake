@@ -1,5 +1,8 @@
-﻿using PieceOfCake.Core.Common;
+﻿using CSharpFunctionalExtensions;
+using PieceOfCake.Core.Common;
 using PieceOfCake.Core.Enumerations;
+using PieceOfCake.Core.Persistence;
+using PieceOfCake.Core.Resources;
 using PieceOfCake.Core.ValueObjects;
 using System;
 using System.Collections.Generic;
@@ -32,5 +35,20 @@ namespace PieceOfCake.Core.Entities
         public string Description { get; protected set; }
         public DishState State { get; protected set; }
         public virtual ICollection<Ingredient> Ingredients { get; protected set; }
+
+        public static Result<Dish> Create(string name, string description, IResources resources)
+        {
+            var nameResult = Name.Create(name, resources, x => x.CommonTerms.Dish, Constants.FIFTY, Constants.TWO);
+            if (nameResult.IsFailure)
+                return nameResult.ConvertFailure<Dish>();
+
+            if (string.IsNullOrWhiteSpace(description))
+                return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.DescriptionIsMandatory, x => x.CommonTerms.Dish));
+
+            if (description.Length > Constants.FIFTY_THOUSAND)
+                return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.DescriptionExceedsMaxLength, x => x.CommonTerms.Dish, x => Constants.FIFTY_THOUSAND.ToString()));
+
+            return Result.Success(new Dish(nameResult.Value, description));
+        }
     }
 }
