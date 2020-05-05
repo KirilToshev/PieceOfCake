@@ -2,9 +2,9 @@
 using PieceOfCake.Core.Entities;
 using System.Collections.Generic;
 
-namespace PieceOfCake.Core.BusinessRules
+namespace PieceOfCake.Core.DomainServices.Interfaces
 {
-    public interface IProductBusinessRules
+    public interface IProductDomainService
     {
         Result<IReadOnlyCollection<Product>> Get();
         Result<Product> Get(long id);

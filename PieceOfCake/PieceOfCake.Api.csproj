@@ -24,7 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PieceOfCake.BusinessRules\PieceOfCake.BusinessRules.csproj" />
     <ProjectReference Include="..\PieceOfCake.Core\PieceOfCake.Core.csproj" />
     <ProjectReference Include="..\PieceOfCake.Persistence\PieceOfCake.Persistence.csproj" />
   </ItemGroup>

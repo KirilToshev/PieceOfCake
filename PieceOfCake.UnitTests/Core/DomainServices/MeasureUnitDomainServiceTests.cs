@@ -1,26 +1,24 @@
 using AutoFixture;
 using CSharpFunctionalExtensions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using PieceOfCake.BusinessRules;
+using PieceOfCake.Core.DomainServices;
 using PieceOfCake.Core.Entities;
 using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
-using PieceOfCake.Core.ValueObjects;
 using System;
 using System.Linq.Expressions;
 
-namespace PieceOfCake.UnitTests.BusinessRules
+namespace PieceOfCake.UnitTests.Core.DomainServices
 {
-    public class ProductBusinessRulesTests
+    public class MeasureUnitDomainServiceTests
     {
         private IResources _resources;
         private Mock<IUnitOfWork> _uowMock;
-        private Mock<IProductRepository> _productRepoMock;
+        private Mock<IMeasureUnitRepository> _measureUnitRepoMock;
         private Fixture _fixture;
-        private Mock<Product> _productMock;
+        private Mock<MeasureUnit> _measureUnitMock;
 
         [SetUp]
         public void BeforeEachTest()
@@ -31,24 +29,24 @@ namespace PieceOfCake.UnitTests.BusinessRules
             var serviceProvider = services.BuildServiceProvider();
             _resources = serviceProvider.GetService<IResources>();
             _uowMock = new Mock<IUnitOfWork>();
-            _productRepoMock = new Mock<IProductRepository>();
-            _uowMock.Setup(x => x.ProductRepository)
-                .Returns(_productRepoMock.Object);
-            _productRepoMock
-                .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product, bool>>>()))
-                .Returns((Product)null);
-            _productMock = new Mock<Product>();
+            _measureUnitRepoMock = new Mock<IMeasureUnitRepository>();
+            _uowMock.Setup(x => x.MeasureUnitRepository)
+                .Returns(_measureUnitRepoMock.Object);
+            _measureUnitRepoMock
+                .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
+                .Returns((MeasureUnit)null);
+            _measureUnitMock = new Mock<MeasureUnit>();
         }
 
         [Test]
         public void Get_Should_Return_User_Error_If_Id_Is_Not_Found()
         {
             var notExistingId = _fixture.Create<long>();
-            _productRepoMock
+            _measureUnitRepoMock
                 .Setup(x => x.GetById(notExistingId))
-                .Returns((Product)null);
+                .Returns((MeasureUnit)null);
 
-            var sut = new ProductBusinessRules(_resources, _uowMock.Object);
+            var sut = new MeasureUnitDomainService(_resources, _uowMock.Object);
 
             var result = sut.Get(notExistingId);
 
@@ -60,11 +58,11 @@ namespace PieceOfCake.UnitTests.BusinessRules
         public void Get_Should_Return_MeasureUnit_If_Id_Is_Found()
         {
             var id = _fixture.Create<long>();
-            _productRepoMock
+            _measureUnitRepoMock
                 .Setup(x => x.GetById(id))
-                .Returns(_productMock.Object);
+                .Returns(_measureUnitMock.Object);
 
-            var sut = new ProductBusinessRules(_resources, _uowMock.Object);
+            var sut = new MeasureUnitDomainService(_resources, _uowMock.Object);
 
             var result = sut.Get(id);
 
@@ -76,11 +74,11 @@ namespace PieceOfCake.UnitTests.BusinessRules
         public void Update_Should_Return_User_Error_If_Id_Is_Not_Found()
         {
             var notExistingId = _fixture.Create<long>();
-            _productRepoMock
+            _measureUnitRepoMock
                 .Setup(x => x.GetById(notExistingId))
-                .Returns((Product)null);
+                .Returns((MeasureUnit)null);
 
-            var sut = new ProductBusinessRules(_resources, _uowMock.Object);
+            var sut = new MeasureUnitDomainService(_resources, _uowMock.Object);
 
             var result = sut.Update(notExistingId, _fixture.Create<string>());
 
@@ -94,12 +92,12 @@ namespace PieceOfCake.UnitTests.BusinessRules
             //Arrange
             var id = _fixture.Create<long>();
             var updatedName = _fixture.Create<string>();
-            _productMock.Setup(x => x.Update(updatedName, It.IsAny<IResources>(), It.IsAny<IUnitOfWork>()))
-                .Returns(Result.Ok(_productMock.Object));
-            _productRepoMock
+            _measureUnitMock.Setup(x => x.Update(updatedName, It.IsAny<IResources>(), It.IsAny<IUnitOfWork>()))
+                .Returns(Result.Ok(_measureUnitMock.Object));
+            _measureUnitRepoMock
                 .Setup(x => x.GetById(id))
-                .Returns(_productMock.Object);
-            var sut = new ProductBusinessRules(_resources, _uowMock.Object);
+                .Returns(_measureUnitMock.Object);
+            var sut = new MeasureUnitDomainService(_resources, _uowMock.Object);
 
             //Act
             var result = sut.Update(id, updatedName);
@@ -113,7 +111,7 @@ namespace PieceOfCake.UnitTests.BusinessRules
         public void Delete_Should_Return_User_Error_If_Id_Is_Not_Found()
         {
             var notExistingId = _fixture.Create<long>();
-            var sut = new ProductBusinessRules(_resources, _uowMock.Object);
+            var sut = new MeasureUnitDomainService(_resources, _uowMock.Object);
 
             var result = sut.Delete(notExistingId);
 
@@ -125,11 +123,11 @@ namespace PieceOfCake.UnitTests.BusinessRules
         public void Delete_Should_Succseed_If_Id_Is_Found()
         {
             var id = _fixture.Create<long>();
-            _productRepoMock
+            _measureUnitRepoMock
                 .Setup(x => x.GetById(id))
-                .Returns(_productMock.Object);
+                .Returns(_measureUnitMock.Object);
 
-            var sut = new ProductBusinessRules(_resources, _uowMock.Object);
+            var sut = new MeasureUnitDomainService(_resources, _uowMock.Object);
 
             var result = sut.Delete(id);
 

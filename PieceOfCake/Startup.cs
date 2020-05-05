@@ -1,22 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using PieceOfCake.BusinessRules;
-using PieceOfCake.Core.BusinessRules;
 using PieceOfCake.Core.Common;
+using PieceOfCake.Core.DomainServices;
+using PieceOfCake.Core.DomainServices.Interfaces;
 using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
 using PieceOfCake.Persistence;
@@ -54,8 +46,8 @@ namespace PieceOfCake.Api
 
             services.AddSingleton<IResources, Resources>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<IMeasureUnitBusinessRules, MeasureUnitBusinessRules>();
-            services.AddTransient<IProductBusinessRules, ProductBusinessRules>();
+            services.AddTransient<IMeasureUnitDomainService, MeasureUnitDomainService>();
+            services.AddTransient<IProductDomainService, ProductDomainService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

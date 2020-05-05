@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using PieceOfCake.Core.BusinessRules;
+using PieceOfCake.Core.DomainServices.Interfaces;
 using PieceOfCake.Core.Entities;
 
 namespace PieceOfCake.Api.Controllers
@@ -12,21 +12,21 @@ namespace PieceOfCake.Api.Controllers
     public class MeasureUnitController : Controller
     {
         private readonly ILogger<MeasureUnitController> _logger;
-        private readonly IMeasureUnitBusinessRules _measureUnitsBr;
+        private readonly IMeasureUnitDomainService _measureUnitDomainService;
 
         public MeasureUnitController(
             ILogger<MeasureUnitController> logger,
-            IMeasureUnitBusinessRules measureUnitsBr
+            IMeasureUnitDomainService measureUnitDomainService
             )
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _measureUnitsBr = measureUnitsBr ?? throw new ArgumentNullException(nameof(measureUnitsBr));
+            _measureUnitDomainService = measureUnitDomainService ?? throw new ArgumentNullException(nameof(measureUnitDomainService));
         }
 
         [HttpGet]
         public ActionResult<IReadOnlyCollection<MeasureUnit>> Get()
         {
-            var result = _measureUnitsBr.Get();
+            var result = _measureUnitDomainService.Get();
             if (result.IsFailure)
                 return Error<IReadOnlyCollection<MeasureUnit>>(result.Error);
 
@@ -37,7 +37,7 @@ namespace PieceOfCake.Api.Controllers
         public ActionResult<MeasureUnit> Get(int id)
         {
 
-            var result = _measureUnitsBr.Get(id);
+            var result = _measureUnitDomainService.Get(id);
             if (result.IsFailure)
                 return Error<MeasureUnit>(result.Error);
 
@@ -47,7 +47,7 @@ namespace PieceOfCake.Api.Controllers
         [HttpPut("{id}")]
         public ActionResult<MeasureUnit> Put(int id, [FromBody]string name)
         {
-            var result = _measureUnitsBr.Update(id, name);
+            var result = _measureUnitDomainService.Update(id, name);
             if (result.IsFailure)
                 return Error<MeasureUnit>(result.Error);
 
@@ -57,7 +57,7 @@ namespace PieceOfCake.Api.Controllers
         [HttpPost]
         public ActionResult<MeasureUnit> Post([FromBody]string name)
         {
-            var result = _measureUnitsBr.Create(name);
+            var result = _measureUnitDomainService.Create(name);
             if (result.IsFailure)
                 return Error<MeasureUnit>(result.Error);
 
@@ -67,7 +67,7 @@ namespace PieceOfCake.Api.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(long id)
         {
-            var result = _measureUnitsBr.Delete(id);
+            var result = _measureUnitDomainService.Delete(id);
             if (result.IsFailure)
                 return Error(result.Error);
 

@@ -1,5 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
-using PieceOfCake.Core.BusinessRules;
+using PieceOfCake.Core.DomainServices.Interfaces;
 using PieceOfCake.Core.Entities;
 using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
@@ -7,14 +7,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PieceOfCake.BusinessRules
+namespace PieceOfCake.Core.DomainServices
 {
-    public class ProductBusinessRules : IProductBusinessRules
+    public class MeasureUnitDomainService : IMeasureUnitDomainService
     {
         private readonly IResources _resources;
         private readonly IUnitOfWork _unitOfWork;
 
-        public ProductBusinessRules(
+        public MeasureUnitDomainService(
             IResources resources,
             IUnitOfWork unitOfWork)
         {
@@ -22,49 +22,49 @@ namespace PieceOfCake.BusinessRules
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         }
 
-        public Result<IReadOnlyCollection<Product>> Get()
+        public Result<IReadOnlyCollection<MeasureUnit>> Get()
         {
-            var measureUnits = _unitOfWork.ProductRepository.Get();
+            var measureUnits = _unitOfWork.MeasureUnitRepository.Get();
 
             if (!measureUnits.Any())
-                return Result.Failure<IReadOnlyCollection<Product>>(
+                return Result.Failure<IReadOnlyCollection<MeasureUnit>>(
                     _resources.GenereteSentence(x => x.UserErrors.SequenceContainsNoElements));
 
             return Result.Success(measureUnits);
         }
 
-        public Result<Product> Get(long id)
+        public Result<MeasureUnit> Get(long id)
         {
-            var measureUnit = _unitOfWork.ProductRepository.GetById(id);
+            var measureUnit = _unitOfWork.MeasureUnitRepository.GetById(id);
 
             if (measureUnit == null)
-                return Result.Failure<Product>(
+                return Result.Failure<MeasureUnit>(
                     _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
 
             return Result.Success(measureUnit);
         }
 
-        public Result<Product> Update(long id, string? name)
+        public Result<MeasureUnit> Update(long id, string? name)
         {
-            var measureUnit = _unitOfWork.ProductRepository.GetById(id);
+            var measureUnit = _unitOfWork.MeasureUnitRepository.GetById(id);
 
             if (measureUnit == null)
-                return Result.Failure<Product>(
+                return Result.Failure<MeasureUnit>(
                     _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
 
             return measureUnit.Update(name, _resources, _unitOfWork)
                 .Tap(x => 
                 {
-                    _unitOfWork.ProductRepository.Update(x);
+                    _unitOfWork.MeasureUnitRepository.Update(x);
                     _unitOfWork.Save();
                 });
         }
 
-        public Result<Product> Create(string name)
+        public Result<MeasureUnit> Create(string name)
         {
-            return Product.Create(name, _resources, _unitOfWork)
+            return MeasureUnit.Create(name, _resources, _unitOfWork)
                 .Tap(x => {
-                    _unitOfWork.ProductRepository.Insert(x);
+                    _unitOfWork.MeasureUnitRepository.Insert(x);
                     _unitOfWork.Save(); 
                 });
         }
@@ -74,7 +74,7 @@ namespace PieceOfCake.BusinessRules
             return this.Get(id)
                 .OnFailure(() => _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()))
                 .Tap(mu => {
-                    _unitOfWork.ProductRepository.Delete(mu);
+                    _unitOfWork.MeasureUnitRepository.Delete(mu);
                     _unitOfWork.Save();
                 });
         }
