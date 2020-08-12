@@ -29,6 +29,7 @@ namespace PieceOfCake.Api
         {
             services.AddDbContext<PocDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("PocDbContext")));
+                //options.UseSqlite("DataSource=:memory:"));
 
             services.AddControllers(setup => {
                 setup.ReturnHttpNotAcceptable = true;

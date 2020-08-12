@@ -126,6 +126,9 @@
   <data name="IdNotFound" xml:space="preserve">
     <value>Element with Id={0} does not exists.</value>
   </data>
+  <data name="InvalidStateTransition" xml:space="preserve">
+    <value>Transition between state {0} and state {1} is invalid.</value>
+  </data>
   <data name="NameAlreadyExists" xml:space="preserve">
     <value>An entity with name {0} already exist.</value>
   </data>

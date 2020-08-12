@@ -11,5 +11,6 @@
         public string QuantityMustBeGraterThanZero { get; }
         public string DescriptionExceedsMaxLength { get; }
         public string DescriptionIsMandatory { get; }
+        public string InvalidStateTransition { get; }
     }
 }

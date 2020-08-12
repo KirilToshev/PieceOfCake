@@ -30,6 +30,8 @@ namespace PieceOfCake.Core.Resources
 
         public string DescriptionIsMandatory => GetString(nameof(DescriptionIsMandatory));
 
+        public string InvalidStateTransition => GetString(nameof(InvalidStateTransition));
+
         private string GetString(string name) => _localizer[name];
     }
 }
