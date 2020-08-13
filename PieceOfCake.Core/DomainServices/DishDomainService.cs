@@ -48,7 +48,7 @@ namespace PieceOfCake.Core.DomainServices
             return Result.Success(dish);
         }
 
-        public Result<Dish> UpdateNameAndDescritption(long id, string name, string description)
+        public Result<Dish> UpdateNameAndDescritption(long id, string? name, string? description)
         {
             var dishResult = this.Get(id);
             if (dishResult.IsFailure)
@@ -62,7 +62,7 @@ namespace PieceOfCake.Core.DomainServices
                 });
         }
 
-        public Result<Dish> Create(string name, string description)
+        public Result<Dish> Create(string? name, string? description)
         {
             return Dish.Create(name, description, _resources)
                 .Tap(dish =>
@@ -74,7 +74,12 @@ namespace PieceOfCake.Core.DomainServices
 
         public Result Delete(long id)
         {
-            throw new NotImplementedException();
+            return this.Get(id)
+                .Tap(dish =>
+                {
+                    _unitOfWork.DishRepository.Delete(dish);
+                    _unitOfWork.Save();
+                });
         }
     }
 }

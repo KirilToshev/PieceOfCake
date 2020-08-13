@@ -28,20 +28,18 @@ namespace PieceOfCake.Core.Entities
         {
             this.Name = name;
             this.Description = description;
-            this.State = Enumerations.DishState.Draft;
             this.DishState = new States.DraftState(resources);
             this.Ingredients = new HashSet<Ingredient>();
         }
 
         public Name Name { get; protected set; }
         public string Description { get; protected set; }
-        public DishState State { get; protected set; }
 
         public States.DishState DishState { get; private set; }
 
         public virtual ICollection<Ingredient> Ingredients { get; protected set; }
 
-        public static Result<Dish> Create(string name, string description, IResources resources)
+        public static Result<Dish> Create(string? name, string? description, IResources resources)
         {
             var nameResult = Name.Create(name, resources, x => x.CommonTerms.Dish, Constants.FIFTY, Constants.TWO);
             if (nameResult.IsFailure)
@@ -56,7 +54,7 @@ namespace PieceOfCake.Core.Entities
             return Result.Success(new Dish(nameResult.Value, description, resources));
         }
 
-        public Result<Dish> UpdateNameAndDescritption(string name, string description, IResources resources)
+        public Result<Dish> UpdateNameAndDescritption(string? name, string? description, IResources resources)
         {
             var transitionResult = this.DishState.Draft(() =>
             {

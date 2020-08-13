@@ -10,8 +10,8 @@ namespace PieceOfCake.Core.DomainServices.Interfaces
     {
         Result<IReadOnlyCollection<Dish>> Get();
         Result<Dish> Get(long id);
-        Result<Dish> Create(string name, string description);
-        Result<Dish> UpdateNameAndDescritption(long id, string name, string description);
+        Result<Dish> Create(string? name, string? description);
+        Result<Dish> UpdateNameAndDescritption(long id, string? name, string? description);
         Result Delete(long id);
     }
 }

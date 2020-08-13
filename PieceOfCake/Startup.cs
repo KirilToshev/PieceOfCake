@@ -49,6 +49,7 @@ namespace PieceOfCake.Api
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IMeasureUnitDomainService, MeasureUnitDomainService>();
             services.AddTransient<IProductDomainService, ProductDomainService>();
+            services.AddTransient<IDishDomainService, DishDomainService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

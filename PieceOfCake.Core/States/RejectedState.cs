@@ -14,6 +14,8 @@ namespace PieceOfCake.Core.States
             _resources = resources;
         }
 
+        public override Enumerations.DishState State => Enumerations.DishState.Rejected;
+
         public override Result<DishState> Active(Func<Result> callback)
         {
             return Result.Failure<DishState>(_resources.GenereteSentence(x =>
@@ -38,7 +40,7 @@ namespace PieceOfCake.Core.States
 
         public override Result<DishState> Rejected(Func<Result> callback)
         {
-            return Result.Success<DishState>(this);
+            return callback.Invoke().Map<DishState>(() => this);
         }
     }
 }

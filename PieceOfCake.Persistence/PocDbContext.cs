@@ -2,6 +2,7 @@
 using PieceOfCake.Core.Common;
 using PieceOfCake.Core.Entities;
 using PieceOfCake.Core.Resources;
+using PieceOfCake.Core.States;
 using PieceOfCake.Core.ValueObjects;
 using System;
 using System.Collections.Generic;
@@ -74,7 +75,31 @@ namespace PieceOfCake.Persistence
                 x.HasMany(x => x.Ingredients)
                  .WithOne(x => x.Dish)
                  .OnDelete(DeleteBehavior.Cascade);
+
+                x.Property(p => p.DishState)
+                 .HasColumnName("State")
+                 .IsRequired()
+                 .HasConversion(
+                    x => x.State,
+                    x => StateConversion(x));
             });
+        }
+
+        private DishState StateConversion(Core.Enumerations.DishState state)
+        {
+            switch (state)
+            {
+                case Core.Enumerations.DishState.Draft:
+                    return new DraftState(_resources);
+                case Core.Enumerations.DishState.AwaitingApproval:
+                    return new AwaitingApprovalState(_resources);
+                case Core.Enumerations.DishState.Rejected:
+                    return new RejectedState(_resources);
+                case Core.Enumerations.DishState.Active:
+                    return new ActiveState(_resources);
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         public DbSet<MeasureUnit> MeasureUnits { get; set; }

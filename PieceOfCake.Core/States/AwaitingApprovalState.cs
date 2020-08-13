@@ -14,6 +14,8 @@ namespace PieceOfCake.Core.States
             _resources = resources;
         }
 
+        public override Enumerations.DishState State => Enumerations.DishState.AwaitingApproval;
+
         public override Result<DishState> Active(Func<Result> callback)
         {
             return callback.Invoke()
@@ -22,7 +24,7 @@ namespace PieceOfCake.Core.States
 
         public override Result<DishState> AwaitingApproval(Func<Result> callback)
         {
-            return Result.Success<DishState>(this);
+            return callback.Invoke().Map<DishState>(() => this);
         }
 
         public override Result<DishState> Draft(Func<Result> callback)
