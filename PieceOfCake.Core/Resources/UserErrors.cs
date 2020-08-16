@@ -32,6 +32,8 @@ namespace PieceOfCake.Core.Resources
 
         public string InvalidStateTransition => GetString(nameof(InvalidStateTransition));
 
+        public string IngredientAlreadyExists => GetString(nameof(IngredientAlreadyExists));
+
         private string GetString(string name) => _localizer[name];
     }
 }

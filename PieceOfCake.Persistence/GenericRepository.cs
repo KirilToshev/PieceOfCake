@@ -36,7 +36,7 @@ namespace PieceOfCake.Persistence
             if (orderBy != null)
                 query = orderBy(query);
 
-            return query.AsNoTracking().ToList().AsReadOnly();
+            return query.ToList().AsReadOnly();
         }
 
         public virtual TEntity? GetById(object id)

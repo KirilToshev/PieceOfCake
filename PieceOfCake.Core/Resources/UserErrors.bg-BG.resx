@@ -126,6 +126,9 @@
   <data name="IdNotFound" xml:space="preserve">
     <value>Елемент с идентификационен номер={0} не съществува.</value>
   </data>
+  <data name="IngredientAlreadyExists" xml:space="preserve">
+    <value>Тази съставка вече е добавена към ястието.</value>
+  </data>
   <data name="InvalidStateTransition" xml:space="preserve">
     <value>Преминаване от състояние {0} към състояние {1} е невалидно.</value>
   </data>

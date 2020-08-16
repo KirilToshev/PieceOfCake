@@ -35,5 +35,28 @@ namespace PieceOfCake.Core.Entities
 
             return Result.Success(new Ingredient(quantity, measureUnit, product));
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (!(obj is Ingredient other))
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            if (GetRealType() != other.GetRealType())
+                return false;
+
+            return Quantity == other.Quantity
+                && MeasureUnit == other.MeasureUnit
+                && Product == other.Product;
+        }
+
+        public override int GetHashCode()
+        {
+            return Quantity.GetHashCode() ^ 601
+                | MeasureUnit.GetHashCode() ^ 432
+                & Product.GetHashCode() ^ 797;
+        }
     }
 }

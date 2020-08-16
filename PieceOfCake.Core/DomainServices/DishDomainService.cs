@@ -81,5 +81,15 @@ namespace PieceOfCake.Core.DomainServices
                     _unitOfWork.Save();
                 });
         }
+
+        public Result AddIngredients(long id, IEnumerable<Ingredient> ingredients)
+        {
+            return Get(id)
+                .Tap(dish => dish.AddIngredients(ingredients, _resources)
+                .Tap(() => {
+                    _unitOfWork.DishRepository.Update(dish);
+                    _unitOfWork.Save();
+                }));
+        }
     }
 }

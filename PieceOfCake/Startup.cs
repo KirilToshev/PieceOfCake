@@ -28,13 +28,14 @@ namespace PieceOfCake.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<PocDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("PocDbContext")));
+                options.UseSqlServer(Configuration.GetConnectionString("PocDbContext"))
+                .UseLazyLoadingProxies());
                 //options.UseSqlite("DataSource=:memory:"));
 
             services.AddControllers(setup => {
                 setup.ReturnHttpNotAcceptable = true;
             })
-            .AddNewtonsoftJson()
+            .AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
             .AddXmlDataContractSerializerFormatters();
 
             services.AddLocalization();

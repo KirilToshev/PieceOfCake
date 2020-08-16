@@ -54,7 +54,7 @@ namespace PieceOfCake.Core.Common
             return (GetRealType().ToString() + Id).GetHashCode();
         }
 
-        private Type GetRealType()
+        protected Type GetRealType()
         {
             Type type = GetType();
 

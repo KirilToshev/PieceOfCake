@@ -6,6 +6,7 @@ using PieceOfCake.Core.Resources;
 using PieceOfCake.Core.ValueObjects;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace PieceOfCake.Core.Entities
@@ -77,6 +78,22 @@ namespace PieceOfCake.Core.Entities
                 transitionResult.ConvertFailure<Dish>();
 
             return Result.Success(this);
+        }
+
+        public Result AddIngredients(IEnumerable<Ingredient> ingredients, IResources resources)
+        {
+            return this.DishState.Draft(() => 
+            {
+                foreach (var ingredient in ingredients)
+                {
+                    if (Ingredients.Contains(ingredient))
+                        return Result.Failure(resources.GenereteSentence(x => x.UserErrors.IngredientAlreadyExists));
+
+                    Ingredients.Add(ingredient);
+                }
+
+                return Result.Success();
+            });
         }
     }
 }

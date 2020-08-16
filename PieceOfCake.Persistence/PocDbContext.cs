@@ -57,6 +57,8 @@ namespace PieceOfCake.Persistence
                 x.HasOne(x => x.Product)
                  .WithMany()
                  .OnDelete(DeleteBehavior.Restrict);
+                x.HasOne(x => x.Dish)
+                 .WithMany(x => x.Ingredients);
             });
 
             modelBuilder.Entity<Dish>(x =>
