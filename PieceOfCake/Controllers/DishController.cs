@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using Castle.Core.Resource;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using PieceOfCake.Api.Models.Dish;
+using PieceOfCake.Shared.ViewModels.Dish;
 using PieceOfCake.Core.DomainServices.Interfaces;
 using PieceOfCake.Core.Entities;
 using PieceOfCake.Core.Resources;

@@ -27,6 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PieceOfCake.Core\PieceOfCake.Core.csproj" />
     <ProjectReference Include="..\PieceOfCake.Persistence\PieceOfCake.Persistence.csproj" />
+    <ProjectReference Include="..\PieceOfCake.Shared\PieceOfCake.Shared.csproj" />
   </ItemGroup>
 
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PieceOfCake.Api.Models.Dish
+namespace PieceOfCake.Shared.ViewModels.Dish
 {
     public class IngredientVm
     {

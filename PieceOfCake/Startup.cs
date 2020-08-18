@@ -38,6 +38,11 @@ namespace PieceOfCake.Api
             .AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
             .AddXmlDataContractSerializerFormatters();
 
+            services.AddCors(options => options.AddPolicy("AllowEverything", 
+                builder => builder.AllowAnyOrigin()
+                                  .AllowAnyMethod()
+                                  .AllowAnyHeader()));
+
             services.AddLocalization();
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -67,6 +72,8 @@ namespace PieceOfCake.Api
             app.UseRequestLocalization(options.Value);
 
             app.UseRouting();
+
+            app.UseCors("AllowEverything");
 
             app.UseAuthorization();
 

@@ -1,4 +1,4 @@
-﻿namespace PieceOfCake.Api.Models.Dish
+﻿namespace PieceOfCake.Shared.ViewModels.Dish
 {
     public class CreateDishVm
     {
