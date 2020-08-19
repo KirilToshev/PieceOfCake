@@ -59,7 +59,7 @@ namespace PieceOfCake.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Product> Put(int id, [FromBody]CreateDishVm dishVm)
+        public ActionResult<Product> Put(int id, [FromBody]UpdateDishVm dishVm)
         {
             var result = _dishDomainService.UpdateNameAndDescritption(id, dishVm.Name, dishVm.Description);
             if (result.IsFailure)
@@ -88,7 +88,7 @@ namespace PieceOfCake.Api.Controllers
             return Ok();
         }
 
-        [HttpPut("{id}/test")]
+        [HttpPatch("{id}")]
         public IActionResult AddIngredients(long id, [FromBody]IEnumerable<IngredientVm> ingredientsVmList)
         {
             var errors = new List<string>();

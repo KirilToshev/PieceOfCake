@@ -57,7 +57,7 @@ namespace PieceOfCake.Core.Entities
 
         public Result<Dish> UpdateNameAndDescritption(string? name, string? description, IResources resources)
         {
-            var transitionResult = this.DishState.Draft(() =>
+            return this.DishState.Draft(() =>
             {
                 var nameResult = Name.Create(name, resources, x => x.CommonTerms.Dish, Constants.FIFTY, Constants.TWO);
                 if (nameResult.IsFailure)
@@ -72,12 +72,11 @@ namespace PieceOfCake.Core.Entities
                 this.Name = nameResult.Value;
                 this.Description = description;
                 return Result.Success();
+            }).Map(state => 
+            {
+                this.DishState = state;
+                return this;
             });
-
-            if (transitionResult.IsFailure)
-                transitionResult.ConvertFailure<Dish>();
-
-            return Result.Success(this);
         }
 
         public Result AddIngredients(IEnumerable<Ingredient> ingredients, IResources resources)
@@ -93,7 +92,7 @@ namespace PieceOfCake.Core.Entities
                 }
 
                 return Result.Success();
-            });
+            }).Tap(state => this.DishState = state);
         }
     }
 }
