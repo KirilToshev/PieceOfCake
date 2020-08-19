@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PieceOfCake.Core.DomainServices.Interfaces;
 using PieceOfCake.Core.Entities;
+using PieceOfCake.Shared.ViewModels.MeasureUnit;
 
 namespace PieceOfCake.Api.Controllers
 {
     [ApiController]
     [Route("api/measureunits")]
-    public class MeasureUnitController : Controller
+    public class MeasureUnitController : ControllerBase
     {
         private readonly ILogger<MeasureUnitController> _logger;
         private readonly IMeasureUnitDomainService _measureUnitDomainService;
@@ -24,13 +26,20 @@ namespace PieceOfCake.Api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IReadOnlyCollection<MeasureUnit>> Get()
+        public IActionResult Get()
         {
             var result = _measureUnitDomainService.Get();
             if (result.IsFailure)
-                return Error<IReadOnlyCollection<MeasureUnit>>(result.Error);
+                return BadRequest(result.Error);
 
-            return Ok(result.Value);
+            //TODO: Introduce AutoMapper
+            var mapping = result.Value.Select(x => new MeasureUnitVm()
+            {
+                Id = x.Id,
+                Name = x.Name
+            });
+
+            return Ok(mapping);
         }
 
         [HttpGet("{id}")]
@@ -39,7 +48,7 @@ namespace PieceOfCake.Api.Controllers
 
             var result = _measureUnitDomainService.Get(id);
             if (result.IsFailure)
-                return Error<MeasureUnit>(result.Error);
+                return BadRequest(result.Error);
 
             return Ok(result.Value);
         }
@@ -49,7 +58,7 @@ namespace PieceOfCake.Api.Controllers
         {
             var result = _measureUnitDomainService.Update(id, name);
             if (result.IsFailure)
-                return Error<MeasureUnit>(result.Error);
+                return BadRequest(result.Error);
 
             return Ok(result.Value);
         }
@@ -59,7 +68,7 @@ namespace PieceOfCake.Api.Controllers
         {
             var result = _measureUnitDomainService.Create(name);
             if (result.IsFailure)
-                return Error<MeasureUnit>(result.Error);
+                return BadRequest(result.Error);
 
             return Ok(result.Value);
         }
@@ -69,7 +78,7 @@ namespace PieceOfCake.Api.Controllers
         {
             var result = _measureUnitDomainService.Delete(id);
             if (result.IsFailure)
-                return Error(result.Error);
+                return BadRequest(result.Error);
 
             return Ok();
         }
