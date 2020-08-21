@@ -93,7 +93,7 @@ namespace PieceOfCake.UnitTests.Core.DomainServices
             var id = _fixture.Create<long>();
             var updatedName = _fixture.Create<string>();
             _measureUnitMock.Setup(x => x.Update(updatedName, It.IsAny<IResources>(), It.IsAny<IUnitOfWork>()))
-                .Returns(Result.Ok(_measureUnitMock.Object));
+                .Returns(Result.Success(_measureUnitMock.Object));
             _measureUnitRepoMock
                 .Setup(x => x.GetById(id))
                 .Returns(_measureUnitMock.Object);
