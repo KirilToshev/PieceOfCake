@@ -1,0 +1,47 @@
+@page "/products"
+@inherits ProductBase
+
+<h1>Products</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (Products == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    if (Products.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Products)
+                {
+                    <tr>
+                        <td>@product.Id</td>
+                        <td>@product.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else if (Errors.Any())
+    {
+        @foreach (var error in Errors)
+        {
+            <div class="alert alert-danger" role="alert">
+                error
+            </div>
+        }
+    }
+    else
+    {
+        <p>There are no products available yet.</p>
+    }
+}

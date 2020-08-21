@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PieceOfCake.Core.DomainServices.Interfaces;
 using PieceOfCake.Core.Entities;
+using PieceOfCake.Shared.ViewModels.Product;
 
 namespace PieceOfCake.Api.Controllers
 {
@@ -34,14 +35,14 @@ namespace PieceOfCake.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Product> Get(int id)
+        public ActionResult<ProductVm> Get(int id)
         {
 
             var result = _productDomainService.Get(id);
             if (result.IsFailure)
-                return Error<Product>(result.Error);
+                return Error<ProductVm>(result.Error);
 
-            return Ok(result.Value);
+            return Ok();
         }
 
         [HttpPut("{id}")]

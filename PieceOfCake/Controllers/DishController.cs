@@ -38,42 +38,42 @@ namespace PieceOfCake.Api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IReadOnlyCollection<Product>> Get()
+        public ActionResult<IReadOnlyCollection<Dish>> Get()
         {
             var result = _dishDomainService.Get();
             if (result.IsFailure)
-                return Error<IReadOnlyCollection<Product>>(result.Error);
+                return Error<IReadOnlyCollection<Dish>>(result.Error);
 
             return Ok(result.Value);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Product> Get(int id)
+        public ActionResult<Dish> Get(int id)
         {
 
             var result = _dishDomainService.Get(id);
             if (result.IsFailure)
-                return Error<Product>(result.Error);
+                return Error<Dish>(result.Error);
 
             return Ok(result.Value);
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Product> Put(int id, [FromBody]UpdateDishVm dishVm)
+        public ActionResult<Dish> Put(int id, [FromBody]UpdateDishVm dishVm)
         {
             var result = _dishDomainService.UpdateNameAndDescritption(id, dishVm.Name, dishVm.Description);
             if (result.IsFailure)
-                return Error<Product>(result.Error);
+                return Error<Dish>(result.Error);
 
             return Ok(result.Value);
         }
 
         [HttpPost]
-        public ActionResult<Product> Post([FromBody]CreateDishVm dishVm)
+        public ActionResult<Dish> Post([FromBody]CreateDishVm dishVm)
         {
             var result = _dishDomainService.Create(dishVm.Name, dishVm.Description);
             if (result.IsFailure)
-                return Error<Product>(result.Error);
+                return Error<Dish>(result.Error);
 
             return Ok(result.Value);
         }
