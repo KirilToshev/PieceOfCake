@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PieceOfCake.Api.Models;
+using PieceOfCake.Shared.ViewModels;
 
 namespace PieceOfCake.Api.Controllers
 {

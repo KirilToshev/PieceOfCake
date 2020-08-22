@@ -30,5 +30,9 @@
     <ProjectReference Include="..\PieceOfCake.Shared\PieceOfCake.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 
 </Project>

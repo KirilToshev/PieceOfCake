@@ -11,6 +11,6 @@ namespace PieceOfCake.BlazorApp.Services.Interfaces
     public interface IProductHttpService
     {
         Task<Result<IEnumerable<ProductVm>>> GetAllProducts();
-        Task<ProductVm> GetProductById(int productId);
+        Task<Result<ProductVm>> GetProductById(int productId);
     }
 }

@@ -23,12 +23,12 @@ namespace PieceOfCake.BlazorApp
 
             builder.Services.AddHttpClient<IMeasureUnitHttpService, MeasureUnitHttpService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:44337/");
+                client.BaseAddress = new Uri("https://localhost:44312/");
             });
 
             builder.Services.AddHttpClient<IProductHttpService, ProductHttpService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:44337/");
+                client.BaseAddress = new Uri("https://localhost:44312/");
             });
 
             await builder.Build().RunAsync();

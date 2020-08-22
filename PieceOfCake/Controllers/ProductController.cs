@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PieceOfCake.Core.DomainServices.Interfaces;
@@ -31,7 +32,11 @@ namespace PieceOfCake.Api.Controllers
             if (result.IsFailure)
                 return Error<IReadOnlyCollection<Product>>(result.Error);
 
-            return Ok(result.Value);
+            return Ok(result.Value.Select(x => new ProductVm
+            {
+                Id = x.Id,
+                Name = x.Name
+            }));
         }
 
         [HttpGet("{id}")]
@@ -42,7 +47,11 @@ namespace PieceOfCake.Api.Controllers
             if (result.IsFailure)
                 return Error<ProductVm>(result.Error);
 
-            return Ok();
+            return Ok(new ProductVm 
+            {
+                Id = result.Value.Id,
+                Name = result.Value.Name
+            });
         }
 
         [HttpPut("{id}")]

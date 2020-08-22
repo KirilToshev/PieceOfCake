@@ -1,12 +1,19 @@
 ﻿using System;
 
-namespace PieceOfCake.Api.Models
+namespace PieceOfCake.Shared.ViewModels
 {
     public class Envelope<T>
     {
-        public T Result { get; }
-        public string ErrorMessage { get; }
-        public DateTime TimeGenerated { get; }
+        public T Result { get; set; }
+        public string ErrorMessage { get; set; }
+        public DateTime TimeGenerated { get; set; }
+
+        #warning Sparation Of Concerns violation
+        //required by JsonSerializar along with public properties setters.
+        public Envelope()
+        {
+
+        }
 
         protected internal Envelope(T result, string errorMessage)
         {

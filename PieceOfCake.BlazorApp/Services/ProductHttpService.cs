@@ -25,26 +25,17 @@ namespace PieceOfCake.BlazorApp.Services
 
         public async Task<Result<IEnumerable<ProductVm>>> GetAllProducts()
         {
-            //var asString = await _httpClient.GetStringAsync($"api/products");
             var responce = await _httpClient.GetAsync($"api/products");
             var test = await responce.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<List<ProductVm>>(test, 
-                new JsonSerializerSettings
-                {
-                    ContractResolver = new DefaultContractResolver
-                    {
-                        NamingStrategy = new CamelCaseNamingStrategy()
-                    },
-                    ObjectCreationHandling = ObjectCreationHandling.Replace
-                });
+            var result = JsonConvert.DeserializeObject<Envelope<List<ProductVm>>>(test);
 
             if (responce.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                return Result.Success<IEnumerable<ProductVm>>(result);
+                return Result.Success<IEnumerable<ProductVm>>(result.Result);
             }
             else if(responce.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
-                return Result.Failure<IEnumerable<ProductVm>>("");
+                return Result.Failure<IEnumerable<ProductVm>>(result.ErrorMessage);
             }
             else
             {
@@ -54,22 +45,22 @@ namespace PieceOfCake.BlazorApp.Services
             }
         }
 
-        public async Task<ProductVm> GetProductById(int productId)
+        public async Task<Result<ProductVm>> GetProductById(int productId)
         {
             var responce = await _httpClient.GetAsync($"api/products/{productId}");
             var test = await responce.Content.ReadAsStringAsync();
 
-            var result = JsonConvert.DeserializeObject<ProductVm>(test,
-                new JsonSerializerSettings
-                {
-                    ContractResolver = new DefaultContractResolver
-                    {
-                        NamingStrategy = new CamelCaseNamingStrategy()
-                    },
-                    //ObjectCreationHandling = ObjectCreationHandling.Replace
-                });
+            var result = JsonConvert.DeserializeObject<Envelope<ProductVm>>(test);
+                //new JsonSerializerSettings
+                //{
+                //    ContractResolver = new DefaultContractResolver
+                //    {
+                //        NamingStrategy = new CamelCaseNamingStrategy()
+                //    },
+                //    //ObjectCreationHandling = ObjectCreationHandling.Replace
+                //});
 
-            return new ProductVm();
+            return result.Result;
         }
     }
 }
