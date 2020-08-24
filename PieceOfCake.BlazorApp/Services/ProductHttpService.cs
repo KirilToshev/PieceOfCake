@@ -39,7 +39,7 @@ namespace PieceOfCake.BlazorApp.Services
             }
             else
             {
-                //TODO: write to console;
+                //handle 500 here
                 var contentAsString = await responce.Content.ReadAsStringAsync();
                 throw new Exception(contentAsString);
             }

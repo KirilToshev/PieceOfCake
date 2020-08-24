@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PieceOfCake.Core.DomainServices.Interfaces;
@@ -15,28 +16,28 @@ namespace PieceOfCake.Api.Controllers
     {
         private readonly ILogger<ProductController> _logger;
         private readonly IProductDomainService _productDomainService;
+        private readonly IMapper _mapper;
 
         public ProductController(
             ILogger<ProductController> logger,
-            IProductDomainService productDomainService
+            IProductDomainService productDomainService,
+            IMapper mapper
             )
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _productDomainService = productDomainService ?? throw new ArgumentNullException(nameof(productDomainService));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
-        public ActionResult<IReadOnlyCollection<Product>> Get()
+        public ActionResult<IReadOnlyCollection<ProductVm>> Get()
         {
             var result = _productDomainService.Get();
             if (result.IsFailure)
-                return Error<IReadOnlyCollection<Product>>(result.Error);
+                return Error<IReadOnlyCollection<ProductVm>>(result.Error);
 
-            return Ok(result.Value.Select(x => new ProductVm
-            {
-                Id = x.Id,
-                Name = x.Name
-            }));
+
+            return Ok(result.Value.Select(x => _mapper.Map<ProductVm>(x)));
         }
 
         [HttpGet("{id}")]
@@ -47,11 +48,7 @@ namespace PieceOfCake.Api.Controllers
             if (result.IsFailure)
                 return Error<ProductVm>(result.Error);
 
-            return Ok(new ProductVm 
-            {
-                Id = result.Value.Id,
-                Name = result.Value.Name
-            });
+            return Ok(_mapper.Map<ProductVm>(result.Value));
         }
 
         [HttpPut("{id}")]

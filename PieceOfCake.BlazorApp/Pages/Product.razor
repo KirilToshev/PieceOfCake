@@ -36,11 +36,15 @@ else
         @foreach (var error in Errors)
         {
             <div class="alert alert-danger" role="alert">
-                error
+                @error
             </div>
         }
     }
-    else
+    else if (IsLoading)
+    {
+        <p><em>Loading products...</em></p>
+    }
+    else 
     {
         <p>There are no products available yet.</p>
     }

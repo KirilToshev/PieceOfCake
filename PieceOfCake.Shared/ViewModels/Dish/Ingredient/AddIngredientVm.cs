@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PieceOfCake.Shared.ViewModels.Dish
+namespace PieceOfCake.Shared.ViewModels.Dish.Ingredient
 {
-    public class IngredientVm
+    public class AddIngredientVm
     {
         public float Quantity { get; set; }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PieceOfCake.Core.DomainServices.Interfaces;
@@ -11,46 +12,43 @@ namespace PieceOfCake.Api.Controllers
 {
     [ApiController]
     [Route("api/measureunits")]
-    public class MeasureUnitController : ControllerBase
+    public class MeasureUnitController : Controller
     {
         private readonly ILogger<MeasureUnitController> _logger;
         private readonly IMeasureUnitDomainService _measureUnitDomainService;
+        private readonly IMapper _mapper;
 
         public MeasureUnitController(
             ILogger<MeasureUnitController> logger,
-            IMeasureUnitDomainService measureUnitDomainService
+            IMeasureUnitDomainService measureUnitDomainService,
+            IMapper mapper
             )
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _measureUnitDomainService = measureUnitDomainService ?? throw new ArgumentNullException(nameof(measureUnitDomainService));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public ActionResult<MeasureUnitVm> Get()
         {
             var result = _measureUnitDomainService.Get();
             if (result.IsFailure)
                 return BadRequest(result.Error);
 
-            //TODO: Introduce AutoMapper
-            var mapping = result.Value.Select(x => new MeasureUnitVm()
-            {
-                Id = x.Id,
-                Name = x.Name
-            });
-
+            var mapping = result.Value.Select(x => _mapper.Map<MeasureUnitVm>(x));
             return Ok(mapping);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<MeasureUnit> Get(int id)
+        public ActionResult<MeasureUnitVm> Get(int id)
         {
 
             var result = _measureUnitDomainService.Get(id);
             if (result.IsFailure)
                 return BadRequest(result.Error);
 
-            return Ok(result.Value);
+            return Ok(_mapper.Map<MeasureUnitVm>(result.Value));
         }
 
         [HttpPut("{id}")]

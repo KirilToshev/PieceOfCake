@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using PieceOfCake.Api.Mapping;
 using PieceOfCake.Core.Common;
 using PieceOfCake.Core.DomainServices;
 using PieceOfCake.Core.DomainServices.Interfaces;
@@ -27,22 +29,26 @@ namespace PieceOfCake.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //SQL Server
             services.AddDbContext<PocDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("PocDbContext"))
                 .UseLazyLoadingProxies());
                 //options.UseSqlite("DataSource=:memory:"));
 
+            //Json Conversion
             services.AddControllers(setup => {
                 setup.ReturnHttpNotAcceptable = true;
             })
             .AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
             .AddXmlDataContractSerializerFormatters();
 
+            //CORS
             services.AddCors(options => options.AddPolicy("AllowEverything", 
                 builder => builder.AllowAnyOrigin()
                                   .AllowAnyMethod()
                                   .AllowAnyHeader()));
 
+            //Localization
             services.AddLocalization();
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -51,6 +57,15 @@ namespace PieceOfCake.Api
                 options.AddSupportedUICultures(Common.SupportedLanguages);
             });
 
+            //AutoMapper Configuration
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMapperMappingProfile());
+            });
+            IMapper mapper = mapperConfig.CreateMapper();
+            
+            //Register services
+            services.AddSingleton(mapper);
             services.AddSingleton<IResources, Resources>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IMeasureUnitDomainService, MeasureUnitDomainService>();

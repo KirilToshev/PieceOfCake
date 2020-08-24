@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using CSharpFunctionalExtensions;
+using Microsoft.AspNetCore.Components;
 using PieceOfCake.BlazorApp.Services.Interfaces;
 using PieceOfCake.Shared.ViewModels.MeasureUnit;
 using PieceOfCake.Shared.ViewModels.Product;
@@ -18,19 +19,24 @@ namespace PieceOfCake.BlazorApp.Pages
 
         public List<string> Errors { get; set; } = new List<string>();
 
+        public bool IsLoading { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
-            var result = await ProductHttpService.GetAllProducts();
+            IsLoading = true;
+            var result = await ProductHttpService.GetAllProducts().Finally(x => 
+            {
+                IsLoading = false;
+                return x;
+            });
+
             if (result.IsFailure)
             {
                 Errors = result.Error.Split(';').ToList();
                 return;
             }
 
-            Products = result.Value.ToList();
-
-            //var mu = await ProductHttpService.GetProductById(2);
-            
+            Products = result.Value.ToList();            
         }
     }
 }
