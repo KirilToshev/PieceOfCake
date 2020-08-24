@@ -14,35 +14,37 @@ using System.Threading.Tasks;
 
 namespace PieceOfCake.BlazorApp.Services
 {
-    public class ProductHttpService : IProductHttpService
+    public class ProductHttpService : HttpRequestService, IProductHttpService
     {
         private readonly HttpClient _httpClient;
 
         public ProductHttpService(HttpClient httpClient)
+            :base(httpClient)
         {
             _httpClient = httpClient;
         }
 
         public async Task<Result<IEnumerable<ProductVm>>> GetAllProducts()
         {
-            var responce = await _httpClient.GetAsync($"api/products");
-            var test = await responce.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<Envelope<List<ProductVm>>>(test);
+            return await base.Handle<IEnumerable<ProductVm>>($"api/products");
+            //var responce = await _httpClient.GetAsync($"api/products");
+            //var test = await responce.Content.ReadAsStringAsync();
+            //var result = JsonConvert.DeserializeObject<Envelope<List<ProductVm>>>(test);
 
-            if (responce.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                return Result.Success<IEnumerable<ProductVm>>(result.Result);
-            }
-            else if(responce.StatusCode == System.Net.HttpStatusCode.BadRequest)
-            {
-                return Result.Failure<IEnumerable<ProductVm>>(result.ErrorMessage);
-            }
-            else
-            {
-                //handle 500 here
-                var contentAsString = await responce.Content.ReadAsStringAsync();
-                throw new Exception(contentAsString);
-            }
+            //if (responce.StatusCode == System.Net.HttpStatusCode.OK)
+            //{
+            //    return Result.Success<IEnumerable<ProductVm>>(result.Result);
+            //}
+            //else if(responce.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            //{
+            //    return Result.Failure<IEnumerable<ProductVm>>(result.ErrorMessage);
+            //}
+            //else
+            //{
+            //    //handle 500 here
+            //    var contentAsString = await responce.Content.ReadAsStringAsync();
+            //    throw new Exception(contentAsString);
+            //}
         }
 
         public async Task<Result<ProductVm>> GetProductById(int productId)
