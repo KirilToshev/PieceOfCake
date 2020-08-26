@@ -36,7 +36,6 @@ namespace PieceOfCake.Api.Controllers
             if (result.IsFailure)
                 return Error<IReadOnlyCollection<ProductVm>>(result.Error);
 
-
             return Ok(result.Value.Select(x => _mapper.Map<ProductVm>(x)));
         }
 

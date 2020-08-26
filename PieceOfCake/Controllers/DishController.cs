@@ -24,7 +24,6 @@ namespace PieceOfCake.Api.Controllers
         private readonly IMeasureUnitDomainService _measureUnitDomainService;
         private readonly IProductDomainService _productDomainService;
         
-
         public DishController(
             ILogger<ProductController> logger,
             IResources resources,
@@ -44,44 +43,44 @@ namespace PieceOfCake.Api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IReadOnlyCollection<Dish>> Get()
+        public ActionResult<IReadOnlyCollection<DishVm>> Get()
         {
             var result = _dishDomainService.Get();
             if (result.IsFailure)
-                return Error<IReadOnlyCollection<Dish>>(result.Error);
+                return Error<IReadOnlyCollection<DishVm>>(result.Error);
 
-            return Ok(result.Value);
+            return Ok(result.Value.Select(x => _mapper.Map<DishVm>(x)));
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Dish> Get(int id)
+        public ActionResult<DishVm> Get(int id)
         {
 
             var result = _dishDomainService.Get(id);
             if (result.IsFailure)
-                return Error<Dish>(result.Error);
+                return Error<DishVm>(result.Error);
 
-            return Ok(result.Value);
+            return Ok(_mapper.Map<DishVm>(result.Value));
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Dish> Put(int id, [FromBody]UpdateDishVm dishVm)
+        public ActionResult<DishVm> Put(int id, [FromBody]UpdateDishVm dishVm)
         {
             var result = _dishDomainService.UpdateNameAndDescritption(id, dishVm.Name, dishVm.Description);
             if (result.IsFailure)
-                return Error<Dish>(result.Error);
+                return Error<DishVm>(result.Error);
 
-            return Ok(result.Value);
+            return Ok(_mapper.Map<DishVm>(result.Value));
         }
 
         [HttpPost]
-        public ActionResult<Dish> Post([FromBody]CreateDishVm dishVm)
+        public ActionResult<DishVm> Post([FromBody]CreateDishVm dishVm)
         {
             var result = _dishDomainService.Create(dishVm.Name, dishVm.Description);
             if (result.IsFailure)
-                return Error<Dish>(result.Error);
+                return Error<DishVm>(result.Error);
 
-            return Ok(result.Value);
+            return Ok(_mapper.Map<DishVm>(result.Value));
         }
 
         [HttpDelete("{id}")]

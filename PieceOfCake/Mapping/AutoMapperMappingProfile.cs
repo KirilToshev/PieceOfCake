@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using PieceOfCake.Core.Entities;
+using PieceOfCake.Core.Resources;
 using PieceOfCake.Shared.ViewModels.Dish;
 using PieceOfCake.Shared.ViewModels.Dish.Ingredient;
 using PieceOfCake.Shared.ViewModels.MeasureUnit;
@@ -13,7 +14,7 @@ namespace PieceOfCake.Api.Mapping
 {
     public class AutoMapperMappingProfile : Profile
     {
-        public AutoMapperMappingProfile()
+        public AutoMapperMappingProfile(IResources resources)
         {
             CreateMap<MeasureUnit, MeasureUnitVm>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.Value));
@@ -23,7 +24,9 @@ namespace PieceOfCake.Api.Mapping
 
             CreateMap<Ingredient, ReadIngredientVm>();
 
-            CreateMap<Dish, DishVm>();
+            CreateMap<Dish, DishVm>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.Value))
+                .ForMember(dest => dest.State, opt => opt.MapFrom(src => resources.CommonTerms.DishState(src.DishState.State)));
         }
     }
 }

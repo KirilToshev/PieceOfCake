@@ -57,16 +57,18 @@ namespace PieceOfCake.Api
                 options.AddSupportedUICultures(Common.SupportedLanguages);
             });
 
+            services.AddSingleton<IResources, Resources>();
+            var sp = services.BuildServiceProvider();
+
             //AutoMapper Configuration
             var mapperConfig = new MapperConfiguration(mc =>
             {
-                mc.AddProfile(new AutoMapperMappingProfile());
+                mc.AddProfile(new AutoMapperMappingProfile(sp.GetService<IResources>()));
             });
             IMapper mapper = mapperConfig.CreateMapper();
             
             //Register services
             services.AddSingleton(mapper);
-            services.AddSingleton<IResources, Resources>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IMeasureUnitDomainService, MeasureUnitDomainService>();
             services.AddTransient<IProductDomainService, ProductDomainService>();

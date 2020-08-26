@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Localization;
+using PieceOfCake.Core.Enumerations;
 using PieceOfCake.Core.Resources;
 
 namespace PieceOfCake.Core.Resources
@@ -16,7 +17,12 @@ namespace PieceOfCake.Core.Resources
 
         public string Product => GetString(nameof(Product));
 
-        public string Dish => GetString(nameof(Product));
+        public string Dish => GetString(nameof(Dish));
+
+        public string DishState(DishState state)
+        {
+            return GetString(state.ToString());
+        }
 
         private string GetString(string name) => _localizer[name];
     }
