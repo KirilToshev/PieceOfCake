@@ -14,55 +14,31 @@ using System.Threading.Tasks;
 
 namespace PieceOfCake.BlazorApp.Services
 {
-    public class ProductHttpService : HttpRequestService, IProductHttpService
+    public class ProductHttpService : HttpRequestServiceBase, IProductHttpService
     {
-        private readonly HttpClient _httpClient;
-
         public ProductHttpService(HttpClient httpClient)
             :base(httpClient)
         {
-            _httpClient = httpClient;
         }
 
         public async Task<Result<IEnumerable<ProductVm>>> GetAllProducts()
         {
-            return await base.Handle<IEnumerable<ProductVm>>($"api/products");
-            //var responce = await _httpClient.GetAsync($"api/products");
-            //var test = await responce.Content.ReadAsStringAsync();
-            //var result = JsonConvert.DeserializeObject<Envelope<List<ProductVm>>>(test);
-
-            //if (responce.StatusCode == System.Net.HttpStatusCode.OK)
-            //{
-            //    return Result.Success<IEnumerable<ProductVm>>(result.Result);
-            //}
-            //else if(responce.StatusCode == System.Net.HttpStatusCode.BadRequest)
-            //{
-            //    return Result.Failure<IEnumerable<ProductVm>>(result.ErrorMessage);
-            //}
-            //else
-            //{
-            //    //handle 500 here
-            //    var contentAsString = await responce.Content.ReadAsStringAsync();
-            //    throw new Exception(contentAsString);
-            //}
+            return await base.HandleGet<IEnumerable<ProductVm>>($"api/products");
         }
 
-        public async Task<Result<ProductVm>> GetProductById(int productId)
+        public async Task<Result<ProductVm>> GetProductById(long productId)
         {
-            var responce = await _httpClient.GetAsync($"api/products/{productId}");
-            var test = await responce.Content.ReadAsStringAsync();
+            return await base.HandleGet<ProductVm>($"api/products/{productId}");
+        }
 
-            var result = JsonConvert.DeserializeObject<Envelope<ProductVm>>(test);
-                //new JsonSerializerSettings
-                //{
-                //    ContractResolver = new DefaultContractResolver
-                //    {
-                //        NamingStrategy = new CamelCaseNamingStrategy()
-                //    },
-                //    //ObjectCreationHandling = ObjectCreationHandling.Replace
-                //});
+        public async Task<Result<ProductVm>> CreateProduct(ProductVm product)
+        {
+            return await base.HandlePost<ProductVm>($"api/products", product);
+        }
 
-            return result.Result;
+        public async Task<Result> DeleteProduct(long productId)
+        {
+            return await base.HandleDelete($"api/products/{productId}");
         }
     }
 }

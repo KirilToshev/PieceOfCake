@@ -1,4 +1,5 @@
-﻿using PieceOfCake.BlazorApp.Services.Interfaces;
+﻿using CSharpFunctionalExtensions;
+using PieceOfCake.BlazorApp.Services.Interfaces;
 using PieceOfCake.Shared.ViewModels.MeasureUnit;
 using System;
 using System.Collections.Generic;
@@ -9,25 +10,21 @@ using System.Threading.Tasks;
 
 namespace PieceOfCake.BlazorApp.Services
 {
-    public class MeasureUnitHttpService : IMeasureUnitHttpService
+    public class MeasureUnitHttpService : HttpRequestServiceBase, IMeasureUnitHttpService
     {
-        private readonly HttpClient _httpClient;
-
         public MeasureUnitHttpService(HttpClient httpClient)
+            : base(httpClient)
         {
-            _httpClient = httpClient;
         }
 
-        public async Task<IEnumerable<MeasureUnitVm>> GetAllMeasureUnits()
+        public async Task<Result<IEnumerable<MeasureUnitVm>>> GetAllMeasureUnits()
         {
-            return await JsonSerializer.DeserializeAsync<IEnumerable<MeasureUnitVm>>
-                (await _httpClient.GetStreamAsync($"api/measureunits"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            return await base.HandleGet<IEnumerable<MeasureUnitVm>>($"api/measureunits");
         }
 
-        public async Task<MeasureUnitVm> GetMeasureUnitById(int measureUnitId)
+        public async Task<Result<MeasureUnitVm>> GetMeasureUnitById(int measureUnitId)
         {
-            return await JsonSerializer.DeserializeAsync<MeasureUnitVm>
-                (await _httpClient.GetStreamAsync($"api/measureunits/{measureUnitId}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            return await base.HandleGet<MeasureUnitVm>($"api/measureunits/{measureUnitId}");
         }
     }
 }

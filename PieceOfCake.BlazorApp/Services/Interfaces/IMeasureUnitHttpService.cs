@@ -1,4 +1,5 @@
-﻿using PieceOfCake.Shared.ViewModels.MeasureUnit;
+﻿using CSharpFunctionalExtensions;
+using PieceOfCake.Shared.ViewModels.MeasureUnit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ namespace PieceOfCake.BlazorApp.Services.Interfaces
 {
     public interface IMeasureUnitHttpService
     {
-        Task<IEnumerable<MeasureUnitVm>> GetAllMeasureUnits();
+        Task<Result<IEnumerable<MeasureUnitVm>>> GetAllMeasureUnits();
+        Task<Result<MeasureUnitVm>> GetMeasureUnitById(int measureUnitId);
     }
 }

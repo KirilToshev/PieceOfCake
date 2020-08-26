@@ -16,9 +16,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PieceOfCake.BlazorApp", "PieceOfCake.BlazorApp\PieceOfCake.BlazorApp.csproj", "{3076FE6C-F71E-4CA9-A9B3-41BD111A2FFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PieceOfCake.BlazorApp", "PieceOfCake.BlazorApp\PieceOfCake.BlazorApp.csproj", "{3076FE6C-F71E-4CA9-A9B3-41BD111A2FFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PieceOfCake.Shared", "PieceOfCake.Shared\PieceOfCake.Shared.csproj", "{79304C4C-517C-420B-9B9F-7CC066A2DF68}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PieceOfCake.Shared", "PieceOfCake.Shared\PieceOfCake.Shared.csproj", "{79304C4C-517C-420B-9B9F-7CC066A2DF68}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

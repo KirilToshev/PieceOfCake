@@ -25,6 +25,11 @@ namespace PieceOfCake.Shared.ViewModels
 
     public class Envelope : Envelope<string>
     {
+        public Envelope()
+        {
+
+        }
+
         protected Envelope(string errorMessage)
             : base(string.Empty, errorMessage)
         {

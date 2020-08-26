@@ -17,7 +17,7 @@ namespace PieceOfCake.BlazorApp.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            MeasureUnits = (await MeasureUnitHttpService.GetAllMeasureUnits()).ToList();
+            MeasureUnits = (await MeasureUnitHttpService.GetAllMeasureUnits()).Value.ToList();
         }
     }
 }

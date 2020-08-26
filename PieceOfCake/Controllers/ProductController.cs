@@ -51,23 +51,23 @@ namespace PieceOfCake.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Product> Put(int id, [FromBody]string name)
+        public ActionResult<ProductVm> Put(int id, [FromBody]string name)
         {
             var result = _productDomainService.Update(id, name);
             if (result.IsFailure)
-                return Error<Product>(result.Error);
+                return Error<ProductVm>(result.Error);
 
-            return Ok(result.Value);
+            return Ok(_mapper.Map<ProductVm>(result.Value));
         }
 
         [HttpPost]
-        public ActionResult<Product> Post([FromBody]string name)
+        public ActionResult<ProductVm> Post([FromBody]ProductVm productVm)
         {
-            var result = _productDomainService.Create(name);
+            var result = _productDomainService.Create(productVm.Name);
             if (result.IsFailure)
-                return Error<Product>(result.Error);
+                return Error<ProductVm>(result.Error);
 
-            return Ok(result.Value);
+            return Ok(_mapper.Map<ProductVm>(result.Value));
         }
 
         [HttpDelete("{id}")]
