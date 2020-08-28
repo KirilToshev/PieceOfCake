@@ -13,7 +13,9 @@ namespace PieceOfCake.BlazorApp.Components
         [Inject]
         public IProductHttpService productService { get; set; }
 
-        protected async Task HandleValidSubmit()
+        public override string Title => "Add Product";
+
+        public override async Task HandleValidSubmit()
         {
             await base.HandleValidSubmit(productService.CreateProduct);
         }

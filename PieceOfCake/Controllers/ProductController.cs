@@ -63,6 +63,7 @@ namespace PieceOfCake.Api.Controllers
         [HttpPost]
         public ActionResult<ProductVm> Post([FromBody]ProductVm productVm)
         {
+            //return Error<ProductVm>("Error One;Error Two");
             var result = _productDomainService.Create(productVm.Name);
             if (result.IsFailure)
                 return Error<ProductVm>(result.Error);

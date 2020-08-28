@@ -34,6 +34,10 @@ namespace PieceOfCake.BlazorApp.Components
             StateHasChanged();
         }
 
+        public abstract string Title { get; }
+
+        public abstract Task HandleValidSubmit();
+
         private void ResetDialog()
         {
             Item = new T();
@@ -42,6 +46,7 @@ namespace PieceOfCake.BlazorApp.Components
 
         protected async Task HandleValidSubmit(Func<T, Task<Result<T>>> serviceCallback)
         {
+            this.Errors = new List<string>();
             var result = await serviceCallback(Item);
 
             if (result.IsFailure)
