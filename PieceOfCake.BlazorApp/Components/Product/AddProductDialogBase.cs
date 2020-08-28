@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 using PieceOfCake.BlazorApp.Services.Interfaces;
 using PieceOfCake.Shared.ViewModels.Product;
 
-namespace PieceOfCake.BlazorApp.Components
+namespace PieceOfCake.BlazorApp.Components.Product
 {
     public class AddProductDialogBase : DialogBase<ProductVm>
     {

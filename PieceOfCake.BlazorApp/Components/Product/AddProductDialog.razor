@@ -1,0 +1,21 @@
+﻿@inherits AddProductDialogBase
+
+<ModalDialogTemplate TItem="ProductVm"
+                     Item="Item"
+                     ShowDialog="ShowDialog"
+                     Errors="Errors"
+                     Title="@Title"
+                     Context="Item">
+    <ItemForm>
+        <EditForm Model="@Item" OnValidSubmit="@HandleValidSubmit">
+
+            <div class="form-group">
+                <label for="lastName">Name: </label>
+                <InputText id="lastName" class="form-control" @bind-Value="@Item.Name" placeholder="Enter product name"></InputText>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a class="btn btn-outline-primary" @onclick="@Close">Close</a>
+        </EditForm>
+    </ItemForm>
+</ModalDialogTemplate>

@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Components;
-using PieceOfCake.BlazorApp.Components;
+using PieceOfCake.BlazorApp.Components.Product;
 using PieceOfCake.BlazorApp.Services.Interfaces;
 using PieceOfCake.Shared.ViewModels.MeasureUnit;
 using PieceOfCake.Shared.ViewModels.Product;

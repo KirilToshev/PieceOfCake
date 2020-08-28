@@ -1,5 +1,4 @@
-﻿
-@inherits AddProductDialogBase
+﻿@typeparam TItem
 
 @if (ShowDialog)
 {
@@ -13,17 +12,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-
-                    <EditForm Model="@Item" OnValidSubmit="@HandleValidSubmit">
-
-                        <div class="form-group">
-                            <label for="lastName">Name: </label>
-                            <InputText id="lastName" class="form-control" @bind-Value="@Item.Name" placeholder="Enter product name"></InputText>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">Save Product</button>
-                        <a class="btn btn-outline-primary" @onclick="@Close">Close</a>
-                    </EditForm>
+                    @ItemForm(Item)
                     <DisplayErrors Errors="Errors" />
                 </div>
             </div>
