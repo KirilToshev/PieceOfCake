@@ -70,6 +70,35 @@ namespace PieceOfCake.BlazorApp.Services
             }
         }
 
+        public async Task<Result<T>> HandlePut<T>(string url, T content)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Put, url);
+            //request.Headers.Add("Accept-Language", "bg-BG");
+            var contentAsJson = JsonConvert.SerializeObject(content);
+            request.Content = new StringContent(contentAsJson);
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            var response = await HttpClient.SendAsync(request);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            var result = JsonConvert.DeserializeObject<Envelope<T>>(responseContent);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return Result.Success<T>(result.Result);
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                return Result.Failure<T>(result.ErrorMessage);
+            }
+            else
+            {
+                //handle 500 here
+                var contentAsString = await response.Content.ReadAsStringAsync();
+                throw new Exception(contentAsString);
+            }
+        }
+
         public async Task<Result> HandleDelete(string url)
         {
             var response = await HttpClient.DeleteAsync(url);

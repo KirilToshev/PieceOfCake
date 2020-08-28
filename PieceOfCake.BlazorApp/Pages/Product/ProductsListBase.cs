@@ -22,6 +22,8 @@ namespace PieceOfCake.BlazorApp.Pages.Product
 
         protected AddProductDialog AddProductDialog { get; set; }
 
+        protected EditProductDialog EditProductDialog { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             IsLoading = true;
@@ -67,7 +69,7 @@ namespace PieceOfCake.BlazorApp.Pages.Product
 
         protected void EditProduct(ProductVm product)
         {
-            AddProductDialog.Show();
+            EditProductDialog.Show(product);
         }
 
         protected async void DeleteProduct(long productId)

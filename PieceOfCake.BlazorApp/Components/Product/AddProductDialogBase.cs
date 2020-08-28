@@ -11,13 +11,13 @@ namespace PieceOfCake.BlazorApp.Components.Product
     public class AddProductDialogBase : DialogBase<ProductVm>
     {
         [Inject]
-        public IProductHttpService productService { get; set; }
+        public IProductHttpService ProductService { get; set; }
 
         public override string Title => "Add Product";
 
         public override async Task HandleValidSubmit()
         {
-            await base.HandleValidSubmit(productService.CreateProduct);
+            await base.HandleValidSubmit(ProductService.CreateProduct);
         }
     }
 }

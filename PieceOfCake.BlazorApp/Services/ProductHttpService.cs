@@ -36,6 +36,11 @@ namespace PieceOfCake.BlazorApp.Services
             return await base.HandlePost<ProductVm>($"api/products", product);
         }
 
+        public async Task<Result<ProductVm>> UpdateProduct(ProductVm product)
+        {
+            return await base.HandlePut<ProductVm>($"api/products/{product.Id}", product);
+        }
+
         public async Task<Result> DeleteProduct(long productId)
         {
             return await base.HandleDelete($"api/products/{productId}");

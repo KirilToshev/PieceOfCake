@@ -51,9 +51,9 @@ namespace PieceOfCake.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult<ProductVm> Put(int id, [FromBody]string name)
+        public ActionResult<ProductVm> Put(int id, [FromBody]ProductVm productVm)
         {
-            var result = _productDomainService.Update(id, name);
+            var result = _productDomainService.Update(id, productVm.Name);
             if (result.IsFailure)
                 return Error<ProductVm>(result.Error);
 

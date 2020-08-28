@@ -13,6 +13,8 @@ namespace PieceOfCake.BlazorApp.Services.Interfaces
         Task<Result<IEnumerable<ProductVm>>> GetAllProducts();
         Task<Result<ProductVm>> GetProductById(long productId);
         Task<Result<ProductVm>> CreateProduct(ProductVm product);
+
+        Task<Result<ProductVm>> UpdateProduct(ProductVm product);
         Task<Result> DeleteProduct(long productId);
     }
 }
