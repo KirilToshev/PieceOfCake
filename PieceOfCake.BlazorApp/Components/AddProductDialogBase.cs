@@ -8,20 +8,10 @@ using PieceOfCake.Shared.ViewModels.Product;
 
 namespace PieceOfCake.BlazorApp.Components
 {
-    public class AddProductDialogBase : ProductDialogBase
+    public class AddProductDialogBase : DialogBase<ProductVm>
     {
-        public void Show()
-        {
-            ResetDialog();
-            ShowDialog = true;
-            StateHasChanged();
-        }
-
-        private void ResetDialog()
-        {
-            Product = new ProductVm();
-            this.Errors = new List<string>();
-        }
+        [Inject]
+        public IProductHttpService productService { get; set; }
 
         protected async Task HandleValidSubmit()
         {
