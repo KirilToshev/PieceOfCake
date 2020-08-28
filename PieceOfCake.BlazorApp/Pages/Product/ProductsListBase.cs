@@ -2,17 +2,14 @@
 using Microsoft.AspNetCore.Components;
 using PieceOfCake.BlazorApp.Components.Product;
 using PieceOfCake.BlazorApp.Services.Interfaces;
-using PieceOfCake.Shared.ViewModels.MeasureUnit;
 using PieceOfCake.Shared.ViewModels.Product;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
-namespace PieceOfCake.BlazorApp.Pages
+namespace PieceOfCake.BlazorApp.Pages.Product
 {
-    public class ProductBase : ComponentBase
+    public class ProductsListBase : ComponentBase
     {
         [Inject]
         public IProductHttpService ProductHttpService { get; set; }
@@ -28,7 +25,7 @@ namespace PieceOfCake.BlazorApp.Pages
         protected override async Task OnInitializedAsync()
         {
             IsLoading = true;
-            var result = await ProductHttpService.GetAllProducts().Finally(x => 
+            var result = await ProductHttpService.GetAllProducts().Finally(x =>
             {
                 IsLoading = false;
                 return x;
@@ -40,7 +37,7 @@ namespace PieceOfCake.BlazorApp.Pages
                 return;
             }
 
-            Products = result.Value.ToList();            
+            Products = result.Value.ToList();
         }
 
         public async void AddProductDialog_OnDialogClose()

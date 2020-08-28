@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Components;
 using PieceOfCake.BlazorApp.Services.Interfaces;
 using PieceOfCake.Shared.ViewModels.MeasureUnit;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PieceOfCake.BlazorApp.Pages
+namespace PieceOfCake.BlazorApp.Pages.MeasureUnit
 {
-    public class MeasureUnitBase : ComponentBase
+    public class MeasureUnitListBase : ComponentBase
     {
         [Inject]
         public IMeasureUnitHttpService MeasureUnitHttpService { get; set; }
