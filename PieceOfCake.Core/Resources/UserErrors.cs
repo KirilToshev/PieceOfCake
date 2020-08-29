@@ -34,6 +34,8 @@ namespace PieceOfCake.Core.Resources
 
         public string IngredientAlreadyExists => GetString(nameof(IngredientAlreadyExists));
 
+        public string ItemIsInUse => GetString(nameof(ItemIsInUse));
+
         private string GetString(string name) => _localizer[name];
     }
 }

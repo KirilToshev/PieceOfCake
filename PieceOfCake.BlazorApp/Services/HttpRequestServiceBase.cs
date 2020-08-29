@@ -4,13 +4,14 @@ using PieceOfCake.Shared.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace PieceOfCake.BlazorApp.Services
 {
-    public abstract class HttpRequestServiceBase
+    public abstract class HttpRequestServiceBase<T>
     {
         protected HttpClient HttpClient { get; private set; }
 
@@ -19,29 +20,13 @@ namespace PieceOfCake.BlazorApp.Services
             HttpClient = httpClient;
         }
 
-        public async Task<Result<T>> HandleGet<T>(string url)
+        public async Task<Result<U>> HandleGet<U>(string url)
         {
             var response = await HttpClient.GetAsync(url);
-            var content = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<Envelope<T>>(content);
-
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                return Result.Success<T>(result.Result);
-            }
-            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-            {
-                return Result.Failure<T>(result.ErrorMessage);
-            }
-            else
-            {
-                //handle 500 here
-                var contentAsString = await response.Content.ReadAsStringAsync();
-                throw new Exception(contentAsString);
-            }
+            return await HandleGenericResponse<U>(response);
         }
 
-        public async Task<Result<T>> HandlePost<T>(string url, T content)
+        public async Task<Result<T>> HandlePost(string url, T content)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, url);
             //request.Headers.Add("Accept-Language", "bg-BG");
@@ -50,27 +35,10 @@ namespace PieceOfCake.BlazorApp.Services
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             var response = await HttpClient.SendAsync(request);
-            var responseContent = await response.Content.ReadAsStringAsync();
-
-            var result = JsonConvert.DeserializeObject<Envelope<T>>(responseContent);
-
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                return Result.Success<T>(result.Result);
-            }
-            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-            {
-                return Result.Failure<T>(result.ErrorMessage);
-            }
-            else
-            {
-                //handle 500 here
-                var contentAsString = await response.Content.ReadAsStringAsync();
-                throw new Exception(contentAsString);
-            }
+            return await HandleGenericResponse<T>(response);
         }
 
-        public async Task<Result<T>> HandlePut<T>(string url, T content)
+        public async Task<Result<T>> HandlePut(string url, T content)
         {
             var request = new HttpRequestMessage(HttpMethod.Put, url);
             //request.Headers.Add("Accept-Language", "bg-BG");
@@ -79,45 +47,54 @@ namespace PieceOfCake.BlazorApp.Services
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             var response = await HttpClient.SendAsync(request);
-            var responseContent = await response.Content.ReadAsStringAsync();
-
-            var result = JsonConvert.DeserializeObject<Envelope<T>>(responseContent);
-
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                return Result.Success<T>(result.Result);
-            }
-            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-            {
-                return Result.Failure<T>(result.ErrorMessage);
-            }
-            else
-            {
-                //handle 500 here
-                var contentAsString = await response.Content.ReadAsStringAsync();
-                throw new Exception(contentAsString);
-            }
+            return await HandleGenericResponse<T>(response);
         }
 
         public async Task<Result> HandleDelete(string url)
         {
             var response = await HttpClient.DeleteAsync(url);
-            var responseContent = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<Envelope>(responseContent);
+            return await HandleResponse(response);
+        }
 
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        private async Task<Result> HandleResponse(HttpResponseMessage response)
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var jsonMapping = JsonConvert.DeserializeObject<Envelope>(responseContent);
+
+            if (response.StatusCode == HttpStatusCode.OK)
             {
                 return Result.Success();
             }
-            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            else if (response.StatusCode == HttpStatusCode.BadRequest)
             {
-                return Result.Failure(result.ErrorMessage);
+                return Result.Failure(jsonMapping.ErrorMessage);
             }
             else
             {
-                //handle 500 here
                 var contentAsString = await response.Content.ReadAsStringAsync();
-                throw new Exception(contentAsString);
+                Console.WriteLine(contentAsString);
+                return Result.Failure("A unhandled server exception occured. See the log or console for more information.");
+            }
+        }
+
+        private async Task<Result<W>> HandleGenericResponse<W>(HttpResponseMessage response)
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var jsonMapping = JsonConvert.DeserializeObject<Envelope<W>>(responseContent);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return Result.Success(jsonMapping.Result);
+            }
+            else if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                return Result.Failure<W>(jsonMapping.ErrorMessage);
+            }
+            else
+            {
+                var contentAsString = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(contentAsString);
+                return Result.Failure<W>("A unhandled server exception occured. See the log or console for more information.");
             }
         }
     }

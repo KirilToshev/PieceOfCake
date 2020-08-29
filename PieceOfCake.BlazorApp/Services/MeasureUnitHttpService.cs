@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PieceOfCake.BlazorApp.Services
 {
-    public class MeasureUnitHttpService : HttpRequestServiceBase, IMeasureUnitHttpService
+    public class MeasureUnitHttpService : HttpRequestServiceBase<MeasureUnitVm>, IMeasureUnitHttpService
     {
         public MeasureUnitHttpService(HttpClient httpClient)
             : base(httpClient)

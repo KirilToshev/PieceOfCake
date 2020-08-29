@@ -132,6 +132,9 @@
   <data name="InvalidStateTransition" xml:space="preserve">
     <value>Преминаване от състояние {0} към състояние {1} е невалидно.</value>
   </data>
+  <data name="ItemIsInUse" xml:space="preserve">
+    <value>{0} не може да бъде изтрит поради съществуваща употреба.</value>
+  </data>
   <data name="NameAlreadyExists" xml:space="preserve">
     <value>Запис с име {0} вече съществува.</value>
   </data>

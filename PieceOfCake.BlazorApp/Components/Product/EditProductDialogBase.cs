@@ -26,23 +26,5 @@ namespace PieceOfCake.BlazorApp.Components.Product
             base.Show();
             this.Item = product;
         }
-
-        protected override async Task OnInitializedAsync()
-        {
-            IsLoading = true;
-            var result = await ProductService.GetProductById(1).Finally(x =>
-            {
-                IsLoading = false;
-                return x;
-            });
-
-            if (result.IsFailure)
-            {
-                Errors = result.Error.Split(';').ToList();
-                return;
-            }
-
-            Item = result.Value;
-        }
     }
 }

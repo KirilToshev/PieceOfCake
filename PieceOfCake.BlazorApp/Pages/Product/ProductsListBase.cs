@@ -84,6 +84,7 @@ namespace PieceOfCake.BlazorApp.Pages.Product
             if (result.IsFailure)
             {
                 Errors = result.Error.Split(';').ToList();
+                StateHasChanged();
                 return;
             }
 

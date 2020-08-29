@@ -13,5 +13,6 @@
         public string DescriptionIsMandatory { get; }
         public string InvalidStateTransition { get; }
         public string IngredientAlreadyExists { get; }
+        public string ItemIsInUse { get; }
     }
 }

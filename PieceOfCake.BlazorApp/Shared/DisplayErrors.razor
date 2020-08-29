@@ -3,7 +3,10 @@
     @foreach (var error in Errors)
     {
         <div class="alert alert-danger" role="alert">
-            @error
+            <span>@error</span>
+            <button type="button" class="close" aria-label="Close" @onclick="@(() => Remove(error))">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
     }
 }
@@ -11,4 +14,9 @@
 @code {
     [Parameter]
     public List<string> Errors { get; set; } = new List<string>();
+
+    public void Remove(string error)
+    {
+        this.Errors.Remove(error);
+    }
 }

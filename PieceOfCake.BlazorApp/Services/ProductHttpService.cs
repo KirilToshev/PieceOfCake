@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace PieceOfCake.BlazorApp.Services
 {
-    public class ProductHttpService : HttpRequestServiceBase, IProductHttpService
+    public class ProductHttpService : HttpRequestServiceBase<ProductVm>, IProductHttpService
     {
         public ProductHttpService(HttpClient httpClient)
             :base(httpClient)
@@ -33,12 +33,12 @@ namespace PieceOfCake.BlazorApp.Services
 
         public async Task<Result<ProductVm>> CreateProduct(ProductVm product)
         {
-            return await base.HandlePost<ProductVm>($"api/products", product);
+            return await base.HandlePost($"api/products", product);
         }
 
         public async Task<Result<ProductVm>> UpdateProduct(ProductVm product)
         {
-            return await base.HandlePut<ProductVm>($"api/products/{product.Id}", product);
+            return await base.HandlePut($"api/products/{product.Id}", product);
         }
 
         public async Task<Result> DeleteProduct(long productId)

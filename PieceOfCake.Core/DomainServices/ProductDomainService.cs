@@ -24,35 +24,31 @@ namespace PieceOfCake.Core.DomainServices
 
         public Result<IReadOnlyCollection<Product>> Get()
         {
-            var measureUnits = _unitOfWork.ProductRepository.Get();
+            var productsList = _unitOfWork.ProductRepository.Get();
 
-            if (!measureUnits.Any())
-                return Result.Failure<IReadOnlyCollection<Product>>(
-                    _resources.GenereteSentence(x => x.UserErrors.SequenceContainsNoElements));
-
-            return Result.Success(measureUnits);
+            return Result.Success(productsList);
         }
 
         public Result<Product> Get(long id)
         {
-            var measureUnit = _unitOfWork.ProductRepository.GetById(id);
+            var product = _unitOfWork.ProductRepository.GetById(id);
 
-            if (measureUnit == null)
+            if (product == null)
                 return Result.Failure<Product>(
                     _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
 
-            return Result.Success(measureUnit);
+            return Result.Success(product);
         }
 
         public Result<Product> Update(long id, string? name)
         {
-            var measureUnit = _unitOfWork.ProductRepository.GetById(id);
+            var product = _unitOfWork.ProductRepository.GetById(id);
 
-            if (measureUnit == null)
+            if (product == null)
                 return Result.Failure<Product>(
                     _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
 
-            return measureUnit.Update(name, _resources, _unitOfWork)
+            return product.Update(name, _resources, _unitOfWork)
                 .Tap(x => 
                 {
                     _unitOfWork.ProductRepository.Update(x);
@@ -72,10 +68,18 @@ namespace PieceOfCake.Core.DomainServices
         public Result Delete(long id)
         {
             return this.Get(id)
-                .OnFailure(() => _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()))
-                .Tap(mu => {
-                    _unitOfWork.ProductRepository.Delete(mu);
+                .Bind(product =>
+                {
+                    var isProductInUse = _unitOfWork.DishRepository
+                                            .Get(dish => dish.Ingredients.Any(i => i.Product.Id == product.Id))
+                                            .Any();
+                    if (isProductInUse)
+                        return Result.Failure(_resources
+                            .GenereteSentence(x => x.UserErrors.ItemIsInUse, x => x.CommonTerms.Product));
+
+                    _unitOfWork.ProductRepository.Delete(product);
                     _unitOfWork.Save();
+                    return Result.Success();
                 });
         }
     }
