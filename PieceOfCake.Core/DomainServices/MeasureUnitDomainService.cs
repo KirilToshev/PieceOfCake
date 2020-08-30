@@ -72,10 +72,18 @@ namespace PieceOfCake.Core.DomainServices
         public Result Delete(long id)
         {
             return this.Get(id)
-                .OnFailure(() => _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()))
-                .Tap(mu => {
+                .Bind(mu => 
+                {
+                    var isMeasureUnitInUse = _unitOfWork.DishRepository
+                                            .Get(dish => dish.Ingredients.Any(i => i.MeasureUnit.Id == mu.Id))
+                                            .Any();
+                    if (isMeasureUnitInUse)
+                        return Result.Failure(_resources
+                            .GenereteSentence(x => x.UserErrors.ItemIsInUse, x => x.CommonTerms.MeasureUnit));
+
                     _unitOfWork.MeasureUnitRepository.Delete(mu);
                     _unitOfWork.Save();
+                    return Result.Success();
                 });
         }
     }

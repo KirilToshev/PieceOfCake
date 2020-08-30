@@ -30,11 +30,11 @@ namespace PieceOfCake.Api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<MeasureUnitVm> Get()
+        public ActionResult<IReadOnlyCollection<MeasureUnitVm>> Get()
         {
             var result = _measureUnitDomainService.Get();
             if (result.IsFailure)
-                return BadRequest(result.Error);
+                return Error<IReadOnlyCollection<MeasureUnitVm>>(result.Error);
 
             var mapping = result.Value.Select(x => _mapper.Map<MeasureUnitVm>(x));
             return Ok(mapping);
@@ -46,29 +46,29 @@ namespace PieceOfCake.Api.Controllers
 
             var result = _measureUnitDomainService.Get(id);
             if (result.IsFailure)
-                return BadRequest(result.Error);
+                return Error<MeasureUnitVm>(result.Error);
 
             return Ok(_mapper.Map<MeasureUnitVm>(result.Value));
         }
 
         [HttpPut("{id}")]
-        public ActionResult<MeasureUnit> Put(int id, [FromBody]string name)
+        public ActionResult<MeasureUnitVm> Put(int id, [FromBody]MeasureUnitVm measureUnit)
         {
-            var result = _measureUnitDomainService.Update(id, name);
+            var result = _measureUnitDomainService.Update(id, measureUnit.Name);
             if (result.IsFailure)
-                return BadRequest(result.Error);
+                return Error<MeasureUnitVm>(result.Error);
 
-            return Ok(result.Value);
+            return Ok(_mapper.Map<MeasureUnitVm>(result.Value));
         }
 
         [HttpPost]
-        public ActionResult<MeasureUnit> Post([FromBody]string name)
+        public ActionResult<MeasureUnitVm> Post([FromBody] MeasureUnitVm measureUnit)
         {
-            var result = _measureUnitDomainService.Create(name);
+            var result = _measureUnitDomainService.Create(measureUnit.Name);
             if (result.IsFailure)
-                return BadRequest(result.Error);
+                return Error<MeasureUnitVm>(result.Error);
 
-            return Ok(result.Value);
+            return Ok(_mapper.Map<MeasureUnitVm>(result.Value));
         }
 
         [HttpDelete("{id}")]
@@ -76,7 +76,7 @@ namespace PieceOfCake.Api.Controllers
         {
             var result = _measureUnitDomainService.Delete(id);
             if (result.IsFailure)
-                return BadRequest(result.Error);
+                return Error(result.Error);
 
             return Ok();
         }

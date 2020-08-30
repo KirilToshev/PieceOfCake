@@ -26,5 +26,20 @@ namespace PieceOfCake.BlazorApp.Services
         {
             return await base.HandleGet<MeasureUnitVm>($"api/measureunits/{measureUnitId}");
         }
+
+        public async Task<Result<MeasureUnitVm>> CreateMeasureUnit(MeasureUnitVm measureUnit)
+        {
+            return await base.HandlePost($"api/measureunits", measureUnit);
+        }
+
+        public async Task<Result<MeasureUnitVm>> UpdateMeasureUnit(MeasureUnitVm measureUnit)
+        {
+            return await base.HandlePut($"api/measureunits/{measureUnit.Id}", measureUnit);
+        }
+
+        public async Task<Result> DeleteMeasureUnit(long measureUnitId)
+        {
+            return await base.HandleDelete($"api/measureunits/{measureUnitId}");
+        }
     }
 }

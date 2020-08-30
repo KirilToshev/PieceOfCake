@@ -1,5 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Components;
+using PieceOfCake.BlazorApp.Components;
+using PieceOfCake.BlazorApp.Components.MeasureUnit;
 using PieceOfCake.BlazorApp.Services.Interfaces;
 using PieceOfCake.Shared.ViewModels.MeasureUnit;
 using System.Collections.Generic;
@@ -19,9 +21,11 @@ namespace PieceOfCake.BlazorApp.Pages.MeasureUnit
 
         public bool IsLoading { get; set; }
 
-        //protected AddProductDialog AddProductDialog { get; set; }
+        protected AddMeasureUnitDialog AddMeasureUnitDialog { get; set; }
 
-        //protected EditProductDialog EditProductDialog { get; set; }
+        protected EditMeasureUnitDialog EditMeasureUnitDialog { get; set; }
+
+        protected ConfirmationDialog<MeasureUnitVm> DeleteConfirmationDialog { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -50,33 +54,41 @@ namespace PieceOfCake.BlazorApp.Pages.MeasureUnit
 
         protected void AddProduct()
         {
-            //AddProductDialog.Show();
+            AddMeasureUnitDialog.Show();
+            this.Errors = new List<string>();
         }
 
-        protected void EditProduct(MeasureUnitVm product)
+        protected void EditProduct(MeasureUnitVm measureUnit)
         {
-            //EditProductDialog.Show(product);
+            EditMeasureUnitDialog.Show(measureUnit);
+            this.Errors = new List<string>();
         }
 
-        protected async void DeleteProduct(long measureUnitId)
+        public void ShowDeleteConfirmationDialog(MeasureUnitVm measureUnit)
         {
-            //IsLoading = true;
-            //var result = await MeasureUnitHttpService.DeleteMeasureUnit(measureUnitId).Finally(x =>
-            //{
-            //    IsLoading = false;
-            //    return x;
-            //});
+            DeleteConfirmationDialog.Show(measureUnit);
+            this.Errors = new List<string>();
+        }
 
-            //if (result.IsFailure)
-            //{
-            //    Errors = result.Error.Split(';').ToList();
-            //    StateHasChanged();
-            //    return;
-            //}
+        protected async Task DeleteProduct(MeasureUnitVm measureUnit)
+        {
+            IsLoading = true;
+            var result = await MeasureUnitHttpService.DeleteMeasureUnit(measureUnit.Id).Finally(x =>
+            {
+                IsLoading = false;
+                return x;
+            });
 
-            //this.MeasureUnits.Remove(this.MeasureUnits.Find(x => x.Id == measureUnitId));
+            if (result.IsFailure)
+            {
+                Errors = result.Error.Split(';').ToList();
+                StateHasChanged();
+                return;
+            }
 
-            //StateHasChanged();
+            this.MeasureUnits.Remove(measureUnit);
+
+            StateHasChanged();
         }
     }
 }

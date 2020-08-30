@@ -1,0 +1,39 @@
+﻿@inherits DialogBase<MeasureUnitVm>
+
+<ModalDialogTemplate TItem="MeasureUnitVm"
+                     Item="Item"
+                     ShowDialog="ShowDialog"
+                     Errors="Errors"
+                     Title="@Title"
+                     Context="Item">
+    <ItemForm>
+        <EditForm Model="@Item" OnValidSubmit="@HandleValidSubmit">
+
+            <div class="form-group">
+                <label for="lastName">Name: </label>
+                <InputText id="lastName" class="form-control" @bind-Value="@Item.Name" placeholder="Enter measure unit name"></InputText>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a class="btn btn-outline-primary" @onclick="@Close">Close</a>
+        </EditForm>
+    </ItemForm>
+</ModalDialogTemplate>
+
+@code {
+    [Inject]
+    public IMeasureUnitHttpService MeasureUnitService { get; set; }
+
+    public override string Title => "Update Measure unit";
+
+    public override async Task HandleValidSubmit()
+    {
+        await base.HandleValidSubmit(MeasureUnitService.UpdateMeasureUnit);
+    }
+
+    public void Show(MeasureUnitVm measureUnit)
+    {
+        base.Show();
+        this.Item = measureUnit;
+    }
+}
