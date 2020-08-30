@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace PieceOfCake.BlazorApp.Services
 {
-    public abstract class HttpRequestServiceBase<T>
+    public abstract class HttpRequestServiceBase
     {
         protected HttpClient HttpClient { get; private set; }
 
@@ -20,13 +20,13 @@ namespace PieceOfCake.BlazorApp.Services
             HttpClient = httpClient;
         }
 
-        public async Task<Result<U>> HandleGet<U>(string url)
+        public async Task<Result<TResponseContent>> HandleGet<TResponseContent>(string url)
         {
             var response = await HttpClient.GetAsync(url);
-            return await HandleGenericResponse<U>(response);
+            return await HandleGenericResponse<TResponseContent>(response);
         }
 
-        public async Task<Result<T>> HandlePost(string url, T content)
+        public async Task<Result<TResponseContent>> HandlePost<TResponseContent>(string url, object content)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, url);
             //request.Headers.Add("Accept-Language", "bg-BG");
@@ -35,10 +35,10 @@ namespace PieceOfCake.BlazorApp.Services
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             var response = await HttpClient.SendAsync(request);
-            return await HandleGenericResponse<T>(response);
+            return await HandleGenericResponse<TResponseContent>(response);
         }
 
-        public async Task<Result<T>> HandlePut(string url, T content)
+        public async Task<Result<TResponseContent>> HandlePut<TResponseContent>(string url, object content)
         {
             var request = new HttpRequestMessage(HttpMethod.Put, url);
             //request.Headers.Add("Accept-Language", "bg-BG");
@@ -47,7 +47,19 @@ namespace PieceOfCake.BlazorApp.Services
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             var response = await HttpClient.SendAsync(request);
-            return await HandleGenericResponse<T>(response);
+            return await HandleGenericResponse<TResponseContent>(response);
+        }
+
+        public async Task<Result<TResponseContent>> HandlePatch<TResponseContent>(string url, object content)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Patch, url);
+            //request.Headers.Add("Accept-Language", "bg-BG");
+            var contentAsJson = JsonConvert.SerializeObject(content);
+            request.Content = new StringContent(contentAsJson);
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            var response = await HttpClient.SendAsync(request);
+            return await HandleGenericResponse<TResponseContent>(response);
         }
 
         public async Task<Result> HandleDelete(string url)
@@ -77,10 +89,10 @@ namespace PieceOfCake.BlazorApp.Services
             }
         }
 
-        private async Task<Result<W>> HandleGenericResponse<W>(HttpResponseMessage response)
+        private async Task<Result<TResponseContent>> HandleGenericResponse<TResponseContent>(HttpResponseMessage response)
         {
             var responseContent = await response.Content.ReadAsStringAsync();
-            var jsonMapping = JsonConvert.DeserializeObject<Envelope<W>>(responseContent);
+            var jsonMapping = JsonConvert.DeserializeObject<Envelope<TResponseContent>>(responseContent);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -88,13 +100,13 @@ namespace PieceOfCake.BlazorApp.Services
             }
             else if (response.StatusCode == HttpStatusCode.BadRequest)
             {
-                return Result.Failure<W>(jsonMapping.ErrorMessage);
+                return Result.Failure<TResponseContent>(jsonMapping.ErrorMessage);
             }
             else
             {
                 var contentAsString = await response.Content.ReadAsStringAsync();
                 Console.WriteLine(contentAsString);
-                return Result.Failure<W>("A unhandled server exception occured. See the log or console for more information.");
+                return Result.Failure<TResponseContent>("A unhandled server exception occured. See the log or console for more information.");
             }
         }
     }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PieceOfCake.BlazorApp.Services
 {
-    public class MeasureUnitHttpService : HttpRequestServiceBase<MeasureUnitVm>, IMeasureUnitHttpService
+    public class MeasureUnitHttpService : HttpRequestServiceBase, IMeasureUnitHttpService
     {
         public MeasureUnitHttpService(HttpClient httpClient)
             : base(httpClient)
@@ -29,12 +29,12 @@ namespace PieceOfCake.BlazorApp.Services
 
         public async Task<Result<MeasureUnitVm>> CreateMeasureUnit(MeasureUnitVm measureUnit)
         {
-            return await base.HandlePost($"api/measureunits", measureUnit);
+            return await base.HandlePost<MeasureUnitVm>($"api/measureunits", measureUnit);
         }
 
         public async Task<Result<MeasureUnitVm>> UpdateMeasureUnit(MeasureUnitVm measureUnit)
         {
-            return await base.HandlePut($"api/measureunits/{measureUnit.Id}", measureUnit);
+            return await base.HandlePut<MeasureUnitVm>($"api/measureunits/{measureUnit.Id}", measureUnit);
         }
 
         public async Task<Result> DeleteMeasureUnit(long measureUnitId)
