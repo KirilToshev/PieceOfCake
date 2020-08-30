@@ -1,7 +1,9 @@
 ﻿using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Components;
+using PieceOfCake.BlazorApp.Components;
 using PieceOfCake.BlazorApp.Components.Product;
 using PieceOfCake.BlazorApp.Services.Interfaces;
+using PieceOfCake.BlazorApp.Templates;
 using PieceOfCake.Shared.ViewModels.Product;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +25,8 @@ namespace PieceOfCake.BlazorApp.Pages.Product
         protected AddProductDialog AddProductDialog { get; set; }
 
         protected EditProductDialog EditProductDialog { get; set; }
+
+        protected ConfirmationDialog<ProductVm> ConfirmationDialog { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -65,17 +69,25 @@ namespace PieceOfCake.BlazorApp.Pages.Product
         protected void AddProduct()
         {
             AddProductDialog.Show();
+            this.Errors = new List<string>();
         }
 
         protected void EditProduct(ProductVm product)
         {
             EditProductDialog.Show(product);
+            this.Errors = new List<string>();
         }
 
-        protected async void DeleteProduct(long productId)
+        public void ShowDeleteConfirmationDialog(ProductVm product)
+        {
+            ConfirmationDialog.Show(product);
+            this.Errors = new List<string>();
+        }
+
+        public async Task DeleteProduct(ProductVm product)
         {
             IsLoading = true;
-            var result = await ProductHttpService.DeleteProduct(productId).Finally(x =>
+            var result = await ProductHttpService.DeleteProduct(product.Id).Finally(x =>
             {
                 IsLoading = false;
                 return x;
@@ -88,7 +100,7 @@ namespace PieceOfCake.BlazorApp.Pages.Product
                 return;
             }
 
-            this.Products.Remove(this.Products.Find(x => x.Id == productId));
+            this.Products.Remove(product);
 
             StateHasChanged();
         }
