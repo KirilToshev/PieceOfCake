@@ -22,7 +22,7 @@ namespace PieceOfCake.BlazorApp.Services
             return await base.HandleGet<IEnumerable<MeasureUnitVm>>($"api/measureunits");
         }
 
-        public async Task<Result<MeasureUnitVm>> GetMeasureUnitById(int measureUnitId)
+        public async Task<Result<MeasureUnitVm>> GetMeasureUnitById(long measureUnitId)
         {
             return await base.HandleGet<MeasureUnitVm>($"api/measureunits/{measureUnitId}");
         }

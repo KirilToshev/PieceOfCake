@@ -1,6 +1,21 @@
 ﻿@page "/create"
-<h3>Create Dish</h3>
+@inherits DishCreateBase
 
-@code {
+<h1>Create Dish</h1>
+<EditForm Model="Dish" OnValidSubmit="@HandleValidSubmit">
 
-}
+    <div class="form-group">
+        <label for="lastName">Name: </label>
+        <InputText id="lastName" class="form-control" @bind-Value="@Dish.Name" placeholder="Enter dish name"></InputText>
+    </div>
+
+    <div class="form-group">
+        <label for="lastName">Description: </label>
+        <textarea id="lastName" class="form-control" @bind="@Dish.Description" placeholder="Enter dish name"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</EditForm>
+<DisplayErrors Errors="Errors.ToList()">
+
+</DisplayErrors>

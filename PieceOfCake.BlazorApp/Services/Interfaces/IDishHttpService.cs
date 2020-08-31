@@ -11,7 +11,7 @@ namespace PieceOfCake.BlazorApp.Services.Interfaces
     public interface IDishHttpService
     {
         Task<Result<IEnumerable<DishVm>>> GetAllDishes();
-        Task<Result<DishVm>> GetDishById(int dishId);
+        Task<Result<DishVm>> GetDishById(long dishId);
         Task<Result<DishVm>> CreateDish(CreateDishVm dish);
         Task<Result<DishVm>> UpdateDish(UpdateDishVm dish);
         Task<Result<DishVm>> AddIngredients(IEnumerable<AddIngredientVm> ingredients);

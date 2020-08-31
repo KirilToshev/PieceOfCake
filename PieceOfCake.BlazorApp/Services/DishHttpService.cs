@@ -22,7 +22,7 @@ namespace PieceOfCake.BlazorApp.Services
             return await base.HandleGet<IEnumerable<DishVm>>($"api/dishes");
         }
 
-        public async Task<Result<DishVm>> GetDishById(int dishId)
+        public async Task<Result<DishVm>> GetDishById(long dishId)
         {
             return await base.HandleGet<DishVm>($"api/dishes/{dishId}");
         }
