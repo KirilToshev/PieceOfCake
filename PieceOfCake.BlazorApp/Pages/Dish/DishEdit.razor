@@ -16,6 +16,56 @@
 
     <button type="submit" class="btn btn-primary">Save</button>
 </EditForm>
-<DisplayErrors Errors="Errors.ToList()">
+@if (Dish.Ingredients != null & Dish.Ingredients.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Quantity</th>
+                <th>Measure unit</th>
+                <th>Product</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < Dish.Ingredients.Count(); i++)
+            {
+                var ingredient = Dish.Ingredients.ToArray()[i];
+                <tr>
+                    @if (DisplayIngredientEditComponent[i])
+                    {
+                        <IngredientEditInTable Ingredient="ingredient"
+                                               Index="i"
+                                               ConfirmEventCallback="index => 
+                                                                     {
+                                                                         EditIngredient(index);
+                                                                     }"
+                                               CancelEventCallback="index =>
+                                                                    {
+                                                                        DisplayIngredientEditComponent[index] = false;
+                                                                        StateHasChanged();
+                                                                    }
+                                               ">
 
+                        </IngredientEditInTable>
+                    }
+                    else
+                    {
+                        <IngredientDisplayInTable Ingredient="ingredient"
+                                                  Index="i"
+                                                  EditEventCallback="index =>
+                                                                     {
+                                                                         DisplayIngredientEditComponent[index] = true;
+                                                                         StateHasChanged();
+                                                                     }"
+                                                  DeleteEventCallback="deleteEvent => DeleteIngredient(ingredient)">
+                        </IngredientDisplayInTable>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<button @onclick="AddIngredient" class="btn btn-dark table-btn quick-add-btn">&nbsp;&nbsp;+&nbsp;&nbsp;</button>
+<DisplayErrors Errors="Errors.ToList()">
 </DisplayErrors>

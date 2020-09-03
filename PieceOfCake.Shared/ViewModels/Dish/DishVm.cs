@@ -7,6 +7,11 @@ namespace PieceOfCake.Shared.ViewModels.Dish
 {
     public class DishVm
     {
+        public DishVm()
+        {
+            this.Ingredients = new HashSet<ReadIngredientVm>();
+        }
+
         public long Id { get; set; }
         public string Name { get; set; }
 
