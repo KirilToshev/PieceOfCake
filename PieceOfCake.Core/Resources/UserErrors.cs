@@ -36,6 +36,10 @@ namespace PieceOfCake.Core.Resources
 
         public string ItemIsInUse => GetString(nameof(ItemIsInUse));
 
+        public string PeriodStartDateLaterThanEndDate => GetString(nameof(PeriodStartDateLaterThanEndDate));
+
+        public string MenuMustHaveAtLeastOneServing => GetString(nameof(MenuMustHaveAtLeastOneServing));
+
         private string GetString(string name) => _localizer[name];
     }
 }

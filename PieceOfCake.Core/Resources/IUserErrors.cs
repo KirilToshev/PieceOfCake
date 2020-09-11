@@ -14,5 +14,7 @@
         public string InvalidStateTransition { get; }
         public string IngredientAlreadyExists { get; }
         public string ItemIsInUse { get; }
+        public string PeriodStartDateLaterThanEndDate { get; }
+        public string MenuMustHaveAtLeastOneServing { get; }
     }
 }

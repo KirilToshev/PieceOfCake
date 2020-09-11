@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PieceOfCake.Core.Common;
 using PieceOfCake.Core.Entities;
+using PieceOfCake.Core.Entities.EFCoreShortcomings;
 using PieceOfCake.Core.Resources;
 using PieceOfCake.Core.States;
 using PieceOfCake.Core.ValueObjects;
@@ -72,11 +73,15 @@ namespace PieceOfCake.Persistence
                         x => Name.Create(x, _resources, x => x.CommonTerms.Product, Constants.FIFTY, null).Value);
 
                 x.Property(x => x.Description)
+                 .IsRequired()
                  .HasMaxLength((int)Constants.FIFTY_THOUSAND);
 
                 x.HasMany(x => x.Ingredients)
                  .WithOne(x => x.Dish)
                  .OnDelete(DeleteBehavior.Cascade);
+
+                x.HasMany(x => x.Menus)
+                 .WithOne(x => x.Dish);
 
                 x.Property(p => p.DishState)
                  .HasColumnName("State")
@@ -84,6 +89,25 @@ namespace PieceOfCake.Persistence
                  .HasConversion(
                     x => x.State,
                     x => StateConversion(x));
+            });
+
+            modelBuilder.Entity<DishMenu>()
+                .HasKey(x => new { x.DishId, x.MenuId });
+
+            modelBuilder.Entity<Menu>(x =>
+            {
+                x.ToTable(nameof(Menu) + "s").HasKey(k => k.Id);
+                x.Property(p => p.ServingsPerDay)
+                 .IsRequired();
+
+                x.HasMany(x => x.Dishes)
+                 .WithOne(x => x.Menu);
+
+                x.Property(p => p.StartDate)
+                 .IsRequired();
+
+                x.Property(p => p.EndDate)
+                 .IsRequired();
             });
         }
 
@@ -108,5 +132,7 @@ namespace PieceOfCake.Persistence
         public DbSet<Product> Products { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<Dish> Dishes { get; set; }
+        public DbSet<Menu> Menus { get; set; }
+        public DbSet<DishMenu> DishMenus { get; set; }
     }
 }

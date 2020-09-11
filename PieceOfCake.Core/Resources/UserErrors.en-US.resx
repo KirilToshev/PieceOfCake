@@ -135,6 +135,9 @@
   <data name="ItemIsInUse" xml:space="preserve">
     <value>{0} can't be deleted, because it is still being used.</value>
   </data>
+  <data name="MenuMustHaveAtLeastOneServing" xml:space="preserve">
+    <value>It is impossible to have a menu without at least one serving per day.</value>
+  </data>
   <data name="NameAlreadyExists" xml:space="preserve">
     <value>An entity with name {0} already exist.</value>
   </data>
@@ -146,6 +149,9 @@
   </data>
   <data name="NameIsMandatory" xml:space="preserve">
     <value>{0} must have name.</value>
+  </data>
+  <data name="PeriodStartDateLaterThanEndDate" xml:space="preserve">
+    <value>Start Date {0} of a time period must be less than its End Date {1}</value>
   </data>
   <data name="QuantityMustBeGraterThanZero" xml:space="preserve">
     <value>Quantity value must be grater than zero.</value>

@@ -16,6 +16,7 @@ namespace PieceOfCake.Persistence
         private IMeasureUnitRepository? _measureUnitRepository;
         private IProductRepository? _productRepository;
         private IDishRepository? _dishRepository;
+        private IMenuRepository? _menuRepository;
 
         public UnitOfWork(DbContextOptions<PocDbContext> options, IResources resources)
         {
@@ -52,6 +53,17 @@ namespace PieceOfCake.Persistence
                     _dishRepository = new DishRepository(_context);
 
                 return _dishRepository;
+            }
+        }
+
+        public IMenuRepository MenuRepository
+        {
+            get
+            {
+                if (_menuRepository == null)
+                    _menuRepository = new MenuRepository(_context);
+
+                return _menuRepository;
             }
         }
 
