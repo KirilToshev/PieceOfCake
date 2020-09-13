@@ -44,6 +44,8 @@ namespace PieceOfCake.Core.Resources
 
         public string EndDateIsMandatory => GetString(nameof(EndDateIsMandatory));
 
+        public string NotEnoughDishes => GetString(nameof(NotEnoughDishes));
+
         private string GetString(string name) => _localizer[name];
     }
 }

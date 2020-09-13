@@ -46,12 +46,22 @@ namespace PieceOfCake.Core.DomainServices
             if (menuResult.IsFailure)
                 return menuResult;
 
-            return menuResult.Value.Update(startDate, endDate, servingsPerDay, _unitOfWork)
-                .Tap(menu =>
-                {
-                    _unitOfWork.MenuRepository.Update(menu);
-                    _unitOfWork.Save();
-                });
+            var updateResult = menuResult.Value.Update(startDate, endDate, servingsPerDay, _resources);
+            if (updateResult.IsFailure)
+                return updateResult;
+
+            menuResult.Value.ClearAllRelatedDishes();
+            _unitOfWork.MenuRepository.Update(menuResult.Value);
+            _unitOfWork.Save();
+
+            var dishesListResult = menuResult.Value.GenerateDishesList(_unitOfWork, _resources);
+            if (dishesListResult.IsFailure)
+                return dishesListResult.ConvertFailure<Menu>();
+
+            _unitOfWork.MenuRepository.Update(menuResult.Value);
+            _unitOfWork.Save();
+
+            return Result.Success(menuResult.Value);
         }
 
         public Result<Menu> Create(DateTime? startDate, DateTime? endDate, byte servingsPerDay)

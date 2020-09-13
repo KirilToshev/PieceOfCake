@@ -13,8 +13,6 @@ namespace PieceOfCake.Core.Entities
 {
     public class Menu : Entity
     {
-        private readonly IResources _resources;
-
         #pragma warning disable 8618
         #warning Sparation Of Concerns violation
         //This is required to suppress warnings/errors in the default(empty) constructor
@@ -23,12 +21,11 @@ namespace PieceOfCake.Core.Entities
         {
         }
 
-        private Menu(TimePeriod duration, byte servingsPerDay, IResources resources)
+        private Menu(TimePeriod duration, byte servingsPerDay)
         {
             this.StartDate = duration.StartDate;
             this.EndDate = duration.EndDate;
             this.ServingsPerDay = servingsPerDay;
-            this._resources = resources;
             this.Dishes = new HashSet<DishMenu>();
         }
 
@@ -56,52 +53,54 @@ namespace PieceOfCake.Core.Entities
             if (servingsPerDay == 0)
                 return Result.Failure<Menu>(resources.GenereteSentence(x => x.UserErrors.MenuMustHaveAtLeastOneServing));
 
-            return Result.Success(new Menu(duration.Value, servingsPerDay, resources));
+            return Result.Success(new Menu(duration.Value, servingsPerDay));
         }
 
-        public Result<Menu> Update(DateTime? startDate, DateTime? endDate, byte servingsPerDay, IUnitOfWork unitOfWork)
+        public Result<Menu> Update(DateTime? startDate, DateTime? endDate, byte servingsPerDay, IResources resources)
         {
-            var menuResult = Create(startDate, endDate, servingsPerDay, _resources);
+            var menuResult = Create(startDate, endDate, servingsPerDay, resources);
             if (menuResult.IsFailure)
                 return menuResult;
 
             this.ServingsPerDay = servingsPerDay;
             this.StartDate = startDate!.Value;
             this.EndDate = endDate!.Value;
-            var dishesListResult = GenerateDishesList(unitOfWork);
-            if (dishesListResult.IsFailure)
-                return dishesListResult.ConvertFailure<Menu>();
-
-            Dishes = dishesListResult.Value.Select(x => 
-                new DishMenu() 
-                {
-                    DishId = x.Id,
-                    MenuId = Id
-                })
-                .ToList();
-
+            
             return Result.Success(this);
         }
 
-        public Result<IEnumerable<Dish>> GenerateDishesList(IUnitOfWork unitOfWork)
+        public Result GenerateDishesList(IUnitOfWork unitOfWork, IResources resources)
         {
-            var durationResult = CalculateDuration(_resources);
+            var durationResult = CalculateDuration(resources);
             if (durationResult.IsFailure)
                 return durationResult.ConvertFailure<IEnumerable<Dish>>();
 
             var totalNumberOfServings = ServingsPerDay * durationResult.Value.DaysDifference;
             var dishesList = unitOfWork.DishRepository.Get();
 
-            if (dishesList.Count() >= totalNumberOfServings)
-                return Result.Success(dishesList.Take(totalNumberOfServings));
+            if (dishesList.Count() < totalNumberOfServings)
+                return Result.Failure<IEnumerable<Dish>>(resources.GenereteSentence(x => x.UserErrors.NotEnoughDishes));
 
-            var result = dishesList.ToList();
-            for (int i = 0; i < totalNumberOfServings - dishesList.Count(); i++)
-            {
-                result.Add(dishesList.ElementAt(i % dishesList.Count()));
-            }
+            //var result = dishesList.ToList();
+            //for (int i = 0; i < totalNumberOfServings - dishesList.Count(); i++)
+            //{
+            //    result.Add(dishesList.ElementAt(i % dishesList.Count()));
+            //}
 
-            return Result.Success(result.AsEnumerable());
+            this.Dishes = dishesList.Take(totalNumberOfServings)
+                .Select(x => new DishMenu()
+                {
+                    DishId = x.Id,
+                    MenuId = Id
+                })
+                .ToList();
+
+            return Result.Success();
+        }
+
+        public void ClearAllRelatedDishes()
+        {
+            this.Dishes = new HashSet<DishMenu>();
         }
     }
 }

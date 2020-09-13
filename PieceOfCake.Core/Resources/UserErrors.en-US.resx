@@ -153,6 +153,9 @@
   <data name="NameIsMandatory" xml:space="preserve">
     <value>{0} must have name.</value>
   </data>
+  <data name="NotEnoughDishes" xml:space="preserve">
+    <value>There are not enough dishes to complete your menu.</value>
+  </data>
   <data name="PeriodStartDateLaterThanEndDate" xml:space="preserve">
     <value>Start Date {0} of a time period must be less than its End Date {1}</value>
   </data>

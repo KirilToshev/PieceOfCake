@@ -18,6 +18,7 @@
         public string MenuMustHaveAtLeastOneServing { get; }
         public string StartDateIsMandatory { get; }
         public string EndDateIsMandatory { get; }
+        public string NotEnoughDishes { get; }
 
     }
 }

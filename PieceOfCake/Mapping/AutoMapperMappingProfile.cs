@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using PieceOfCake.Core.Entities;
+using PieceOfCake.Core.Entities.EFCoreShortcomings;
 using PieceOfCake.Core.Resources;
 using PieceOfCake.Shared.ViewModels.Dish;
 using PieceOfCake.Shared.ViewModels.Dish.Ingredient;
@@ -29,7 +30,8 @@ namespace PieceOfCake.Api.Mapping
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.Value))
                 .ForMember(dest => dest.State, opt => opt.MapFrom(src => resources.CommonTerms.DishState(src.DishState.State)));
 
-            CreateMap<Menu, MenuVm>();
+            CreateMap<Menu, MenuVm>()
+                .ForMember(dest => dest.Dishes, opt => opt.MapFrom(src => src.Dishes.Select(x => x.Dish)));
         }
     }
 }

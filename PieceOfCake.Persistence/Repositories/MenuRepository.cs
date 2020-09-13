@@ -1,5 +1,6 @@
 ﻿using PieceOfCake.Core.Entities;
 using PieceOfCake.Core.Persistence;
+using System.Linq;
 
 namespace PieceOfCake.Persistence.Repositories
 {

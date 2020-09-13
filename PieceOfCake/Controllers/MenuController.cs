@@ -12,7 +12,7 @@ using PieceOfCake.Shared.ViewModels.Menu;
 namespace PieceOfCake.Api.Controllers
 {
     [ApiController]
-    [Route("api/menus")]
+    [Route("api/menu")]
     public class MenuController : Controller
     {
         private readonly ILogger<ProductController> _logger;
