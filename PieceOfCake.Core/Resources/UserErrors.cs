@@ -40,6 +40,10 @@ namespace PieceOfCake.Core.Resources
 
         public string MenuMustHaveAtLeastOneServing => GetString(nameof(MenuMustHaveAtLeastOneServing));
 
+        public string StartDateIsMandatory => GetString(nameof(StartDateIsMandatory));
+
+        public string EndDateIsMandatory => GetString(nameof(EndDateIsMandatory));
+
         private string GetString(string name) => _localizer[name];
     }
 }

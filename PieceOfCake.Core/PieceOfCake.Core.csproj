@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <PackageReference Include="CSharpFunctionalExtensions" Version="2.11.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="3.1.7" />
   </ItemGroup>
 

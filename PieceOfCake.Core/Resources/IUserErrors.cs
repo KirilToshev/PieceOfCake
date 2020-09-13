@@ -16,5 +16,8 @@
         public string ItemIsInUse { get; }
         public string PeriodStartDateLaterThanEndDate { get; }
         public string MenuMustHaveAtLeastOneServing { get; }
+        public string StartDateIsMandatory { get; }
+        public string EndDateIsMandatory { get; }
+
     }
 }

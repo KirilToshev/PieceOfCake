@@ -47,12 +47,40 @@ namespace PieceOfCake.Core.Entities
 
         public virtual ICollection<DishMenu> Dishes { get; protected set; }
 
-        public static Result<Menu> Create(TimePeriod duration, byte servingsPerDay, IResources resources)
+        public static Result<Menu> Create(DateTime? startDate, DateTime? endDate, byte servingsPerDay, IResources resources)
         {
+            var duration = TimePeriod.Create(startDate, endDate, resources);
+            if (duration.IsFailure)
+                return duration.ConvertFailure<Menu>();
+
             if (servingsPerDay == 0)
                 return Result.Failure<Menu>(resources.GenereteSentence(x => x.UserErrors.MenuMustHaveAtLeastOneServing));
 
-            return Result.Success(new Menu(duration, servingsPerDay, resources));
+            return Result.Success(new Menu(duration.Value, servingsPerDay, resources));
+        }
+
+        public Result<Menu> Update(DateTime? startDate, DateTime? endDate, byte servingsPerDay, IUnitOfWork unitOfWork)
+        {
+            var menuResult = Create(startDate, endDate, servingsPerDay, _resources);
+            if (menuResult.IsFailure)
+                return menuResult;
+
+            this.ServingsPerDay = servingsPerDay;
+            this.StartDate = startDate!.Value;
+            this.EndDate = endDate!.Value;
+            var dishesListResult = GenerateDishesList(unitOfWork);
+            if (dishesListResult.IsFailure)
+                return dishesListResult.ConvertFailure<Menu>();
+
+            Dishes = dishesListResult.Value.Select(x => 
+                new DishMenu() 
+                {
+                    DishId = x.Id,
+                    MenuId = Id
+                })
+                .ToList();
+
+            return Result.Success(this);
         }
 
         public Result<IEnumerable<Dish>> GenerateDishesList(IUnitOfWork unitOfWork)

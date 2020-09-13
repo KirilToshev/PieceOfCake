@@ -123,6 +123,9 @@
   <data name="DescriptionIsMandatory" xml:space="preserve">
     <value>{0} must have description.</value>
   </data>
+  <data name="EndDateIsMandatory" xml:space="preserve">
+    <value>End Date is mandatory.</value>
+  </data>
   <data name="IdNotFound" xml:space="preserve">
     <value>Element with Id={0} does not exists.</value>
   </data>
@@ -158,5 +161,8 @@
   </data>
   <data name="SequenceContainsNoElements" xml:space="preserve">
     <value>Sequence contains no elements.</value>
+  </data>
+  <data name="StartDateIsMandatory" xml:space="preserve">
+    <value>Start Date is mandatory.</value>
   </data>
 </root>

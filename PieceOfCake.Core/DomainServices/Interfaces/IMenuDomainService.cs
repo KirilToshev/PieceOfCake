@@ -11,7 +11,7 @@ namespace PieceOfCake.Core.DomainServices.Interfaces
         Result<IReadOnlyCollection<Menu>> Get();
         Result<Menu> Get(long id);
         Result<Menu> Create(DateTime? startDate, DateTime? endDate, byte servingsPerDay);
-        Result<Menu> Update(DateTime? startDate, DateTime? endDate, byte servingsPerDay);
+        Result<Menu> Update(long id, DateTime? startDate, DateTime? endDate, byte servingsPerDay);
         Result Delete(long id);
     }
 }

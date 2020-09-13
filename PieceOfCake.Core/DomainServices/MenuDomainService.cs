@@ -24,51 +24,54 @@ namespace PieceOfCake.Core.DomainServices
 
         public Result<IReadOnlyCollection<Menu>> Get()
         {
-            throw new NotImplementedException();
-            //var productsList = _unitOfWork.ProductRepository.Get();
+            var menuList = _unitOfWork.MenuRepository.Get();
 
-            //return Result.Success(productsList);
+            return Result.Success(menuList);
         }
 
         public Result<Menu> Get(long id)
         {
-            throw new NotImplementedException();
-            //var product = _unitOfWork.ProductRepository.GetById(id);
+            var menu = _unitOfWork.MenuRepository.GetById(id);
 
-            //if (product == null)
-            //    return Result.Failure<Product>(
-            //        _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
+            if (menu == null)
+                return Result.Failure<Menu>(
+                    _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
 
-            //return Result.Success(product);
+            return Result.Success(menu);
         }
 
-        public Result<Menu> Update(DateTime? startDate, DateTime? endDate, byte servingsPerDay)
+        public Result<Menu> Update(long id, DateTime? startDate, DateTime? endDate, byte servingsPerDay)
         {
-            throw new NotImplementedException();
+            var menuResult = this.Get(id);
+            if (menuResult.IsFailure)
+                return menuResult;
+
+            return menuResult.Value.Update(startDate, endDate, servingsPerDay, _unitOfWork)
+                .Tap(menu =>
+                {
+                    _unitOfWork.MenuRepository.Update(menu);
+                    _unitOfWork.Save();
+                });
         }
 
         public Result<Menu> Create(DateTime? startDate, DateTime? endDate, byte servingsPerDay)
         {
-            throw new NotImplementedException();
+            return Menu.Create(startDate, endDate, servingsPerDay, _resources)
+                .Tap(menu =>
+                {
+                    _unitOfWork.MenuRepository.Insert(menu);
+                    _unitOfWork.Save();
+                });
         }
 
         public Result Delete(long id)
         {
-            throw new NotImplementedException();
-            //return this.Get(id)
-            //    .Bind(product =>
-            //    {
-            //        var isProductInUse = _unitOfWork.DishRepository
-            //                                .Get(dish => dish.Ingredients.Any(i => i.Product.Id == product.Id))
-            //                                .Any();
-            //        if (isProductInUse)
-            //            return Result.Failure(_resources
-            //                .GenereteSentence(x => x.UserErrors.ItemIsInUse, x => x.CommonTerms.Product));
-
-            //        _unitOfWork.ProductRepository.Delete(product);
-            //        _unitOfWork.Save();
-            //        return Result.Success();
-            //    });
+            return this.Get(id)
+                .Tap(menu =>
+                {
+                    _unitOfWork.MenuRepository.Delete(menu);
+                    _unitOfWork.Save();
+                });
         }
     }
 }

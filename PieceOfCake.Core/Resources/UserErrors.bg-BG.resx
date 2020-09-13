@@ -123,6 +123,9 @@
   <data name="DescriptionIsMandatory" xml:space="preserve">
     <value>Описанието на {0} е задължително.</value>
   </data>
+  <data name="EndDateIsMandatory" xml:space="preserve">
+    <value>Крайна дата е задължителна.</value>
+  </data>
   <data name="IdNotFound" xml:space="preserve">
     <value>Елемент с идентификационен номер={0} не съществува.</value>
   </data>
@@ -158,5 +161,8 @@
   </data>
   <data name="SequenceContainsNoElements" xml:space="preserve">
     <value>Съдържанието на колекцията е празно.</value>
+  </data>
+  <data name="StartDateIsMandatory" xml:space="preserve">
+    <value>Стартова дата е задължителна.</value>
   </data>
 </root>
