@@ -46,18 +46,23 @@ namespace PieceOfCake.Core.DomainServices
             if (menuResult.IsFailure)
                 return menuResult;
 
+            var previousPeriodDaysCount = menuResult.Value.CalculateDuration(_resources);
+            if (previousPeriodDaysCount.IsFailure)
+                return previousPeriodDaysCount.ConvertFailure<Menu>();
+
             var updateResult = menuResult.Value.Update(startDate, endDate, servingsPerDay, _resources);
             if (updateResult.IsFailure)
                 return updateResult;
 
-            menuResult.Value.ClearAllRelatedDishes();
-            _unitOfWork.MenuRepository.Update(menuResult.Value);
-            _unitOfWork.Save();
+            var currentPeriodDaysCount = updateResult.Value.CalculateDuration(_resources);
+            if (currentPeriodDaysCount.IsFailure)
+                return currentPeriodDaysCount.ConvertFailure<Menu>();
 
-            var dishesListResult = menuResult.Value.GenerateDishesList(_unitOfWork, _resources);
-            if (dishesListResult.IsFailure)
-                return dishesListResult.ConvertFailure<Menu>();
-
+            if (previousPeriodDaysCount.Value.DaysDifference != currentPeriodDaysCount.Value.DaysDifference)
+            {
+                menuResult.Value.ClearAllRelatedDishes();
+            }
+            
             _unitOfWork.MenuRepository.Update(menuResult.Value);
             _unitOfWork.Save();
 
@@ -82,6 +87,26 @@ namespace PieceOfCake.Core.DomainServices
                     _unitOfWork.MenuRepository.Delete(menu);
                     _unitOfWork.Save();
                 });
+        }
+
+        public Result<Menu> GenerateDishesList(long id)
+        {
+            var menuResult = this.Get(id);
+            if (menuResult.IsFailure)
+                return menuResult;
+
+            menuResult.Value.ClearAllRelatedDishes();
+            _unitOfWork.MenuRepository.Update(menuResult.Value);
+            _unitOfWork.Save();
+
+            var dishesListResult = menuResult.Value.GenerateDishesList(_unitOfWork, _resources);
+            if (dishesListResult.IsFailure)
+                return dishesListResult.ConvertFailure<Menu>();
+
+            _unitOfWork.MenuRepository.Update(menuResult.Value);
+            _unitOfWork.Save();
+
+            return Result.Success(menuResult.Value);
         }
     }
 }

@@ -7,6 +7,7 @@ namespace PieceOfCake.Shared.ViewModels.Menu
 {
     public class MenuVm
     {
+        public long Id { get; set; }
         public byte ServingsPerDay { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }

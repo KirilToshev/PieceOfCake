@@ -8,6 +8,7 @@ using PieceOfCake.Core.Resources;
 using AutoMapper;
 using PieceOfCake.Shared.ViewModels.Dish;
 using PieceOfCake.Shared.ViewModels.Menu;
+using PieceOfCake.Core.Persistence;
 
 namespace PieceOfCake.Api.Controllers
 {
@@ -20,11 +21,13 @@ namespace PieceOfCake.Api.Controllers
         private readonly IMapper _mapper;
 
         private readonly IMenuDomainService _menuDomainService;
-        
+        private readonly IUnitOfWork _unitOfWork;
+
         public MenuController(
             ILogger<ProductController> logger,
             IResources resources,
             IMenuDomainService dishDomainService,
+            IUnitOfWork unitOfWork,
             IMapper mapper
             )
         {
@@ -33,6 +36,7 @@ namespace PieceOfCake.Api.Controllers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
             _menuDomainService = dishDomainService ?? throw new ArgumentNullException(nameof(dishDomainService));
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -70,6 +74,16 @@ namespace PieceOfCake.Api.Controllers
         public ActionResult<MenuVm> Post([FromBody]MenuVm menuVm)
         {
             var result = _menuDomainService.Create(menuVm.StartDate, menuVm.EndDate, menuVm.ServingsPerDay);
+            if (result.IsFailure)
+                return Error<MenuVm>(result.Error);
+
+            return Ok(_mapper.Map<MenuVm>(result.Value));
+        }
+
+        [HttpPatch("{id}")]
+        public ActionResult<MenuVm> GenerateDishesList(long id)
+        {
+            var result = _menuDomainService.GenerateDishesList(id);
             if (result.IsFailure)
                 return Error<MenuVm>(result.Error);
 
