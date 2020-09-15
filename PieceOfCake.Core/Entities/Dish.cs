@@ -82,15 +82,16 @@ namespace PieceOfCake.Core.Entities
             });
         }
 
-        public Result AddIngredients(IEnumerable<Ingredient> ingredients, IResources resources)
+        public Result UpdateIngredients(IEnumerable<Ingredient> ingredients, IResources resources)
         {
             return this.DishState.Draft(() => 
             {
+                Ingredients.Clear();
                 foreach (var ingredient in ingredients)
                 {
                     if (Ingredients.Contains(ingredient))
                         return Result.Failure(resources.GenereteSentence(x => x.UserErrors.IngredientAlreadyExists));
-
+                    
                     Ingredients.Add(ingredient);
                 }
 

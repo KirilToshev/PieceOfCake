@@ -2,10 +2,16 @@
     <input type="number" class="form-control" @bind="@Ingredient.Quantity" placeholder="Quantity">
 </td>
 <td>
-    <input type="number" class="form-control" @bind="@Ingredient.MeasureUnit.Id" placeholder="Measure Unit">
+    <RadzenDropDown TValue="MeasureUnitVm" FilterDelay="300"
+                    Data="@MeasureUnits" TextProperty="Name"
+                    @bind-Value="@Ingredient.MeasureUnit"
+                    AllowFiltering="true" />
 </td>
 <td>
-    <input type="number" class="form-control" @bind="@Ingredient.Product.Id" placeholder="Product">
+    <RadzenDropDown TValue="ProductVm" FilterDelay="300"
+                    Data="@Products" TextProperty="Name" 
+                    @bind-Value="@Ingredient.Product"
+                    AllowFiltering="true"/>
 </td>
 <td>
     <button @onclick="@Confirm" class="btn btn-success">
@@ -35,6 +41,12 @@
 
     [Parameter]
     public EventCallback<int> CancelEventCallback { get; set; }
+
+    [Parameter]
+    public IEnumerable<MeasureUnitVm> MeasureUnits { get; set; } = new HashSet<MeasureUnitVm>();
+
+    [Parameter]
+    public IEnumerable<ProductVm> Products { get; set; } = new HashSet<ProductVm>();
 
     protected async Task Confirm()
     {

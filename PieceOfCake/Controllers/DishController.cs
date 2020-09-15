@@ -94,7 +94,7 @@ namespace PieceOfCake.Api.Controllers
         }
 
         [HttpPatch("{id}")]
-        public IActionResult AddIngredients(long id, [FromBody]IEnumerable<AddIngredientVm> ingredientsVmList)
+        public IActionResult UpdateDishIngredients(long id, [FromBody]IEnumerable<AddIngredientVm> ingredientsVmList)
         {
             var errors = new List<string>();
             bool containErrors = false;
@@ -132,7 +132,7 @@ namespace PieceOfCake.Api.Controllers
             if (errors.Any())
                 return Error(errors.Aggregate((curr, next) => curr + ";" + next));
 
-            var addResult = _dishDomainService.AddIngredients(id, ingredients);
+            var addResult = _dishDomainService.UpdateIngredients(id, ingredients);
             if (addResult.IsFailure)
                 return Error(addResult.Error);
 

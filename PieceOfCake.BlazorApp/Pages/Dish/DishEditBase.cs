@@ -4,6 +4,8 @@ using PieceOfCake.BlazorApp.Components;
 using PieceOfCake.BlazorApp.Services.Interfaces;
 using PieceOfCake.Shared.ViewModels.Dish;
 using PieceOfCake.Shared.ViewModels.Dish.Ingredient;
+using PieceOfCake.Shared.ViewModels.MeasureUnit;
+using PieceOfCake.Shared.ViewModels.Product;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,16 @@ namespace PieceOfCake.BlazorApp.Pages.Dish
     {
         [Inject]
         protected IDishHttpService DishHttpService { get; set; }
+
+        [Inject]
+        public IMeasureUnitHttpService MeasureUnitHttpService { get; set; }
+
+        [Inject]
+        public IProductHttpService ProdcutHttpService { get; set; }
+
+        public IEnumerable<MeasureUnitVm> MeasureUnits { get; set; } = new HashSet<MeasureUnitVm>();
+
+        public IEnumerable<ProductVm> Products { get; set; } = new HashSet<ProductVm>();
 
         [Parameter]
         public long Id { get; set; }
@@ -39,6 +51,18 @@ namespace PieceOfCake.BlazorApp.Pages.Dish
 
             this.Item = dishResult.Value;
             this.DisplayIngredientEditComponent = dishResult.Value.Ingredients.Select(x => false).ToArray();
+
+            var measureUnitsList = await MeasureUnitHttpService.GetAllMeasureUnits();
+            if (measureUnitsList.IsFailure)
+                return;
+
+            MeasureUnits = measureUnitsList.Value;
+
+            var productsList = await ProdcutHttpService.GetAllProducts();
+            if (productsList.IsFailure)
+                return;
+
+            Products = productsList.Value;
         }
 
         public override async Task HandleValidSubmit()
@@ -87,6 +111,20 @@ namespace PieceOfCake.BlazorApp.Pages.Dish
             updatedDisplayList.RemoveAt(index);
             DisplayIngredientEditComponent = updatedDisplayList.ToArray();
             StateHasChanged();
+        }
+
+        public async Task UpdateIngredients()
+        {
+            var updateResult = await DishHttpService.UpdateIngredients(Item.Id, Item.Ingredients
+                .Select(x => new AddIngredientVm()
+                {
+                    Quantity = x.Quantity,
+                    MeasureUnitId = x.MeasureUnit.Id,
+                    ProductId = x.Product.Id
+                }));
+
+            if (updateResult.IsFailure)
+                this.Errors = updateResult.Error.Split(';');
         }
     }
 }

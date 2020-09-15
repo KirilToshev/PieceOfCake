@@ -82,10 +82,10 @@ namespace PieceOfCake.Core.DomainServices
                 });
         }
 
-        public Result AddIngredients(long id, IEnumerable<Ingredient> ingredients)
+        public Result UpdateIngredients(long id, IEnumerable<Ingredient> ingredients)
         {
             return Get(id)
-                .Tap(dish => dish.AddIngredients(ingredients, _resources)
+                .Tap(dish => dish.UpdateIngredients(ingredients, _resources)
                 .Tap(() => {
                     _unitOfWork.DishRepository.Update(dish);
                     _unitOfWork.Save();

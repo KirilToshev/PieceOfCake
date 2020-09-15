@@ -14,7 +14,7 @@ namespace PieceOfCake.BlazorApp.Services.Interfaces
         Task<Result<DishVm>> GetDishById(long dishId);
         Task<Result<DishVm>> CreateDish(CreateDishVm dish);
         Task<Result<DishVm>> UpdateDish(UpdateDishVm dish);
-        Task<Result<DishVm>> AddIngredients(IEnumerable<AddIngredientVm> ingredients);
+        Task<Result<DishVm>> UpdateIngredients(long dishId, IEnumerable<AddIngredientVm> ingredients);
         Task<Result> DeleteDish(long dishId);
     }
 }

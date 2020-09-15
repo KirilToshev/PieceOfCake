@@ -42,9 +42,9 @@ namespace PieceOfCake.BlazorApp.Services
             return await base.HandleDelete($"api/dishes/{dishId}");
         }
 
-        public async Task<Result<DishVm>> AddIngredients(IEnumerable<AddIngredientVm> ingredients)
+        public async Task<Result<DishVm>> UpdateIngredients(long dishId, IEnumerable<AddIngredientVm> ingredients)
         {
-            return await base.HandlePatch<DishVm>($"api/dishes", ingredients);
+            return await base.HandlePatch<DishVm>($"api/dishes/{dishId}", ingredients);
         }
     }
 }

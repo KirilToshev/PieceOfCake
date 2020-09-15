@@ -13,6 +13,6 @@ namespace PieceOfCake.Core.DomainServices.Interfaces
         Result<Dish> Create(string? name, string? description);
         Result<Dish> UpdateNameAndDescritption(long id, string? name, string? description);
         Result Delete(long id);
-        Result AddIngredients(long id, IEnumerable<Ingredient> ingredients);
+        Result UpdateIngredients(long id, IEnumerable<Ingredient> ingredients);
     }
 }
