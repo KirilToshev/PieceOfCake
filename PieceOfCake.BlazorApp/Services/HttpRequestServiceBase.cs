@@ -50,7 +50,7 @@ namespace PieceOfCake.BlazorApp.Services
             return await HandleGenericResponse<TResponseContent>(response);
         }
 
-        public async Task<Result<TResponseContent>> HandlePatch<TResponseContent>(string url, object content)
+        public async Task<Result<TResponseContent>> HandlePatch<TResponseContent>(string url, object content = null)
         {
             var request = new HttpRequestMessage(HttpMethod.Patch, url);
             //request.Headers.Add("Accept-Language", "bg-BG");

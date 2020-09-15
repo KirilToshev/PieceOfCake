@@ -1,19 +1,15 @@
 ﻿using Microsoft.AspNetCore.Components;
-using PieceOfCake.BlazorApp.Services.Interfaces;
-using PieceOfCake.Shared.ViewModels.Dish;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PieceOfCake.BlazorApp.Pages.Dish
+namespace PieceOfCake.BlazorApp.Components
 {
-    public abstract class DishCreateEditBase : ComponentBase
+    public abstract class CreateEditBase<TItem> : ComponentBase
+        where TItem: new()
     {
-        [Inject]
-        protected IDishHttpService DishHttpService { get; set; }
-
-        public DishVm Dish { get; set; } = new DishVm();
+        public TItem Item { get; set; } = new TItem();
 
         public IEnumerable<string> Errors { get; set; } = new List<string>();
 

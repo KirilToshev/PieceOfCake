@@ -1,4 +1,7 @@
-﻿using PieceOfCake.Shared.ViewModels.Dish;
+﻿using Microsoft.AspNetCore.Components;
+using PieceOfCake.BlazorApp.Components;
+using PieceOfCake.BlazorApp.Services.Interfaces;
+using PieceOfCake.Shared.ViewModels.Dish;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,14 +9,17 @@ using System.Threading.Tasks;
 
 namespace PieceOfCake.BlazorApp.Pages.Dish
 {
-    public class DishCreateBase : DishCreateEditBase
+    public class DishCreateBase : CreateEditBase<DishVm>
     {
+        [Inject]
+        protected IDishHttpService DishHttpService { get; set; }
+
         public override async Task HandleValidSubmit()
         {
             var createModel = new CreateDishVm()
             {
-                Name = Dish.Name,
-                Description = Dish.Description
+                Name = Item.Name,
+                Description = Item.Description
             };
 
             var updateResult = await this.DishHttpService.CreateDish(createModel);

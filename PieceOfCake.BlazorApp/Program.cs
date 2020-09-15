@@ -39,6 +39,11 @@ namespace PieceOfCake.BlazorApp
                 client.BaseAddress = new Uri("https://localhost:44312/");
             });
 
+            builder.Services.AddHttpClient<IMenuHttpService, MenuHttpService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:44312/");
+            });
+
             await builder.Build().RunAsync();
         }
     }

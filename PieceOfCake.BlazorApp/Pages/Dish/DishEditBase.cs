@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Components;
+using PieceOfCake.BlazorApp.Components;
 using PieceOfCake.BlazorApp.Services.Interfaces;
 using PieceOfCake.Shared.ViewModels.Dish;
 using PieceOfCake.Shared.ViewModels.Dish.Ingredient;
@@ -10,8 +11,11 @@ using System.Threading.Tasks;
 
 namespace PieceOfCake.BlazorApp.Pages.Dish
 {
-    public class DishEditBase : DishCreateEditBase
+    public class DishEditBase : CreateEditBase<DishVm>
     {
+        [Inject]
+        protected IDishHttpService DishHttpService { get; set; }
+
         [Parameter]
         public long Id { get; set; }
 
@@ -33,7 +37,7 @@ namespace PieceOfCake.BlazorApp.Pages.Dish
                 return;
             }
 
-            this.Dish = dishResult.Value;
+            this.Item = dishResult.Value;
             this.DisplayIngredientEditComponent = dishResult.Value.Ingredients.Select(x => false).ToArray();
         }
 
@@ -41,9 +45,9 @@ namespace PieceOfCake.BlazorApp.Pages.Dish
         {
             var updateModel = new UpdateDishVm()
             {
-                Id = Dish.Id,
-                Name = Dish.Name,
-                Description = Dish.Description
+                Id = Item.Id,
+                Name = Item.Name,
+                Description = Item.Description
             };
 
             var updateResult = await this.DishHttpService.UpdateDish(updateModel);
@@ -58,9 +62,9 @@ namespace PieceOfCake.BlazorApp.Pages.Dish
 
         public void AddIngredient()
         {
-            var updatedList = Dish.Ingredients.ToList();
+            var updatedList = Item.Ingredients.ToList();
             updatedList.Add(new ReadIngredientVm());
-            Dish.Ingredients = updatedList.ToArray();
+            Item.Ingredients = updatedList.ToArray();
             var updatedDisplayList = DisplayIngredientEditComponent.ToList();
             updatedDisplayList.Add(true);
             DisplayIngredientEditComponent = updatedDisplayList.ToArray();
@@ -75,10 +79,10 @@ namespace PieceOfCake.BlazorApp.Pages.Dish
 
         public void DeleteIngredient(ReadIngredientVm ingredient)
         {
-            var updatedList = Dish.Ingredients.ToList();
+            var updatedList = Item.Ingredients.ToList();
             var index = updatedList.FindIndex(0, x => x.Id == ingredient.Id);
             updatedList.Remove(ingredient);
-            Dish.Ingredients = updatedList;
+            Item.Ingredients = updatedList;
             var updatedDisplayList = DisplayIngredientEditComponent.ToList();
             updatedDisplayList.RemoveAt(index);
             DisplayIngredientEditComponent = updatedDisplayList.ToArray();

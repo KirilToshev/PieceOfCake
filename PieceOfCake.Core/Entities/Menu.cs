@@ -100,7 +100,7 @@ namespace PieceOfCake.Core.Entities
 
         public void ClearAllRelatedDishes()
         {
-            this.Dishes = new HashSet<DishMenu>();
+            this.Dishes.Clear();
         }
     }
 }

@@ -7,6 +7,11 @@ namespace PieceOfCake.Shared.ViewModels.Menu
 {
     public class MenuVm
     {
+        public MenuVm()
+        {
+            this.Dishes = new HashSet<DishVm>();
+        }
+
         public long Id { get; set; }
         public byte ServingsPerDay { get; set; }
         public DateTime? StartDate { get; set; }

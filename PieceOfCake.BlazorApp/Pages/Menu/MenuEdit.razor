@@ -1,0 +1,81 @@
+﻿@page "/menu/edit/{Id:long}"
+@inherits MenuEditBase
+
+<h1>Edit Menu</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm Model="Item" OnValidSubmit="@HandleValidSubmit">
+
+                <div class="form-group">
+                    <label for="startDate">Start Date:</label>
+                    <RadzenDatePicker id="startDate" @bind-Value="@Item.StartDate" DateFormat="dd/MM/yyyy h:mm tt" />
+                </div>
+
+                <div class="form-group">
+                    <label for="endDate">End Date:</label>
+                    <RadzenDatePicker id="endDate" @bind-Value="@Item.EndDate" DateFormat="dd/MM/yyyy h:mm tt" />
+                </div>
+
+                <div class="form-group">
+                    <label for="servingsPerDay">Number of servings per day:</label>
+                    <input id="servingsPerDay" type="number" class="form-control col-md-3" @bind="@Item.ServingsPerDay" placeholder="Quantity">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+        @if (Item.Dishes != null & Item.Dishes.Any())
+        {
+            <div class="col-md-4">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var dish in Item.Dishes)
+                        {
+                            <tr>
+                                @dish.Name
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-md-4">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Quantity</th>
+                            <th>Measure unit</th>
+                            <th>Product</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var dish in Item.Dishes)
+                        {
+                            @foreach (var ingredient in dish.Ingredients)
+                            {
+                                <tr>
+                                    <IngredientDisplayInTable Ingredient="ingredient"
+                                                              ShowButtons="false">
+                                    </IngredientDisplayInTable>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<button @onclick="GenerateDishesList" class="btn btn-dark table-btn quick-add-btn">&nbsp;&nbsp;+&nbsp;&nbsp;</button>
+<DisplayErrors Errors="Errors.ToList()">
+</DisplayErrors>
