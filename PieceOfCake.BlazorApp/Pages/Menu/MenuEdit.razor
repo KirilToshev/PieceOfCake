@@ -60,6 +60,9 @@
                     <tbody>
                         @foreach (var dish in Item.Dishes)
                         {
+                            <tr>
+                                @dish.Name
+                            </tr>
                             @foreach (var ingredient in dish.Ingredients)
                             {
                                 <tr>
@@ -76,6 +79,6 @@
     </div>
 </div>
 
-<button @onclick="GenerateDishesList" class="btn btn-dark table-btn quick-add-btn">&nbsp;&nbsp;+&nbsp;&nbsp;</button>
+<button @onclick="GenerateDishesList" class="btn btn-dark table-btn quick-add-btn">Generate Dishes List</button>
 <DisplayErrors Errors="Errors.ToList()">
 </DisplayErrors>

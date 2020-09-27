@@ -28,6 +28,8 @@ namespace PieceOfCake.BlazorApp.Pages.Dish
 
         public IEnumerable<ProductVm> Products { get; set; } = new HashSet<ProductVm>();
 
+        public bool IsListUpdated { get; set; }
+
         [Parameter]
         public long Id { get; set; }
 
@@ -92,6 +94,7 @@ namespace PieceOfCake.BlazorApp.Pages.Dish
             var updatedDisplayList = DisplayIngredientEditComponent.ToList();
             updatedDisplayList.Add(true);
             DisplayIngredientEditComponent = updatedDisplayList.ToArray();
+            IsListUpdated = true;
             StateHasChanged();
         }
 
@@ -103,6 +106,7 @@ namespace PieceOfCake.BlazorApp.Pages.Dish
 
         public void DeleteIngredient(ReadIngredientVm ingredient)
         {
+            IsListUpdated = true;
             var updatedList = Item.Ingredients.ToList();
             var index = updatedList.FindIndex(0, x => x.Id == ingredient.Id);
             updatedList.Remove(ingredient);
@@ -115,13 +119,14 @@ namespace PieceOfCake.BlazorApp.Pages.Dish
 
         public async Task UpdateIngredients()
         {
+            IsListUpdated = true;
             var updateResult = await DishHttpService.UpdateIngredients(Item.Id, Item.Ingredients
                 .Select(x => new AddIngredientVm()
                 {
                     Quantity = x.Quantity,
                     MeasureUnitId = x.MeasureUnit.Id,
                     ProductId = x.Product.Id
-                }));
+                })).Finally(x => { IsListUpdated = false; return x; });
 
             if (updateResult.IsFailure)
                 this.Errors = updateResult.Error.Split(';');

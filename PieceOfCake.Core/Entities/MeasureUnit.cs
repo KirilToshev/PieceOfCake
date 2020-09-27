@@ -12,7 +12,7 @@ namespace PieceOfCake.Core.Entities
     public class MeasureUnit : Entity
     {
         #warning Sparation Of Concerns violation
-        //The default constructor is requred by Moq
+        //The default constructor is requred by Moq and EF Core
         protected MeasureUnit()
         {
         }
@@ -30,9 +30,7 @@ namespace PieceOfCake.Core.Entities
             if (nameResult.IsFailure)
                 return nameResult.ConvertFailure<MeasureUnit>();
 
-            var measureUnit = unitOfWork.MeasureUnitRepository.GetFirstOrDefault(x => x.Name == name);
-            if (measureUnit != null)
-                return Result.Failure<MeasureUnit>(resources.GenereteSentence(x => x.UserErrors.NameAlreadyExists, x => measureUnit.Name));
+            
 
             var entity = new MeasureUnit(nameResult.Value);
             return Result.Success(entity);

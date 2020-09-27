@@ -69,6 +69,6 @@
     </table>
 }
 <button @onclick="AddIngredient" class="btn btn-dark table-btn quick-add-btn">&nbsp;&nbsp;+&nbsp;&nbsp;</button>
-<button @onclick="UpdateIngredients" class="btn btn-dark table-btn quick-add-btn">Update Ingredients List</button>
+<button @onclick="UpdateIngredients" class="btn btn-dark table-btn quick-add-btn" disabled=@(!IsListUpdated)>Update Ingredients List</button>
 <DisplayErrors Errors="Errors.ToList()">
 </DisplayErrors>
