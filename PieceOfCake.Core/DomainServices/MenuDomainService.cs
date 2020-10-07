@@ -58,10 +58,7 @@ namespace PieceOfCake.Core.DomainServices
             if (currentPeriodDaysCount.IsFailure)
                 return currentPeriodDaysCount.ConvertFailure<Menu>();
 
-            if (previousPeriodDaysCount.Value.DaysDifference != currentPeriodDaysCount.Value.DaysDifference)
-            {
-                menuResult.Value.ClearAllRelatedDishes();
-            }
+            menuResult.Value.ClearAllRelatedDishes();
             
             _unitOfWork.MenuRepository.Update(menuResult.Value);
             _unitOfWork.Save();

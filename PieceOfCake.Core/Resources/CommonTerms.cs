@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Localization;
 using PieceOfCake.Core.Enumerations;
 using PieceOfCake.Core.Resources;
+using System;
 
 namespace PieceOfCake.Core.Resources
 {
@@ -22,6 +23,11 @@ namespace PieceOfCake.Core.Resources
         public string DishState(DishState state)
         {
             return GetString(state.ToString());
+        }
+
+        public string DayOfWeek(DayOfWeek dayOfWeek)
+        {
+            return GetString(dayOfWeek.ToString());
         }
 
         private string GetString(string name) => _localizer[name];

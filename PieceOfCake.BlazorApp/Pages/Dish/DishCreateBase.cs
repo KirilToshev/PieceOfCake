@@ -29,7 +29,7 @@ namespace PieceOfCake.BlazorApp.Pages.Dish
                 return;
             }
 
-            Navigation.NavigateTo($"/edit/{updateResult.Value.Id}");
+            Navigation.NavigateTo($"/dishes/edit/{updateResult.Value.Id}");
         }
     }
 }

@@ -26,7 +26,7 @@
                 <button type="submit" class="btn btn-primary">Save</button>
             </EditForm>
         </div>
-        @if (Item.Dishes != null & Item.Dishes.Any())
+        @if (Item.DishesPerDay != null & Item.DishesPerDay.Any())
         {
             <div class="col-md-4">
                 <table class="table">
@@ -37,11 +37,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var dish in Item.Dishes)
+                        @foreach (var kvPair in Item.DishesPerDay)
                         {
                             <tr>
-                                @dish.Name
+                                <b>@kvPair.Key</b>
                             </tr>
+                            foreach (var dish in Item.DishesPerDay[kvPair.Key])
+                            {
+                                <tr>
+                                    @dish.Name
+                                </tr>
+                            }
                         }
                     </tbody>
                 </table>
@@ -61,7 +67,7 @@
                         @foreach (var dish in Item.Dishes)
                         {
                             <tr>
-                                @dish.Name
+                                <b>@dish.Name</b>
                             </tr>
                             @foreach (var ingredient in dish.Ingredients)
                             {

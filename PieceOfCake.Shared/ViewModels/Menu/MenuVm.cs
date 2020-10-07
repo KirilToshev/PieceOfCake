@@ -10,6 +10,7 @@ namespace PieceOfCake.Shared.ViewModels.Menu
         public MenuVm()
         {
             this.Dishes = new HashSet<DishVm>();
+            this.DishesPerDay = new Dictionary<string, IEnumerable<DishVm>>();
         }
 
         public long Id { get; set; }
@@ -18,5 +19,6 @@ namespace PieceOfCake.Shared.ViewModels.Menu
         public DateTime? EndDate { get; set; }
 
         public IEnumerable<DishVm> Dishes { get; set; }
+        public Dictionary<string, IEnumerable<DishVm>> DishesPerDay { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using PieceOfCake.Core.Enumerations;
+using System;
 
 namespace PieceOfCake.Core.Resources
 {
@@ -9,5 +10,6 @@ namespace PieceOfCake.Core.Resources
         public string Dish { get; }
 
         string DishState(DishState state);
+        string DayOfWeek(DayOfWeek dayOfWeek);
     }
 }

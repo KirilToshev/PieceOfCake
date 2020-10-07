@@ -102,5 +102,35 @@ namespace PieceOfCake.Core.Entities
         {
             this.Dishes.Clear();
         }
+
+        public Result<Dictionary<DateTime, ICollection<DishMenu>>> CalculateDishesPerDay(IResources resources)
+        {
+            var durationResult = CalculateDuration(resources);
+            if (durationResult.IsFailure)
+                return durationResult.ConvertFailure<Dictionary<DateTime, ICollection<DishMenu>>>();
+
+            var result = new Dictionary<DateTime, ICollection<DishMenu>>();
+            var dishes = Dishes.ToArray();
+            if (!dishes.Any())
+                return result;
+
+            var index = 0;
+
+            foreach (var day in durationResult.Value)
+            {
+                for (int i = 0; i < ServingsPerDay; i++, index++)
+                {
+                    if (!result.ContainsKey(day))
+                    {
+                        var dishesPerDayList = new List<DishMenu>();
+                        result.Add(day, dishesPerDayList);
+                    }
+
+                    result[day].Add(dishes[index]);
+                }
+            }
+
+            return result;
+        }
     }
 }

@@ -1,0 +1,76 @@
+﻿@using CSharpFunctionalExtensions;
+@using System.Linq;
+
+<h3>Dish Of The Day</h3>
+
+@if (DishesOfTheDay != null & DishesOfTheDay.Any())
+{
+    <div class="col-md-4">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Quantity</th>
+                    <th>Measure unit</th>
+                    <th>Product</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var dish in DishesOfTheDay)
+                {
+                    <tr>
+                        <b>@dish.Name</b>
+                    </tr>
+                    @foreach (var ingredient in dish.Ingredients)
+                    {
+                        <tr>
+                            <IngredientDisplayInTable Ingredient="ingredient"
+                                                      ShowButtons="false">
+                            </IngredientDisplayInTable>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    [Inject]
+    IMenuHttpService MenuHttpService { get; set; }
+
+    public ICollection<DishVm> DishesOfTheDay { get; set; } = new List<DishVm>();
+
+    public List<string> Errors { get; set; } = new List<string>();
+
+    public bool IsLoading { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+        var menus = await MenuHttpService.GetAllMenus().Finally(x =>
+        {
+            IsLoading = false;
+            return x;
+        });
+
+        if (menus.IsFailure)
+        {
+            Errors = menus.Error.Split(';').ToList();
+            return;
+        }
+
+        var menuInThisDay = menus.Value
+            .FirstOrDefault(x => x.DishesPerDay.Keys.Select(k => k.Split(' ')[0])
+            .Contains(DateTime.Now.Date.ToShortDateString()));
+
+        if (menuInThisDay == null)
+            return;
+
+        var key = menuInThisDay.DishesPerDay.Keys.FirstOrDefault(k => k.Split(' ')[0] == DateTime.Now.Date.ToShortDateString());
+
+        this.DishesOfTheDay = menuInThisDay.DishesPerDay[key].ToList();
+
+        StateHasChanged();
+    }
+}

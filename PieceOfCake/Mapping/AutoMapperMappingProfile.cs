@@ -31,7 +31,11 @@ namespace PieceOfCake.Api.Mapping
                 .ForMember(dest => dest.State, opt => opt.MapFrom(src => resources.CommonTerms.DishState(src.DishState.State)));
 
             CreateMap<Menu, MenuVm>()
-                .ForMember(dest => dest.Dishes, opt => opt.MapFrom(src => src.Dishes.Select(x => x.Dish)));
+                .ForMember(dest => dest.Dishes, opt => opt.MapFrom(src => src.Dishes.Select(x => x.Dish)))
+                .ForMember(dest => dest.DishesPerDay, opt => opt.MapFrom(src => src.CalculateDishesPerDay(resources).Value
+                .ToDictionary(
+                    key => key.Key.Date.ToShortDateString() + " " + resources.CommonTerms.DayOfWeek(key.Key.Date.DayOfWeek),
+                    value => value.Value.Select(x => x.Dish))));
         }
     }
 }

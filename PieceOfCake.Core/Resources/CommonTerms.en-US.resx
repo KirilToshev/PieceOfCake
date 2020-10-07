@@ -129,13 +129,34 @@
   <data name="Draft" xml:space="preserve">
     <value>Draft</value>
   </data>
+  <data name="Friday" xml:space="preserve">
+    <value>Friday</value>
+  </data>
   <data name="MeasureUnit" xml:space="preserve">
     <value>Measure Unit</value>
+  </data>
+  <data name="Monday" xml:space="preserve">
+    <value>Monday</value>
   </data>
   <data name="Product" xml:space="preserve">
     <value>Product</value>
   </data>
   <data name="Rejected" xml:space="preserve">
     <value>Rejected</value>
+  </data>
+  <data name="Saturday" xml:space="preserve">
+    <value>Saturday</value>
+  </data>
+  <data name="Sunday" xml:space="preserve">
+    <value>Sunday</value>
+  </data>
+  <data name="Thursday" xml:space="preserve">
+    <value>Thursday</value>
+  </data>
+  <data name="Tuesday" xml:space="preserve">
+    <value>Tuesday</value>
+  </data>
+  <data name="Wednesday" xml:space="preserve">
+    <value>Wednesday</value>
   </data>
 </root>

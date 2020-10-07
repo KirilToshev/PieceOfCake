@@ -129,13 +129,34 @@
   <data name="Draft" xml:space="preserve">
     <value>Чернова</value>
   </data>
+  <data name="Friday" xml:space="preserve">
+    <value>Петък</value>
+  </data>
   <data name="MeasureUnit" xml:space="preserve">
     <value>Еденица за измерване</value>
+  </data>
+  <data name="Monday" xml:space="preserve">
+    <value>Понеделник</value>
   </data>
   <data name="Product" xml:space="preserve">
     <value>Продукт</value>
   </data>
   <data name="Rejected" xml:space="preserve">
     <value>Отхвърлен</value>
+  </data>
+  <data name="Saturday" xml:space="preserve">
+    <value>Събота</value>
+  </data>
+  <data name="Sunday" xml:space="preserve">
+    <value>Неделя</value>
+  </data>
+  <data name="Thursday" xml:space="preserve">
+    <value>Четвъртък</value>
+  </data>
+  <data name="Tuesday" xml:space="preserve">
+    <value>Вторник</value>
+  </data>
+  <data name="Wednesday" xml:space="preserve">
+    <value>Сряда</value>
   </data>
 </root>

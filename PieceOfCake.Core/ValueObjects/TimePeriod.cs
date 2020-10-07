@@ -1,12 +1,13 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Resources;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
 namespace PieceOfCake.Core.ValueObjects
 {
-    public class TimePeriod : ValueObject<TimePeriod>
+    public class TimePeriod : ValueObject<TimePeriod>, IEnumerable<DateTime>
     {
         private TimePeriod(DateTime startDate, DateTime endDate)
         {
@@ -18,7 +19,7 @@ namespace PieceOfCake.Core.ValueObjects
 
         public DateTime EndDate { get; private set; }
 
-        public int DaysDifference { get { return (this.EndDate - this.StartDate).Days; } }
+        public int DaysDifference { get { return (this.EndDate - this.StartDate).Days + 1; } }
 
         public static Result<TimePeriod> Create(DateTime? startDate, DateTime? endDate, IResources resources)
         {
@@ -47,6 +48,19 @@ namespace PieceOfCake.Core.ValueObjects
         protected override int GetHashCodeCore()
         {
             return StartDate.GetHashCode() ^ 2451 & EndDate.GetHashCode() ^ 9038;
+        }
+
+        public IEnumerator<DateTime> GetEnumerator()
+        {
+            for (DateTime dayIterrator = StartDate; dayIterrator.Date <= EndDate.Date; dayIterrator = dayIterrator.AddDays(1))
+            {
+                yield return dayIterrator;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
