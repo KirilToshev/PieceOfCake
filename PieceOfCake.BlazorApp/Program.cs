@@ -44,6 +44,8 @@ namespace PieceOfCake.BlazorApp
                 client.BaseAddress = new Uri("https://localhost:44312/");
             });
 
+            builder.Services.AddSingleton<IEventsService, EventsService>();
+
             await builder.Build().RunAsync();
         }
     }

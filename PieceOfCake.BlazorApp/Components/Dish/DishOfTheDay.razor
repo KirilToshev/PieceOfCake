@@ -3,7 +3,11 @@
 
 <h3>Dish Of The Day</h3>
 
-@if (DishesOfTheDay != null & DishesOfTheDay.Any())
+@if (IsLoading)
+{
+    <p>Loading data...</p>
+}
+else if (DishesOfTheDay != null & DishesOfTheDay.Any())
 {
     <div class="col-md-4">
         <table class="table">
@@ -33,6 +37,10 @@
             </tbody>
         </table>
     </div>
+}
+else
+{
+    <p>There are no dishes for today</p>
 }
 
 @code {
