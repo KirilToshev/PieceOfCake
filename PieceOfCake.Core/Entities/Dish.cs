@@ -1,6 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Common;
-using PieceOfCake.Core.Entities.EFCoreShortcomings;
 using PieceOfCake.Core.Enumerations;
 using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
@@ -41,7 +40,7 @@ namespace PieceOfCake.Core.Entities
 
         public virtual ICollection<Ingredient> Ingredients { get; protected set; }
 
-        public virtual ICollection<DishMenu> Menus { get; protected set; }
+        public virtual ICollection<Menu> Menus { get; protected set; }
 
         public static Result<Dish> Create(string? name, string? description, IResources resources)
         {

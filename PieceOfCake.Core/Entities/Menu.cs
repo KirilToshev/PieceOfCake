@@ -1,6 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Common;
-using PieceOfCake.Core.Entities.EFCoreShortcomings;
 using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
 using PieceOfCake.Core.ValueObjects;
@@ -26,7 +25,7 @@ namespace PieceOfCake.Core.Entities
             this.StartDate = duration.StartDate;
             this.EndDate = duration.EndDate;
             this.ServingsPerDay = servingsPerDay;
-            this.Dishes = new HashSet<DishMenu>();
+            this.Dishes = new HashSet<Dish>();
         }
 
         public byte ServingsPerDay { get; private set; }
@@ -42,7 +41,7 @@ namespace PieceOfCake.Core.Entities
         public DateTime StartDate { get; private set; }
         public DateTime EndDate { get; private set; }
 
-        public virtual ICollection<DishMenu> Dishes { get; protected set; }
+        public virtual ICollection<Dish> Dishes { get; protected set; }
 
         public static Result<Menu> Create(DateTime? startDate, DateTime? endDate, byte servingsPerDay, IResources resources)
         {
@@ -87,13 +86,7 @@ namespace PieceOfCake.Core.Entities
             //    result.Add(dishesList.ElementAt(i % dishesList.Count()));
             //}
 
-            this.Dishes = dishesList.Take(totalNumberOfServings)
-                .Select(x => new DishMenu()
-                {
-                    DishId = x.Id,
-                    MenuId = Id
-                })
-                .ToList();
+            this.Dishes = dishesList.Take(totalNumberOfServings).ToList();
 
             return Result.Success();
         }
@@ -103,13 +96,13 @@ namespace PieceOfCake.Core.Entities
             this.Dishes.Clear();
         }
 
-        public Result<Dictionary<DateTime, ICollection<DishMenu>>> CalculateDishesPerDay(IResources resources)
+        public Result<Dictionary<DateTime, ICollection<Dish>>> CalculateDishesPerDay(IResources resources)
         {
             var durationResult = CalculateDuration(resources);
             if (durationResult.IsFailure)
-                return durationResult.ConvertFailure<Dictionary<DateTime, ICollection<DishMenu>>>();
+                return durationResult.ConvertFailure<Dictionary<DateTime, ICollection<Dish>>>();
 
-            var result = new Dictionary<DateTime, ICollection<DishMenu>>();
+            var result = new Dictionary<DateTime, ICollection<Dish>>();
             var dishes = Dishes.ToArray();
             if (!dishes.Any())
                 return result;
@@ -122,7 +115,7 @@ namespace PieceOfCake.Core.Entities
                 {
                     if (!result.ContainsKey(day))
                     {
-                        var dishesPerDayList = new List<DishMenu>();
+                        var dishesPerDayList = new List<Dish>();
                         result.Add(day, dishesPerDayList);
                     }
 

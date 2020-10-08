@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PieceOfCake.Persistence;
 
 namespace PieceOfCake.Persistence.Migrations
 {
     [DbContext(typeof(PocDbContext))]
-    partial class PocDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201008095133_Remove_DishMenu_Entity")]
+    partial class Remove_DishMenu_Entity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

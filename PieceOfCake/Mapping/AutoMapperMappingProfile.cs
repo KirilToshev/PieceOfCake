@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using PieceOfCake.Core.Entities;
-using PieceOfCake.Core.Entities.EFCoreShortcomings;
 using PieceOfCake.Core.Resources;
 using PieceOfCake.Shared.ViewModels.Dish;
 using PieceOfCake.Shared.ViewModels.Dish.Ingredient;
@@ -31,11 +30,11 @@ namespace PieceOfCake.Api.Mapping
                 .ForMember(dest => dest.State, opt => opt.MapFrom(src => resources.CommonTerms.DishState(src.DishState.State)));
 
             CreateMap<Menu, MenuVm>()
-                .ForMember(dest => dest.Dishes, opt => opt.MapFrom(src => src.Dishes.Select(x => x.Dish)))
+                //TODO: Fix .Value call -> real NullReferenceException threat!
                 .ForMember(dest => dest.DishesPerDay, opt => opt.MapFrom(src => src.CalculateDishesPerDay(resources).Value
                 .ToDictionary(
-                    key => key.Key.Date.ToShortDateString() + " " + resources.CommonTerms.DayOfWeek(key.Key.Date.DayOfWeek),
-                    value => value.Value.Select(x => x.Dish))));
+                    kvPair => kvPair.Key.Date.ToShortDateString() + " " + resources.CommonTerms.DayOfWeek(kvPair.Key.Date.DayOfWeek),
+                    kvPair => kvPair.Value)));
         }
     }
 }
