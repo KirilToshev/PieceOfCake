@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Entities;
+using PieceOfCake.Core.IoModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,6 +14,6 @@ namespace PieceOfCake.Core.DomainServices.Interfaces
         Result<Dish> Create(string? name, string? description);
         Result<Dish> UpdateNameAndDescritption(long id, string? name, string? description);
         Result Delete(long id);
-        Result UpdateIngredients(long id, IEnumerable<Ingredient> ingredients);
+        Result UpdateIngredients(long id, IEnumerable<AddIngredientDto> ingredientsVmList);
     }
 }

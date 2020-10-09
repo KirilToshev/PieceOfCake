@@ -9,6 +9,7 @@ using PieceOfCake.Core.Entities;
 using PieceOfCake.Core.Resources;
 using AutoMapper;
 using PieceOfCake.Shared.ViewModels.Dish;
+using PieceOfCake.Core.IoModels;
 
 namespace PieceOfCake.Api.Controllers
 {
@@ -21,15 +22,13 @@ namespace PieceOfCake.Api.Controllers
         private readonly IMapper _mapper;
 
         private readonly IDishDomainService _dishDomainService;
-        private readonly IMeasureUnitDomainService _measureUnitDomainService;
-        private readonly IProductDomainService _productDomainService;
+        
         
         public DishController(
             ILogger<ProductController> logger,
             IResources resources,
             IDishDomainService dishDomainService,
-            IMeasureUnitDomainService measureUnitDomainService,
-            IProductDomainService productDomainService,
+            
             IMapper mapper
             )
         {
@@ -38,8 +37,7 @@ namespace PieceOfCake.Api.Controllers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
             _dishDomainService = dishDomainService ?? throw new ArgumentNullException(nameof(dishDomainService));
-            _measureUnitDomainService = measureUnitDomainService ?? throw new ArgumentNullException(nameof(measureUnitDomainService));
-            _productDomainService = productDomainService ?? throw new ArgumentNullException(nameof(productDomainService));
+            
         }
 
         [HttpGet]
@@ -96,45 +94,10 @@ namespace PieceOfCake.Api.Controllers
         [HttpPatch("{id}")]
         public IActionResult UpdateDishIngredients(long id, [FromBody]IEnumerable<AddIngredientVm> ingredientsVmList)
         {
-            var errors = new List<string>();
-            bool containErrors = false;
-            var ingredients = new List<Ingredient>();
-
-            foreach (var ingredientVm in ingredientsVmList)
-            {
-                var measureUnitResult = _measureUnitDomainService.Get(ingredientVm.MeasureUnitId);
-                if (measureUnitResult.IsFailure)
-                {
-                    errors.Add(measureUnitResult.Error);
-                    containErrors = true;
-                }
-
-                var productResult = _productDomainService.Get(ingredientVm.ProductId);
-                if (productResult.IsFailure)
-                {
-                    errors.Add(productResult.Error);
-                    containErrors = true;
-                }
-
-                if (containErrors)
-                    continue;
-
-                var ingredientResult = Ingredient.Create(ingredientVm.Quantity, measureUnitResult.Value, productResult.Value, _resources);
-                if (ingredientResult.IsFailure)
-                {
-                    errors.Add(ingredientResult.Error);
-                    continue;
-                }
-
-                ingredients.Add(ingredientResult.Value);
-            }
-
-            if (errors.Any())
-                return Error(errors.Aggregate((curr, next) => curr + ";" + next));
-
-            var addResult = _dishDomainService.UpdateIngredients(id, ingredients);
-            if (addResult.IsFailure)
-                return Error(addResult.Error);
+            var ingredients = _mapper.ProjectTo<AddIngredientDto>(ingredientsVmList.AsQueryable());
+            var result = _dishDomainService.UpdateIngredients(id, ingredients);
+            if (result.IsFailure)
+                return Error(result.Error);
 
             return Ok();
         }

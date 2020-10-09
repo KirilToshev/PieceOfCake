@@ -1,15 +1,13 @@
 ﻿using AutoMapper;
 using PieceOfCake.Core.Entities;
+using PieceOfCake.Core.IoModels;
 using PieceOfCake.Core.Resources;
 using PieceOfCake.Shared.ViewModels.Dish;
 using PieceOfCake.Shared.ViewModels.Dish.Ingredient;
 using PieceOfCake.Shared.ViewModels.MeasureUnit;
 using PieceOfCake.Shared.ViewModels.Menu;
 using PieceOfCake.Shared.ViewModels.Product;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace PieceOfCake.Api.Mapping
 {
@@ -35,6 +33,8 @@ namespace PieceOfCake.Api.Mapping
                 .ToDictionary(
                     kvPair => kvPair.Key.Date.ToShortDateString() + " " + resources.CommonTerms.DayOfWeek(kvPair.Key.Date.DayOfWeek),
                     kvPair => kvPair.Value)));
+
+            CreateMap<AddIngredientVm, AddIngredientDto>().ReverseMap();
         }
     }
 }

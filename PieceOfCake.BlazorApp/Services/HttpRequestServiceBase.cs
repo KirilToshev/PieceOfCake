@@ -41,7 +41,7 @@ namespace PieceOfCake.BlazorApp.Services
         public async Task<Result<TResponseContent>> HandlePut<TResponseContent>(string url, object content)
         {
             var request = new HttpRequestMessage(HttpMethod.Put, url);
-            request.Headers.Add("Accept-Language", "bg-BG");
+            //request.Headers.Add("Accept-Language", "bg-BG");
             var contentAsJson = JsonConvert.SerializeObject(content);
             request.Content = new StringContent(contentAsJson);
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");

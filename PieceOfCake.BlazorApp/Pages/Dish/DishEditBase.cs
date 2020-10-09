@@ -101,6 +101,7 @@ namespace PieceOfCake.BlazorApp.Pages.Dish
         public void EditIngredient(int index)
         {
             DisplayIngredientEditComponent[index] = false;
+            IsListUpdated = true;
             StateHasChanged();
         }
 

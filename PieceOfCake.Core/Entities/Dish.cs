@@ -88,7 +88,7 @@ namespace PieceOfCake.Core.Entities
                 Ingredients.Clear();
                 foreach (var ingredient in ingredients)
                 {
-                    if (Ingredients.Contains(ingredient))
+                    if (Ingredients.Any(x => x.Equals(ingredient)))
                         return Result.Failure(resources.GenereteSentence(x => x.UserErrors.IngredientAlreadyExists));
                     
                     Ingredients.Add(ingredient);
