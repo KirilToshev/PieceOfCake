@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using PieceOfCake.Shared.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -29,7 +30,7 @@ namespace PieceOfCake.BlazorApp.Services
         public async Task<Result<TResponseContent>> HandlePost<TResponseContent>(string url, object content)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, url);
-            //request.Headers.Add("Accept-Language", "bg-BG");
+            request.Headers.Add("Accept-Language", CultureInfo.CurrentCulture.Name);
             var contentAsJson = JsonConvert.SerializeObject(content);
             request.Content = new StringContent(contentAsJson);
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
@@ -41,7 +42,7 @@ namespace PieceOfCake.BlazorApp.Services
         public async Task<Result<TResponseContent>> HandlePut<TResponseContent>(string url, object content)
         {
             var request = new HttpRequestMessage(HttpMethod.Put, url);
-            //request.Headers.Add("Accept-Language", "bg-BG");
+            request.Headers.Add("Accept-Language", CultureInfo.CurrentCulture.Name);
             var contentAsJson = JsonConvert.SerializeObject(content);
             request.Content = new StringContent(contentAsJson);
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
@@ -53,7 +54,7 @@ namespace PieceOfCake.BlazorApp.Services
         public async Task<Result<TResponseContent>> HandlePatch<TResponseContent>(string url, object content = null)
         {
             var request = new HttpRequestMessage(HttpMethod.Patch, url);
-            //request.Headers.Add("Accept-Language", "bg-BG");
+            request.Headers.Add("Accept-Language", CultureInfo.CurrentCulture.Name);
             var contentAsJson = JsonConvert.SerializeObject(content);
             request.Content = new StringContent(contentAsJson);
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");

@@ -9,6 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PieceOfCake.BlazorApp.Services;
 using PieceOfCake.BlazorApp.Services.Interfaces;
+using Microsoft.JSInterop;
+using System.Globalization;
+using PieceOfCake.BlazorApp.Resources;
 
 namespace PieceOfCake.BlazorApp
 {
@@ -45,8 +48,20 @@ namespace PieceOfCake.BlazorApp
             });
 
             builder.Services.AddSingleton<IEventsService, EventsService>();
+            builder.Services.AddSingleton<IResources, Resources.Resources>();
+            builder.Services.AddLocalization();
 
-            await builder.Build().RunAsync();
+            var host = builder.Build();
+            var jsInterop = host.Services.GetRequiredService<IJSRuntime>();
+            var result = await jsInterop.InvokeAsync<string>("blazorCulture.get");
+            if (result != null)
+            {
+                var culture = new CultureInfo(result);
+                CultureInfo.DefaultThreadCurrentCulture = culture;
+                CultureInfo.DefaultThreadCurrentUICulture = culture;
+            }
+
+            await host.RunAsync();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿@using CSharpFunctionalExtensions;
 @using System.Linq;
 
-<h3>Dish Of The Day</h3>
+<h3>@Resources.CommonTerms.Dish Of The Day</h3>
 
 @if (IsLoading)
 {
@@ -46,6 +46,9 @@ else
 @code {
     [Inject]
     IMenuHttpService MenuHttpService { get; set; }
+
+    [Inject]
+    IResources Resources { get; set; }
 
     public ICollection<DishVm> DishesOfTheDay { get; set; } = new List<DishVm>();
 

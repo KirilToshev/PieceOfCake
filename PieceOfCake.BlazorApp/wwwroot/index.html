@@ -10,6 +10,12 @@
     <link href="css/app.css" rel="stylesheet" />
     <link rel="stylesheet" href="_content/Radzen.Blazor/css/default.css">
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
+    <script>
+        window.blazorCulture = {
+            get: () => window.localStorage['BlazorCulture'],
+            set: (value) => window.localStorage['BlazorCulture'] = value
+        };
+    </script>
 </head>
 
 <body>
