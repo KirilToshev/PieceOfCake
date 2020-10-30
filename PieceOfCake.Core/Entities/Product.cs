@@ -9,7 +9,7 @@ using PieceOfCake.Core.ValueObjects;
 #pragma warning disable 8618
 namespace PieceOfCake.Core.Entities
 {
-    public class Product : Entity
+    public class Product : Common.Entity
     {
 #warning Sparation Of Concerns violation
         //The default constructor is requred by Moq

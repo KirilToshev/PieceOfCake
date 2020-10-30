@@ -20,6 +20,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PieceOfCake.BlazorApp", "Pi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PieceOfCake.Shared", "PieceOfCake.Shared\PieceOfCake.Shared.csproj", "{79304C4C-517C-420B-9B9F-7CC066A2DF68}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PieceOfCake.IDP", "PieceOfCake.IDP\PieceOfCake.IDP.csproj", "{1AE99D78-2FA0-421B-A8BD-3E0C4C277C2C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{79304C4C-517C-420B-9B9F-7CC066A2DF68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79304C4C-517C-420B-9B9F-7CC066A2DF68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79304C4C-517C-420B-9B9F-7CC066A2DF68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AE99D78-2FA0-421B-A8BD-3E0C4C277C2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AE99D78-2FA0-421B-A8BD-3E0C4C277C2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AE99D78-2FA0-421B-A8BD-3E0C4C277C2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AE99D78-2FA0-421B-A8BD-3E0C4C277C2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

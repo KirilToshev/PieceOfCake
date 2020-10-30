@@ -46,6 +46,6 @@ namespace PieceOfCake.Core.Resources
 
         public string NotEnoughDishes => GetString(nameof(NotEnoughDishes));
 
-        private string GetString(string name) => _localizer[name];
+        private string GetString(string name) => _localizer[name]!;
     }
 }

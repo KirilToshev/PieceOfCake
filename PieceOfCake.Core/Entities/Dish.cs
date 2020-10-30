@@ -11,7 +11,7 @@ using System.Text;
 
 namespace PieceOfCake.Core.Entities
 {
-    public class Dish : Entity
+    public class Dish : Common.Entity
     {
         #pragma warning disable 8618
         #warning Sparation Of Concerns violation

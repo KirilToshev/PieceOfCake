@@ -30,6 +30,6 @@ namespace PieceOfCake.Core.Resources
             return GetString(dayOfWeek.ToString());
         }
 
-        private string GetString(string name) => _localizer[name];
+        private string GetString(string name) => _localizer[name]!;
     }
 }

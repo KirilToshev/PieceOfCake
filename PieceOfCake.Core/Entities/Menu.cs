@@ -10,7 +10,7 @@ using System.Text;
 
 namespace PieceOfCake.Core.Entities
 {
-    public class Menu : Entity
+    public class Menu : Common.Entity
     {
         #pragma warning disable 8618
         #warning Sparation Of Concerns violation

@@ -4,7 +4,7 @@ using PieceOfCake.Core.Resources;
 
 namespace PieceOfCake.Core.Entities
 {
-    public class Ingredient : Entity
+    public class Ingredient : Common.Entity
     {
         //This is required to suppress warnings/errors in the default(empty) constructor
         //required by Moq to construct this object in the UnitTests
