@@ -1,4 +1,10 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@inject IAccessTokenProvider TokenProvider
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
+
+<div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">Piece Of Cake</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
@@ -32,6 +38,26 @@
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Products
             </NavLink>
         </li>
+
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="authentication/login">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Log in
+            </NavLink>
+        </li>
+
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="https://localhost:44333/Identity/Account/Register">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Register
+            </NavLink>
+        </li>
+
+        <button class="list-group-item list-group-item-action bg-light" @onclick="BeginSignOut">
+            <span class="oi oi-list-rich" aria-hidden="true"></span> Log out
+        </button>
+
+        <button class="list-group-item list-group-item-action bg-light" @onclick="WriteToken">
+            <span class="oi oi-list-rich" aria-hidden="true"></span> Write token
+        </button>
     </ul>
 </div>
 
@@ -43,5 +69,20 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    private async Task BeginSignOut(MouseEventArgs args)
+    {
+        await SignOutManager.SetSignOutState();
+        Navigation.NavigateTo("authentication/logout");
+    }
+
+    private async Task WriteToken()
+    {
+        var tokenResult = await TokenProvider.RequestAccessToken();
+        if (tokenResult.TryGetToken(out var token))
+        {
+            System.Diagnostics.Debug.WriteLine(token.Value);
+        }
     }
 }

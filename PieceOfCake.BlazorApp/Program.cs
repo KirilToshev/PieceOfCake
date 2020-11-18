@@ -22,6 +22,11 @@ namespace PieceOfCake.BlazorApp
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
 
+            builder.Services.AddOidcAuthentication(options =>
+            {
+                builder.Configuration.Bind("OidcConfiguration", options.ProviderOptions);
+            });
+
             builder.Services.AddScoped(sp => new HttpClient 
             { 
                 BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) 
