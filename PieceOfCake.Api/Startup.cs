@@ -1,7 +1,10 @@
 using AutoMapper;
+using IdentityServer4.AccessTokenValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,24 +32,39 @@ namespace PieceOfCake.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Authentication and Authorization
+            var requireAuthenticatedUserPolicy = new AuthorizationPolicyBuilder()
+                 .RequireAuthenticatedUser()
+                 .Build();
+
+            services.AddAuthentication(
+                IdentityServerAuthenticationDefaults.AuthenticationScheme)
+            .AddIdentityServerAuthentication(options =>
+            {
+                options.Authority = "https://localhost:44333/";
+                options.ApiName = "pieceOfCakeApi";
+            });
+
             //SQL Server
             services.AddDbContext<PocDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("PocDbContext"))
                 .UseLazyLoadingProxies());
-                //options.UseSqlite("DataSource=:memory:"));
+            //options.UseSqlite("DataSource=:memory:"));
 
             //Json Conversion
-            services.AddControllers(setup => {
+            services.AddControllers(setup =>
+            {
                 setup.ReturnHttpNotAcceptable = true;
+                setup.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
             })
             .AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
             .AddXmlDataContractSerializerFormatters();
 
             //CORS
-            services.AddCors(options => options.AddPolicy("AllowEverything", 
-                builder => builder.AllowAnyOrigin()
-                                  .AllowAnyMethod()
-                                  .AllowAnyHeader()));
+            services.AddCors(options => options.AddPolicy("AllowEverything",
+                    builder => builder.AllowAnyOrigin()
+                                      .AllowAnyMethod()
+                                      .AllowAnyHeader()));
 
             //Localization
             services.AddLocalization();
@@ -66,7 +84,7 @@ namespace PieceOfCake.Api
                 mc.AddProfile(new AutoMapperMappingProfile(sp.GetService<IResources>()));
             });
             IMapper mapper = mapperConfig.CreateMapper();
-            
+
             //Register services
             services.AddSingleton(mapper);
             services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -98,6 +116,8 @@ namespace PieceOfCake.Api
             app.UseCors("AllowEverything");
 
             app.UseAuthorization();
+
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

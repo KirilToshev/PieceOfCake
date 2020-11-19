@@ -12,6 +12,7 @@ using PieceOfCake.BlazorApp.Services.Interfaces;
 using Microsoft.JSInterop;
 using System.Globalization;
 using PieceOfCake.BlazorApp.Resources;
+using PieceOfCake.BlazorApp.Services.MessageHandlers;
 
 namespace PieceOfCake.BlazorApp
 {
@@ -21,6 +22,8 @@ namespace PieceOfCake.BlazorApp
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
+
+            builder.Services.AddTransient<PieceOfCakeApiMessageHandler>();
 
             builder.Services.AddOidcAuthentication(options =>
             {
@@ -35,22 +38,22 @@ namespace PieceOfCake.BlazorApp
             builder.Services.AddHttpClient<IMeasureUnitHttpService, MeasureUnitHttpService>(client =>
             {
                 client.BaseAddress = new Uri("https://localhost:44312/");
-            });
+            }).AddHttpMessageHandler<PieceOfCakeApiMessageHandler>();
 
             builder.Services.AddHttpClient<IProductHttpService, ProductHttpService>(client =>
             {
                 client.BaseAddress = new Uri("https://localhost:44312/");
-            });
+            }).AddHttpMessageHandler<PieceOfCakeApiMessageHandler>();
 
             builder.Services.AddHttpClient<IDishHttpService, DishHttpService>(client =>
             {
                 client.BaseAddress = new Uri("https://localhost:44312/");
-            });
+            }).AddHttpMessageHandler<PieceOfCakeApiMessageHandler>();
 
             builder.Services.AddHttpClient<IMenuHttpService, MenuHttpService>(client =>
             {
                 client.BaseAddress = new Uri("https://localhost:44312/");
-            });
+            }).AddHttpMessageHandler<PieceOfCakeApiMessageHandler>();
 
             builder.Services.AddSingleton<IEventsService, EventsService>();
             builder.Services.AddSingleton<IResources, Resources.Resources>();

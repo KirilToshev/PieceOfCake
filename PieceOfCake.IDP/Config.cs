@@ -15,13 +15,25 @@ namespace PieceOfCake.IDP
                         new IdentityResources.OpenId(),
                         new IdentityResources.Profile(),
                         new IdentityResources.Email(),
+                        //new IdentityResource("country", new [] { "country" })
                    };
 
         public static IEnumerable<ApiScope> ApiScopes =>
-            new ApiScope[]
+            new List<ApiScope>
             {
-                new ApiScope("scope1"),
-                new ApiScope("scope2"),
+                new ApiScope("test", "Piece Of Cake API")
+            };
+
+        public static IEnumerable<ApiResource> Apis =>
+            new List<ApiResource>
+            {
+                //new ApiResource("pieceOfCakeApi", "Piece Of Cake API")
+                new ApiResource()
+                {
+                    Name = "pieceOfCakeApi",
+                    DisplayName = "Piece Of Cake API",
+                    Scopes = new [] { "test" }
+                }
             };
 
         public static IEnumerable<Client> Clients =>
@@ -34,9 +46,10 @@ namespace PieceOfCake.IDP
                     AllowedGrantTypes = GrantTypes.Code,
                     RequireClientSecret = false,
                     RequirePkce = true,
+                    RequireConsent = true,
                     RedirectUris = { "https://localhost:44341/authentication/login-callback" },
                     PostLogoutRedirectUris = { "https://localhost:44341/authentication/logout-callback" },
-                    AllowedScopes = { "openid", "profile", "email" },
+                    AllowedScopes = { "openid", "profile", "email", "test" },
                     AllowedCorsOrigins = { "https://localhost:44341" }
                 }
             };
