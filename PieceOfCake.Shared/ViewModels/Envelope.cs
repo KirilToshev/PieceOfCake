@@ -8,6 +8,8 @@ namespace PieceOfCake.Shared.ViewModels
         public string ErrorMessage { get; set; }
         public DateTime TimeGenerated { get; set; }
 
+        #pragma warning disable 8618
+        #pragma warning disable 1030
         #warning Sparation Of Concerns violation
         //required by JsonSerializar along with public properties setters.
         public Envelope()

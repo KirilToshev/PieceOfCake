@@ -1,10 +1,9 @@
 ﻿using CSharpFunctionalExtensions;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Newtonsoft.Json;
 using PieceOfCake.Shared.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -23,54 +22,69 @@ namespace PieceOfCake.BlazorApp.Services
 
         public async Task<Result<TResponseContent>> HandleGet<TResponseContent>(string url)
         {
-            var response = await HttpClient.GetAsync(url);
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            var response = await SendRequest(request);
             return await HandleGenericResponse<TResponseContent>(response);
         }
 
         public async Task<Result<TResponseContent>> HandlePost<TResponseContent>(string url, object content)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, url);
-            request.Headers.Add("Accept-Language", CultureInfo.CurrentCulture.Name);
-            var contentAsJson = JsonConvert.SerializeObject(content);
-            request.Content = new StringContent(contentAsJson);
-            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-            var response = await HttpClient.SendAsync(request);
+            var response = await SendRequest(request, content);
             return await HandleGenericResponse<TResponseContent>(response);
         }
 
         public async Task<Result<TResponseContent>> HandlePut<TResponseContent>(string url, object content)
         {
             var request = new HttpRequestMessage(HttpMethod.Put, url);
-            request.Headers.Add("Accept-Language", CultureInfo.CurrentCulture.Name);
-            var contentAsJson = JsonConvert.SerializeObject(content);
-            request.Content = new StringContent(contentAsJson);
-            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-            var response = await HttpClient.SendAsync(request);
+            var response = await SendRequest(request, content);
             return await HandleGenericResponse<TResponseContent>(response);
         }
 
         public async Task<Result<TResponseContent>> HandlePatch<TResponseContent>(string url, object content = null)
         {
             var request = new HttpRequestMessage(HttpMethod.Patch, url);
-            request.Headers.Add("Accept-Language", CultureInfo.CurrentCulture.Name);
-            var contentAsJson = JsonConvert.SerializeObject(content);
-            request.Content = new StringContent(contentAsJson);
-            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-            var response = await HttpClient.SendAsync(request);
+            var response = await SendRequest(request, content);
             return await HandleGenericResponse<TResponseContent>(response);
         }
 
         public async Task<Result> HandleDelete(string url)
         {
-            var response = await HttpClient.DeleteAsync(url);
+            var request = new HttpRequestMessage(HttpMethod.Delete, url);
+            var response = await SendRequest(request);
             return await HandleResponse(response);
         }
 
-        private async Task<Result> HandleResponse(HttpResponseMessage response)
+        private async Task<Result<HttpResponseMessage>> SendRequest(HttpRequestMessage request, object content = null)
         {
+            request.Headers.Add("Accept-Language", CultureInfo.CurrentCulture.Name);
+
+            if(content != null)
+            {
+                var contentAsJson = JsonConvert.SerializeObject(content);
+                request.Content = new StringContent(contentAsJson);
+                request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            }
+
+            try
+            {
+                return Result.Success(await HttpClient.SendAsync(request));
+            }
+            catch (AccessTokenNotAvailableException exception)
+            {
+                exception.Redirect();
+                //TODO: Translation
+                return Result.Failure<HttpResponseMessage>("Unable to acquire access token. Please login.");
+            }
+        }
+
+        private async Task<Result> HandleResponse(Result<HttpResponseMessage> responseResult)
+        {
+            if (responseResult.IsFailure)
+                return responseResult;
+
+            var response = responseResult.Value;
+
             var responseContent = await response.Content.ReadAsStringAsync();
             var jsonMapping = JsonConvert.DeserializeObject<Envelope>(responseContent);
 
@@ -86,12 +100,17 @@ namespace PieceOfCake.BlazorApp.Services
             {
                 var contentAsString = await response.Content.ReadAsStringAsync();
                 Console.WriteLine(contentAsString);
-                return Result.Failure("A unhandled server exception occured. See the log or console for more information.");
+                return Result.Failure("An unhandled server exception occured. See the log or console for more information.");
             }
         }
 
-        private async Task<Result<TResponseContent>> HandleGenericResponse<TResponseContent>(HttpResponseMessage response)
+        private async Task<Result<TResponseContent>> HandleGenericResponse<TResponseContent>(Result<HttpResponseMessage> responseResult)
         {
+            if (responseResult.IsFailure)
+                return responseResult.ConvertFailure<TResponseContent>();
+
+            var response = responseResult.Value;
+
             var responseContent = await response.Content.ReadAsStringAsync();
             var jsonMapping = JsonConvert.DeserializeObject<Envelope<TResponseContent>>(responseContent);
 
@@ -107,7 +126,7 @@ namespace PieceOfCake.BlazorApp.Services
             {
                 var contentAsString = await response.Content.ReadAsStringAsync();
                 Console.WriteLine(contentAsString);
-                return Result.Failure<TResponseContent>("A unhandled server exception occured. See the log or console for more information.");
+                return Result.Failure<TResponseContent>("An unhandled server exception occured. See the log or console for more information.");
             }
         }
     }

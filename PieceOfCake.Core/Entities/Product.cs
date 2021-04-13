@@ -11,7 +11,8 @@ namespace PieceOfCake.Core.Entities
 {
     public class Product : Common.Entity
     {
-#warning Sparation Of Concerns violation
+        #pragma warning disable 1030
+        #warning Sparation Of Concerns violation
         //The default constructor is requred by Moq
         protected Product()
         {

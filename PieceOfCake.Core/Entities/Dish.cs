@@ -14,6 +14,7 @@ namespace PieceOfCake.Core.Entities
     public class Dish : Common.Entity
     {
         #pragma warning disable 8618
+        #pragma warning disable 1030
         #warning Sparation Of Concerns violation
         //This is required to suppress warnings/errors in the default(empty) constructor
         //required by Moq to construct this object in the UnitTests
