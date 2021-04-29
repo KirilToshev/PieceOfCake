@@ -13,51 +13,55 @@
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="menu">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Menus
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="dishes">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Dishes
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="measureUnits">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Measure Units
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="products">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Products
-            </NavLink>
-        </li>
+        <AuthorizeView>
+            <Authorized>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> Home
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="menu">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Menus
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="dishes">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Dishes
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="measureUnits">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Measure Units
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="products">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Products
+                    </NavLink>
+                </li>
+                <button class="list-group-item list-group-item-action bg-light" @onclick="BeginSignOut">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Log out
+                </button>
 
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="authentication/login">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Log in
-            </NavLink>
-        </li>
+                <button class="list-group-item list-group-item-action bg-light" @onclick="WriteToken">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Write token
+                </button>
+            </Authorized>
+            <NotAuthorized>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="authentication/login">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Log in
+                    </NavLink>
+                </li>
 
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="https://localhost:44333/Identity/Account/Register">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Register
-            </NavLink>
-        </li>
-
-        <button class="list-group-item list-group-item-action bg-light" @onclick="BeginSignOut">
-            <span class="oi oi-list-rich" aria-hidden="true"></span> Log out
-        </button>
-
-        <button class="list-group-item list-group-item-action bg-light" @onclick="WriteToken">
-            <span class="oi oi-list-rich" aria-hidden="true"></span> Write token
-        </button>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="https://localhost:44333/Identity/Account/Register">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Register
+                    </NavLink>
+                </li>
+            </NotAuthorized>
+        </AuthorizeView>
     </ul>
 </div>
 

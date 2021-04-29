@@ -31,7 +31,9 @@ namespace PieceOfCake.Core.Entities
             if (nameResult.IsFailure)
                 return nameResult.ConvertFailure<MeasureUnit>();
 
-            
+            var measureUnit = unitOfWork.MeasureUnitRepository.GetFirstOrDefault(x => x.Name == name);
+            if (measureUnit != null)
+                return Result.Failure<MeasureUnit>(resources.GenereteSentence(x => x.UserErrors.NameAlreadyExists, x => measureUnit.Name));
 
             var entity = new MeasureUnit(nameResult.Value);
             return Result.Success(entity);

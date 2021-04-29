@@ -10,6 +10,7 @@ using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
 using PieceOfCake.Core.ValueObjects;
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace PieceOfCake.UnitTests.Core.DomainServices
@@ -19,6 +20,7 @@ namespace PieceOfCake.UnitTests.Core.DomainServices
         private IResources _resources;
         private Mock<IUnitOfWork> _uowMock;
         private Mock<IProductRepository> _productRepoMock;
+        private Mock<IDishRepository> _dishRepoMock;
         private Fixture _fixture;
         private Mock<Product> _productMock;
 
@@ -32,8 +34,11 @@ namespace PieceOfCake.UnitTests.Core.DomainServices
             _resources = serviceProvider.GetService<IResources>();
             _uowMock = new Mock<IUnitOfWork>();
             _productRepoMock = new Mock<IProductRepository>();
+            _dishRepoMock = new Mock<IDishRepository>();
             _uowMock.Setup(x => x.ProductRepository)
                 .Returns(_productRepoMock.Object);
+            _uowMock.Setup(x => x.DishRepository)
+                .Returns(_dishRepoMock.Object);
             _productRepoMock
                 .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product, bool>>>()))
                 .Returns((Product)null);
@@ -128,12 +133,35 @@ namespace PieceOfCake.UnitTests.Core.DomainServices
             _productRepoMock
                 .Setup(x => x.GetById(id))
                 .Returns(_productMock.Object);
+            _dishRepoMock
+                .Setup(x => x.Get(It.IsAny<Expression<Func<Dish, bool>>>(), null))
+                .Returns(new Dish [0]);
 
             var sut = new ProductDomainService(_resources, _uowMock.Object);
 
             var result = sut.Delete(id);
 
             Assert.IsTrue(result.IsSuccess);
+        }
+
+        [Test]
+        public void Delete_Should_Fail_If_Product_Is_In_Use()
+        {
+            var id = _fixture.Create<long>();
+            _productRepoMock
+                .Setup(x => x.GetById(id))
+                .Returns(_productMock.Object);
+            var dishMock = new Mock<Dish>();
+            _dishRepoMock
+                .Setup(x => x.Get(It.IsAny<Expression<Func<Dish, bool>>>(), null))
+                .Returns(new Dish[] { dishMock.Object });
+
+            var sut = new ProductDomainService(_resources, _uowMock.Object);
+
+            var result = sut.Delete(id);
+
+            Assert.IsTrue(result.IsFailure);
+            Assert.AreEqual($"{_resources.CommonTerms.Product} can't be deleted, because it is still being used.", result.Error);
         }
     }
 }

@@ -19,6 +19,7 @@ namespace PieceOfCake.UnitTests.Core.DomainServices
         private Mock<IMeasureUnitRepository> _measureUnitRepoMock;
         private Fixture _fixture;
         private Mock<MeasureUnit> _measureUnitMock;
+        private Mock<IDishRepository> _dishRepoMock;
 
         [SetUp]
         public void BeforeEachTest()
@@ -30,8 +31,11 @@ namespace PieceOfCake.UnitTests.Core.DomainServices
             _resources = serviceProvider.GetService<IResources>();
             _uowMock = new Mock<IUnitOfWork>();
             _measureUnitRepoMock = new Mock<IMeasureUnitRepository>();
+            _dishRepoMock = new Mock<IDishRepository>();
             _uowMock.Setup(x => x.MeasureUnitRepository)
                 .Returns(_measureUnitRepoMock.Object);
+            _uowMock.Setup(x => x.DishRepository)
+                .Returns(_dishRepoMock.Object);
             _measureUnitRepoMock
                 .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
                 .Returns((MeasureUnit)null);
@@ -126,12 +130,35 @@ namespace PieceOfCake.UnitTests.Core.DomainServices
             _measureUnitRepoMock
                 .Setup(x => x.GetById(id))
                 .Returns(_measureUnitMock.Object);
+            _dishRepoMock
+                .Setup(x => x.Get(It.IsAny<Expression<Func<Dish, bool>>>(), null))
+                .Returns(new Dish[0]);
 
             var sut = new MeasureUnitDomainService(_resources, _uowMock.Object);
 
             var result = sut.Delete(id);
 
             Assert.IsTrue(result.IsSuccess);
+        }
+
+        [Test]
+        public void Delete_Should_Fail_If_MeasureUnit_Is_In_Use()
+        {
+            var id = _fixture.Create<long>();
+            _measureUnitRepoMock
+                .Setup(x => x.GetById(id))
+                .Returns(_measureUnitMock.Object);
+            var dishMock = new Mock<Dish>();
+            _dishRepoMock
+                .Setup(x => x.Get(It.IsAny<Expression<Func<Dish, bool>>>(), null))
+                .Returns(new Dish[] { dishMock.Object });
+
+            var sut = new MeasureUnitDomainService(_resources, _uowMock.Object);
+
+            var result = sut.Delete(id);
+
+            Assert.IsTrue(result.IsFailure);
+            Assert.AreEqual($"{_resources.CommonTerms.MeasureUnit} can't be deleted, because it is still being used.", result.Error);
         }
     }
 }
