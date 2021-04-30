@@ -82,10 +82,19 @@ namespace PieceOfCake.Core.DomainServices
         public Result Delete(long id)
         {
             return this.Get(id)
-                .Tap(dish =>
+                .Bind(dish =>
                 {
+                    var isDishInUse = _unitOfWork.MenuRepository
+                                        .Get(menu => menu.Dishes.Contains(dish))
+                                        .Any();
+
+                    if (isDishInUse)
+                        return Result.Failure(_resources
+                            .GenereteSentence(x => x.UserErrors.ItemIsInUse, x => x.CommonTerms.Dish));
+
                     _unitOfWork.DishRepository.Delete(dish);
                     _unitOfWork.Save();
+                    return Result.Success();
                 });
         }
 
