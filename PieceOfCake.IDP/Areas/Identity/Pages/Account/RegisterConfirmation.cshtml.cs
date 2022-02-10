@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using PieceOfCake.IDP.Models;
+using IdentityServer4.Models;
+using IdentityServer4.Services;
 
 namespace PieceOfCake.IDP.Areas.Identity.Pages.Account
 {
@@ -15,11 +17,18 @@ namespace PieceOfCake.IDP.Areas.Identity.Pages.Account
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailSender _sender;
+        private readonly IIdentityServerInteractionService _identityService;
 
-        public RegisterConfirmationModel(UserManager<ApplicationUser> userManager, IEmailSender sender)
+        public RegisterConfirmationModel
+            (
+                UserManager<ApplicationUser> userManager,
+                IEmailSender sender,
+                IIdentityServerInteractionService identityService
+            )
         {
             _userManager = userManager;
             _sender = sender;
+            _identityService = identityService;
         }
 
         public string Email { get; set; }
@@ -27,6 +36,8 @@ namespace PieceOfCake.IDP.Areas.Identity.Pages.Account
         public bool DisplayConfirmAccountLink { get; set; }
 
         public string EmailConfirmationUrl { get; set; }
+
+        public string ClientUrl { get; private set; }
 
         public async Task<IActionResult> OnGetAsync(string email, string returnUrl = null)
         {
@@ -40,6 +51,9 @@ namespace PieceOfCake.IDP.Areas.Identity.Pages.Account
             {
                 return NotFound($"Unable to load user with email '{email}'.");
             }
+
+            //var context = await _identityService.GetAuthorizationContextAsync("https://localhost:44341/authentication/login-callback");
+            ClientUrl = "https://localhost:44341";
 
             Email = email;
             // Once you add a real email sender, you should remove this code that lets you confirm the account

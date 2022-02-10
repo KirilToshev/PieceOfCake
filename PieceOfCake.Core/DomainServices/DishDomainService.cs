@@ -137,7 +137,7 @@ namespace PieceOfCake.Core.DomainServices
                 return Result.Failure(errors.Aggregate((curr, next) => curr + ";" + next));
 
             return Get(id)
-                .Tap(dish => dish.UpdateIngredients(ingredients, _resources)
+                .Check(dish => dish.UpdateIngredients(ingredients, _resources)
                 .Tap(() => {
                     _unitOfWork.DishRepository.Update(dish);
                     _unitOfWork.Save();

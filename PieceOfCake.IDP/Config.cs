@@ -47,10 +47,11 @@ namespace PieceOfCake.IDP
                     RequireClientSecret = false,
                     RequirePkce = true,
                     RequireConsent = true,
-                    RedirectUris = { "https://localhost:44341/authentication/login-callback" },
+                    RedirectUris = new [] { "https://localhost:44341/authentication/login-callback" },
                     PostLogoutRedirectUris = { "https://localhost:44341/authentication/logout-callback" },
                     AllowedScopes = { "openid", "profile", "email", "test" },
-                    AllowedCorsOrigins = { "https://localhost:44341" }
+                    AllowedCorsOrigins = { "https://localhost:44341" },
+                    ClientUri = "https://localhost:44341"
                 }
             };
     }
