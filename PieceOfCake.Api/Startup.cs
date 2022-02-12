@@ -37,13 +37,13 @@ namespace PieceOfCake.Api
                  .RequireAuthenticatedUser()
                  .Build();
 
-            services.AddAuthentication(
-                IdentityServerAuthenticationDefaults.AuthenticationScheme)
-            .AddIdentityServerAuthentication(options =>
-            {
-                options.Authority = "https://localhost:44333/";
-                options.ApiName = "pieceOfCakeApi";
-            });
+            //services.AddAuthentication(
+            //    IdentityServerAuthenticationDefaults.AuthenticationScheme)
+            //.AddIdentityServerAuthentication(options =>
+            //{
+            //    options.Authority = "https://localhost:44333/";
+            //    options.ApiName = "pieceOfCakeApi";
+            //});
 
             //SQL Server
             services.AddDbContext<PocDbContext>(options =>
@@ -55,7 +55,7 @@ namespace PieceOfCake.Api
             services.AddControllers(setup =>
             {
                 setup.ReturnHttpNotAcceptable = true;
-                setup.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
+                //setup.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
             })
             .AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
             .AddXmlDataContractSerializerFormatters();
