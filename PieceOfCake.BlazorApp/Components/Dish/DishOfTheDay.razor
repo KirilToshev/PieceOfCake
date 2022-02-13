@@ -71,17 +71,30 @@ else
             Errors = menus.Error.Split(';').ToList();
             return;
         }
+        string key = null;
 
         var menuInThisDay = menus.Value
-            .FirstOrDefault(x => x.DishesPerDay.Keys.Select(k => k.Split(' ')[0])
-            .Contains(DateTime.Now.Date.ToShortDateString()));
+            .Where(x => x.DishesPerDay.Keys.Select(k => 
+                { 
+                    var incomingDate = k.Split(' ')[0];
+                    var date = new DateTime();
+                    if(!DateTime.TryParse(incomingDate, out date))
+                    {
+                        Errors.Add($"Can not parse {incomingDate} to Date");
+                    }
+                    key = k;
+                    return date.Date;
+                })
+            .Contains(DateTime.Now.Date))
+            .Select(menu => menu.DishesPerDay[key])
+            .Aggregate((curr, next) => curr.Concat(next));
 
         if (menuInThisDay == null)
             return;
 
-        var key = menuInThisDay.DishesPerDay.Keys.FirstOrDefault(k => k.Split(' ')[0] == DateTime.Now.Date.ToShortDateString());
+        //var key = menuInThisDay.DishesPerDay.Keys.FirstOrDefault(k => k.Split(' ')[0] == DateTime.Now.Date.ToShortDateString());
 
-        this.DishesOfTheDay = menuInThisDay.DishesPerDay[key].ToList();
+        this.DishesOfTheDay = menuInThisDay.ToList();
 
         StateHasChanged();
     }
