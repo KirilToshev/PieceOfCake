@@ -13,72 +13,58 @@ public class Menu : Entity<Guid>
     }
 
     private Menu (
-        TimePeriod duration, 
-        byte servingsPerDay, 
-        ushort numberOfPeople)
+        TimePeriod duration,
+        ushort numberOfPeople,
+        IEnumerable<MealOfTheDayType> mealOfTheDayTypes)
     {
         Duration = duration;
-        ServingsPerDay = servingsPerDay;
+        
         Dishes = new HashSet<Dish>();
         NumberOfPeople = numberOfPeople;
+        MealOfTheDayTypes = mealOfTheDayTypes;
     }
 
-    public byte ServingsPerDay { get; private set; }
-
     public ushort NumberOfPeople { get; private set; }
-
     public TimePeriod Duration { get; private set; }
-
+    public IEnumerable<MealOfTheDayType> MealOfTheDayTypes { get; private set; }
     public virtual ICollection<Dish> Dishes { get; protected set; }
 
     public static Result<Menu> Create(
         DateTime startDate, 
-        DateTime endDate, 
-        byte servingsPerDay, 
+        DateTime endDate,
         ushort numberOfPeople,
+        IEnumerable<MealOfTheDayType> mealOfTheDayTypes,
         IResources resources)
     {
         var duration = TimePeriod.Create(startDate, endDate, resources);
         if (duration.IsFailure)
             return duration.ConvertFailure<Menu>();
 
-        if (servingsPerDay < 1)
+        if (mealOfTheDayTypes.Count() < 1)
             return Result.Failure<Menu>(resources.GenereteSentence(x => x.UserErrors.MenuMustHaveAtLeastOneServing));
 
         if (numberOfPeople < 1)
             return Result.Failure<Menu>(resources.GenereteSentence(x => x.UserErrors.MenuMustHaveAtleastOnePerson));
 
-        return Result.Success(new Menu(duration.Value, servingsPerDay, numberOfPeople));
+        return Result.Success(new Menu(duration.Value, numberOfPeople, mealOfTheDayTypes));
     }
 
-    public Result<Menu> Update(DateTime startDate,
+    public Result<Menu> Update(
+        DateTime startDate,
         DateTime endDate,
-        byte servingsPerDay,
         ushort numberOfPeople,
+        IEnumerable<MealOfTheDayType> mealOfTheDayTypes,
         IResources resources)
     {
-        var menuResult = Create(startDate, endDate, servingsPerDay, numberOfPeople, resources);
+        var menuResult = Create(startDate, endDate, numberOfPeople, mealOfTheDayTypes, resources);
         if (menuResult.IsFailure)
             return menuResult;
 
-        ServingsPerDay = servingsPerDay;
+        MealOfTheDayTypes = menuResult.Value.MealOfTheDayTypes;
         Duration = menuResult.Value.Duration;
         NumberOfPeople = numberOfPeople;
         
         return Result.Success(this);
-    }
-
-    public Result GenerateDishesList(IUnitOfWork unitOfWork, IResources resources)
-    {
-        var totalNumberOfServings = ServingsPerDay * Duration.DaysDifference * NumberOfPeople;
-        var dishesList = unitOfWork.DishRepository.Get();
-
-        if (dishesList.Count() < totalNumberOfServings)
-            return Result.Failure<IEnumerable<Dish>>(resources.GenereteSentence(x => x.UserErrors.NotEnoughDishes));
-
-        this.Dishes = dishesList.Take(totalNumberOfServings).ToList();
-
-        return Result.Success();
     }
 
     public void ClearAllRelatedDishes()
@@ -86,12 +72,16 @@ public class Menu : Entity<Guid>
         this.Dishes.Clear();
     }
 
-    public Result<Dictionary<DateOnly, ICollection<Dish>>> CalculateDishesPerDay(IResources resources)
+    public Result<Dictionary<DateOnly, ICollection<Dish>>> CalculateDishesPerDay(IEnumerable<Dish> dishes, IResources resources)
     {
         var result = new Dictionary<DateOnly, ICollection<Dish>>();
-        var dishes = Dishes.ToArray();
         if (!dishes.Any())
             return result;
+
+        var totalNumberOfServings = MealOfTheDayTypes.Count() * Duration.DaysDifference * NumberOfPeople;
+
+        if (dishes.Count() < totalNumberOfServings)
+            return Result.Failure<Dictionary<DateOnly, ICollection<Dish>>>(resources.GenereteSentence(x => x.UserErrors.NotEnoughDishes));
 
         var index = 0;
 
