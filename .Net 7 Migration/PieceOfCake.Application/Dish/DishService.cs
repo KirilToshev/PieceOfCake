@@ -1,12 +1,14 @@
 ﻿using CSharpFunctionalExtensions;
-using PieceOfCake.Core.DomainServices.Interfaces;
 using PieceOfCake.Core.Entities;
 using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
 using PieceOfCake.Core.Dtos;
 using PieceOfCake.Core.ValueObjects;
+using PieceOfCake.Application.MealOfTheDayType;
+using PieceOfCake.Application.MeasureUnit;
+using PieceOfCake.Application.Product.Services;
 
-namespace PieceOfCake.Core.DomainServices;
+namespace PieceOfCake.Application.Dish;
 
 public class DishService : IDishService
 {
@@ -30,27 +32,27 @@ public class DishService : IDishService
         _productDomainService = productDomainService ?? throw new ArgumentNullException(nameof(productDomainService));
     }
 
-    public IReadOnlyCollection<Dish> Get () => _unitOfWork.DishRepository.Get();
+    public IReadOnlyCollection<Core.Entities.Dish> Get () => _unitOfWork.DishRepository.Get();
 
-    public Result<Dish> Get (Guid id)
+    public Result<Core.Entities.Dish> Get (Guid id)
     {
         var dish = _unitOfWork.DishRepository.GetById(id);
 
         if (dish == null)
-            return Result.Failure<Dish>(
+            return Result.Failure<Core.Entities.Dish>(
                 _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
 
         return Result.Success(dish);
     }
 
-    public Result<Dish> Create (
+    public Result<Core.Entities.Dish> Create (
         string name,
         string description,
         int servingSize,
-        IEnumerable<MealOfTheDayType> mealOfTheDayTypes,
+        IEnumerable<Core.Entities.MealOfTheDayType> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsDtos)
     {
-        return ValidateInputs(name, description, servingSize, mealOfTheDayTypes, ingredientsDtos, Dish.Create)
+        return ValidateInputs(name, description, servingSize, mealOfTheDayTypes, ingredientsDtos, Core.Entities.Dish.Create)
             .Tap(dish =>
             {
                 _unitOfWork.DishRepository.Insert(dish);
@@ -58,15 +60,15 @@ public class DishService : IDishService
             });
     }
 
-    public Result<Dish> Update (
+    public Result<Core.Entities.Dish> Update (
         Guid id,
         string name,
         string description,
         int servingSize,
-        IEnumerable<MealOfTheDayType> mealOfTheDayTypes,
+        IEnumerable<Core.Entities.MealOfTheDayType> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsDtos)
     {
-        var dishResult = this.Get(id);
+        var dishResult = Get(id);
         if (dishResult.IsFailure)
             return dishResult;
 
@@ -80,7 +82,7 @@ public class DishService : IDishService
 
     public Result Delete (Guid id)
     {
-        return this.Get(id)
+        return Get(id)
             .Bind(dish =>
             {
                 var isDishInUse = _unitOfWork.MenuRepository
@@ -97,13 +99,13 @@ public class DishService : IDishService
             });
     }
 
-    private Result<Dish> ValidateInputs (
+    private Result<Core.Entities.Dish> ValidateInputs (
         string name,
         string description,
         int servingSize,
-        IEnumerable<MealOfTheDayType> mealOfTheDayTypes,
+        IEnumerable<Core.Entities.MealOfTheDayType> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsDtos,
-        Func<string, string, int, IEnumerable<MealOfTheDayType>, IEnumerable<Ingredient>, IResources, Result<Dish>> callbackFunc)
+        Func<string, string, int, IEnumerable<Core.Entities.MealOfTheDayType>, IEnumerable<Ingredient>, IResources, Result<Core.Entities.Dish>> callbackFunc)
     {
         //TODO: Implement cacheing
         var allMeasureUnits = _measureUnitDomainService.Get();
@@ -151,7 +153,7 @@ public class DishService : IDishService
         }
 
         if (errors.Any())
-            return Result.Failure<Dish>(string.Join(";", errors));
+            return Result.Failure<Core.Entities.Dish>(string.Join(";", errors));
 
         return callbackFunc(name, description, servingSize, mealOfTheDayTypes, ingredients, _resources);
     }

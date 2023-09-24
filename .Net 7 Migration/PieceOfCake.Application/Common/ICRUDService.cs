@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 
-namespace PieceOfCake.Core.DomainServices.Interfaces;
+namespace PieceOfCake.Application.Common;
 
 public interface ICRUDService<TEntity, KId>
     where TEntity : Entity<KId>

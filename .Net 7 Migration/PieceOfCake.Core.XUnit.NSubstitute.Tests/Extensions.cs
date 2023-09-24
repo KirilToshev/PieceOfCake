@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using PieceOfCake.Core.Resources;
 
-namespace PieceOfCake.UnitTests;
+namespace PieceOfCake.Application.Tests;
 
 internal static class Extensions
 {
-    public static void AddResources(this IServiceCollection services)
+    public static void AddResources (this IServiceCollection services)
     {
         services.AddLogging();
         services.AddLocalization();

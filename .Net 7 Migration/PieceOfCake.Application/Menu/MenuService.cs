@@ -1,17 +1,16 @@
 ﻿using CSharpFunctionalExtensions;
-using PieceOfCake.Core.DomainServices.Interfaces;
 using PieceOfCake.Core.Entities;
 using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
 
-namespace PieceOfCake.Core.DomainServices;
+namespace PieceOfCake.Application.Menu;
 
 public class MenuService : IMenuService
 {
     private readonly IResources _resources;
     private readonly IUnitOfWork _unitOfWork;
 
-    public MenuService(
+    public MenuService (
         IResources resources,
         IUnitOfWork unitOfWork)
     {
@@ -19,26 +18,26 @@ public class MenuService : IMenuService
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     }
 
-    public IReadOnlyCollection<Menu> Get() => _unitOfWork.MenuRepository.Get();
+    public IReadOnlyCollection<Core.Entities.Menu> Get () => _unitOfWork.MenuRepository.Get();
 
-    public Result<Menu> Get(Guid id)
+    public Result<Core.Entities.Menu> Get (Guid id)
     {
         var menu = _unitOfWork.MenuRepository.GetById(id);
 
         if (menu == null)
-            return Result.Failure<Menu>(
+            return Result.Failure<Core.Entities.Menu>(
                 _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
 
         return Result.Success(menu);
     }
 
-    public Result<Menu> Create(
+    public Result<Core.Entities.Menu> Create (
         DateTime startDate,
         DateTime endDate,
         ushort numberOfPeople,
-        IEnumerable<MealOfTheDayType> mealOfTheDayTypes)
+        IEnumerable<Core.Entities.MealOfTheDayType> mealOfTheDayTypes)
     {
-        return Menu.Create(startDate, endDate, numberOfPeople, mealOfTheDayTypes, _resources)
+        return Core.Entities.Menu.Create(startDate, endDate, numberOfPeople, mealOfTheDayTypes, _resources)
             .Tap(menu =>
             {
                 _unitOfWork.MenuRepository.Insert(menu);
@@ -46,14 +45,14 @@ public class MenuService : IMenuService
             });
     }
 
-    public Result<Menu> Update (
-        Guid id, 
+    public Result<Core.Entities.Menu> Update (
+        Guid id,
         DateTime startDate,
         DateTime endDate,
         ushort numberOfPeople,
-        IEnumerable<MealOfTheDayType> mealOfTheDayTypes)
+        IEnumerable<Core.Entities.MealOfTheDayType> mealOfTheDayTypes)
     {
-        var menuResult = this.Get(id);
+        var menuResult = Get(id);
         if (menuResult.IsFailure)
             return menuResult;
 
@@ -69,9 +68,9 @@ public class MenuService : IMenuService
         return Result.Success(menuResult.Value);
     }
 
-    public Result Delete(Guid id)
+    public Result Delete (Guid id)
     {
-        return this.Get(id)
+        return Get(id)
             .Tap(menu =>
             {
                 _unitOfWork.MenuRepository.Delete(menu);
@@ -79,7 +78,7 @@ public class MenuService : IMenuService
             });
     }
 
-    public Result<Menu> GenerateDishesList(Guid id)
+    public Result<Core.Entities.Menu> GenerateDishesList (Guid id)
     {
         //TODO: Implement generation of menu calendar.
         throw new NotImplementedException();

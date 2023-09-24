@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 
-namespace PieceOfCake.Core.DomainServices.Interfaces;
+namespace PieceOfCake.Application.Common;
 public interface ICRUDNameService<TEntity, KId> : ICRUDService<TEntity, KId>
     where TEntity : Entity<KId>
     where KId : IComparable<KId>
