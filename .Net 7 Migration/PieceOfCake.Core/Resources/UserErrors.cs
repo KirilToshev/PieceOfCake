@@ -51,5 +51,9 @@ public class UserErrors : IUserErrors
 
     public string MenuMustHaveAtleastOnePerson => GetString(nameof(MenuMustHaveAtleastOnePerson));
 
+    public string DishMustHaveMenuOfTheDayType => GetString(nameof(DishMustHaveMenuOfTheDayType));
+
+    public string MenuOfTheDayTypeAlreadyExists => GetString(nameof(MenuOfTheDayTypeAlreadyExists));
+
     private string GetString(string name) => _localizer[name]!;
 }

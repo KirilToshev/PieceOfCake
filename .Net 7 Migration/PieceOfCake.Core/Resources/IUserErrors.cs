@@ -21,6 +21,8 @@ public interface IUserErrors
     public string EndDateIsMandatory { get; }
     public string NotEnoughDishes { get; }
     public string DishMustHaveIngredients { get; }
+    public string DishMustHaveMenuOfTheDayType { get; }
+    public string MenuOfTheDayTypeAlreadyExists { get; }
     public string MenuMustHaveAtleastOnePerson { get; }
 
 }

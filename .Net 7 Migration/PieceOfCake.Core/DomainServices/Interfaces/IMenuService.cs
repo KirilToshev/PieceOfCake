@@ -5,7 +5,7 @@ namespace PieceOfCake.Core.DomainServices.Interfaces;
 
 public interface IMenuService : ICRUDService<Menu, Guid>
 {
-    Result<Menu> Create(DateTime startDate, DateTime endDate, byte servingsPerDay, ushort numberOfPeople);
-    Result<Menu> Update(Guid id, DateTime startDate, DateTime endDate, byte servingsPerDay, ushort numberOfPeople);
+    Result<Menu> Create(DateTime startDate, DateTime endDate, ushort numberOfPeople, IEnumerable<MealOfTheDayType> mealOfTheDayTypes);
+    Result<Menu> Update(Guid id, DateTime startDate, DateTime endDate, ushort numberOfPeople, IEnumerable<MealOfTheDayType> mealOfTheDayTypes);
     Result<Menu> GenerateDishesList(Guid id);
 }

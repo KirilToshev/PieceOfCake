@@ -19,7 +19,7 @@ public class Dish : Entity<Guid>
         Name name,
         string description,
         int servingSize,
-        MealOfTheDayType mealOfTheDayType,
+        IEnumerable<MealOfTheDayType> mealOfTheDayTypes,
         IEnumerable<Ingredient> ingredients,
         IResources resources)
     {
@@ -28,15 +28,15 @@ public class Dish : Entity<Guid>
         DishState = new States.DraftState(resources);
         _ingredients = ingredients;
         ServingSize = servingSize;
-        MealOfTheDayType = mealOfTheDayType;
+        MealOfTheDayTypes = mealOfTheDayTypes;
     }
 
     public Name Name { get; protected set; }
     public string Description { get; protected set; }
     public int ServingSize { get; protected set; }
-    public MealOfTheDayType MealOfTheDayType { get; protected set; }
+    public IEnumerable<MealOfTheDayType> MealOfTheDayTypes { get; protected set; }
 
-    public States.DishState DishState { get; private set; }
+    public States.DishState DishState { get; protected set; }
 
     public virtual IReadOnlyCollection<Ingredient> Ingredients { get => _ingredients.ToList().AsReadOnly(); }
 
@@ -46,7 +46,7 @@ public class Dish : Entity<Guid>
         string name, 
         string description,
         int servingSize,
-        MealOfTheDayType mealOfTheDayType,
+        IEnumerable<MealOfTheDayType> mealOfTheDayTypes,
         IEnumerable<Ingredient> ingredients,
         IResources resources)
     {
@@ -63,33 +63,39 @@ public class Dish : Entity<Guid>
         if (description.Length > Constants.FIFTY_THOUSAND)
             return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.DescriptionExceedsMaxLength, x => x.CommonTerms.Dish, x => Constants.FIFTY_THOUSAND.ToString()));
 
+        if (!mealOfTheDayTypes.Any())
+            return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.DishMustHaveMenuOfTheDayType));
+
+        if (mealOfTheDayTypes.Distinct().Count() != mealOfTheDayTypes.Count())
+            return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.MenuOfTheDayTypeAlreadyExists));
+
         if (!ingredients.Any())
             return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.DishMustHaveIngredients));
 
         if(ingredients.DistinctBy(x => x.Product).Count() != ingredients.Count())
             return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.IngredientAlreadyExists));
 
-        return Result.Success(new Dish(nameResult.Value, description, servingSize, mealOfTheDayType, ingredients.ToList(), resources));
+        return Result.Success(new Dish(nameResult.Value, description, servingSize, mealOfTheDayTypes, ingredients.ToList(), resources));
     }
 
     public Result<Dish> Update (
         string name,
         string description,
         int servingSize,
-        MealOfTheDayType mealOfTheDayType,
+        IEnumerable<MealOfTheDayType> mealOfTheDayTypes,
         IEnumerable<Ingredient> ingredients,
         IResources resources)
     {
         return this.DishState.Draft(() =>
         {
-            var dishResult = Create(name, description, servingSize, mealOfTheDayType, ingredients, resources);
+            var dishResult = Create(name, description, servingSize, mealOfTheDayTypes, ingredients, resources);
             if (dishResult.IsFailure)
                 return dishResult;
 
             Name = dishResult.Value.Name;
             Description = dishResult.Value.Description;
             ServingSize = dishResult.Value.ServingSize;
-            MealOfTheDayType = dishResult.Value.MealOfTheDayType;
+            MealOfTheDayTypes = dishResult.Value.MealOfTheDayTypes;
             _ingredients = dishResult.Value.Ingredients;
 
             return Result.Success();

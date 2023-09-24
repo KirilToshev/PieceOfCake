@@ -35,10 +35,10 @@ public class MenuService : IMenuService
     public Result<Menu> Create(
         DateTime startDate,
         DateTime endDate,
-        byte servingsPerDay,
-        ushort numberOfPeople)
+        ushort numberOfPeople,
+        IEnumerable<MealOfTheDayType> mealOfTheDayTypes)
     {
-        return Menu.Create(startDate, endDate, servingsPerDay, numberOfPeople, _resources)
+        return Menu.Create(startDate, endDate, numberOfPeople, mealOfTheDayTypes, _resources)
             .Tap(menu =>
             {
                 _unitOfWork.MenuRepository.Insert(menu);
@@ -50,14 +50,14 @@ public class MenuService : IMenuService
         Guid id, 
         DateTime startDate,
         DateTime endDate,
-        byte servingsPerDay,
-        ushort numberOfPeople)
+        ushort numberOfPeople,
+        IEnumerable<MealOfTheDayType> mealOfTheDayTypes)
     {
         var menuResult = this.Get(id);
         if (menuResult.IsFailure)
             return menuResult;
 
-        var updateResult = menuResult.Value.Update(startDate, endDate, servingsPerDay, numberOfPeople, _resources);
+        var updateResult = menuResult.Value.Update(startDate, endDate, numberOfPeople, mealOfTheDayTypes, _resources);
         if (updateResult.IsFailure)
             return updateResult;
 
@@ -81,21 +81,23 @@ public class MenuService : IMenuService
 
     public Result<Menu> GenerateDishesList(Guid id)
     {
-        var menuResult = this.Get(id);
-        if (menuResult.IsFailure)
-            return menuResult;
+        //TODO: Implement generation of menu calendar.
+        throw new NotImplementedException();
+        //var menuResult = this.Get(id);
+        //if (menuResult.IsFailure)
+        //    return menuResult;
 
-        menuResult.Value.ClearAllRelatedDishes();
-        _unitOfWork.MenuRepository.Update(menuResult.Value);
-        _unitOfWork.Save();
+        //menuResult.Value.ClearAllRelatedDishes();
+        //_unitOfWork.MenuRepository.Update(menuResult.Value);
+        //_unitOfWork.Save();
 
-        var dishesListResult = menuResult.Value.GenerateDishesList(_unitOfWork, _resources);
-        if (dishesListResult.IsFailure)
-            return dishesListResult.ConvertFailure<Menu>();
+        //var dishesListResult = menuResult.Value.GenerateDishesList(_unitOfWork, _resources);
+        //if (dishesListResult.IsFailure)
+        //    return dishesListResult.ConvertFailure<Menu>();
 
-        _unitOfWork.MenuRepository.Update(menuResult.Value);
-        _unitOfWork.Save();
+        //_unitOfWork.MenuRepository.Update(menuResult.Value);
+        //_unitOfWork.Save();
 
-        return Result.Success(menuResult.Value);
+        //return Result.Success(menuResult.Value);
     }
 }

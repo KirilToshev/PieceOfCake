@@ -1,10 +1,10 @@
-﻿namespace PieceOfCake.Core.IoModels;
+﻿namespace PieceOfCake.Core.Dtos;
 
-public class AddIngredientDto
+public record AddIngredientDto
 {
-    public float Quantity { get; set; }
+    public required float Quantity { get; init; }
 
-    public Guid MeasureUnitId { get; set; }
+    public required Guid MeasureUnitId { get; init; }
 
-    public Guid ProductId { get; set; }
+    public required Guid ProductId { get; init; }
 }

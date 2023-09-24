@@ -6,19 +6,19 @@ namespace PieceOfCake.Core.ValueObjects;
 
 public class Name : ValueObject<Name, string>
 {
-    protected Name()
-        :base(string.Empty)
+    protected Name ()
+        : base(string.Empty)
     {
     }
 
-    protected Name(string name)
-        :base(name)
+    protected Name (string name)
+        : base(name)
     {
     }
 
-    public static implicit operator string(Name name) => name.Value;
+    public static implicit operator string (Name name) => name.Value;
 
-    public static Result<Name> Create(string name, IResources resources, Expression<Func<IResources, string?>> entityName, uint maxLength, uint? minLength = null)
+    public static Result<Name> Create (string name, IResources resources, Expression<Func<IResources, string?>> entityName, uint maxLength, uint? minLength = null)
     {
         if (maxLength == 0)
             throw new ArgumentOutOfRangeException(nameof(maxLength));

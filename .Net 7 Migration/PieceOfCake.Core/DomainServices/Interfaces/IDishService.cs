@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
+using PieceOfCake.Core.Dtos;
 using PieceOfCake.Core.Entities;
-using PieceOfCake.Core.IoModels;
 
 namespace PieceOfCake.Core.DomainServices.Interfaces;
 
@@ -10,13 +10,13 @@ public interface IDishService : ICRUDService<Dish, Guid>
         string name, 
         string description, 
         int servingSize,
-        Guid mealOfTheDayType,
+        IEnumerable<MealOfTheDayType> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsVmList);
     Result<Dish> Update(
         Guid id, 
         string name, 
         string description, 
         int servingSize,
-        Guid mealOfTheDayType,
+        IEnumerable<MealOfTheDayType> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsVmList);
 }

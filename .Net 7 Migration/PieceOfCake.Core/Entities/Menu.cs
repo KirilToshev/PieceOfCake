@@ -72,33 +72,5 @@ public class Menu : Entity<Guid>
         this.Dishes.Clear();
     }
 
-    public Result<Dictionary<DateOnly, ICollection<Dish>>> CalculateDishesPerDay(IEnumerable<Dish> dishes, IResources resources)
-    {
-        var result = new Dictionary<DateOnly, ICollection<Dish>>();
-        if (!dishes.Any())
-            return result;
-
-        var totalNumberOfServings = MealOfTheDayTypes.Count() * Duration.DaysDifference * NumberOfPeople;
-
-        if (dishes.Count() < totalNumberOfServings)
-            return Result.Failure<Dictionary<DateOnly, ICollection<Dish>>>(resources.GenereteSentence(x => x.UserErrors.NotEnoughDishes));
-
-        var index = 0;
-
-        foreach (var day in Duration)
-        {
-            for (int i = 0; i < ServingsPerDay; i++, index++)
-            {
-                if (!result.ContainsKey(day))
-                {
-                    var dishesPerDayList = new List<Dish>();
-                    result.Add(day, dishesPerDayList);
-                }
-
-                result[day].Add(dishes[index]);
-            }
-        }
-
-        return result;
-    }
+    
 }

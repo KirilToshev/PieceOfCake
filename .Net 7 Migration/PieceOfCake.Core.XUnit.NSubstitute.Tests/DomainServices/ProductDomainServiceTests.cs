@@ -7,9 +7,6 @@ using PieceOfCake.Core.DomainServices;
 using PieceOfCake.Core.Entities;
 using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
-using PieceOfCake.Core.ValueObjects;
-using System;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace PieceOfCake.UnitTests.Core.DomainServices;
