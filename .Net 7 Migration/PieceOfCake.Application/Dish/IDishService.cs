@@ -1,23 +1,22 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Application.Common;
-using PieceOfCake.Core.Dtos;
-using PieceOfCake.Core.Entities;
+using PieceOfCake.Application.Dish.Dtos;
 
 namespace PieceOfCake.Application.Dish;
 
-public interface IDishService : ICRUDService<Core.Entities.Dish, Guid>
+public interface IDishService : ICRUDService<Core.Dish.Dish, Guid>
 {
-    Result<Core.Entities.Dish> Create (
+    Result<Core.Dish.Dish> Create (
         string name,
         string description,
         int servingSize,
-        IEnumerable<Core.Entities.MealOfTheDayType> mealOfTheDayTypes,
+        IEnumerable<Core.MealOfTheDayType.MealOfTheDayType> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsVmList);
-    Result<Core.Entities.Dish> Update (
+    Result<Core.Dish.Dish> Update (
         Guid id,
         string name,
         string description,
         int servingSize,
-        IEnumerable<Core.Entities.MealOfTheDayType> mealOfTheDayTypes,
+        IEnumerable<Core.MealOfTheDayType.MealOfTheDayType> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsVmList);
 }

@@ -1,12 +1,11 @@
 ﻿using CSharpFunctionalExtensions;
-using PieceOfCake.Core.Entities;
-using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
-using PieceOfCake.Core.Dtos;
-using PieceOfCake.Core.ValueObjects;
 using PieceOfCake.Application.MealOfTheDayType;
 using PieceOfCake.Application.MeasureUnit;
 using PieceOfCake.Application.Product.Services;
+using PieceOfCake.Application.Dish.Dtos;
+using PieceOfCake.Core.Dish.ValueObjects;
+using PieceOfCake.Core.Common.Persistence;
 
 namespace PieceOfCake.Application.Dish;
 
@@ -32,27 +31,27 @@ public class DishService : IDishService
         _productDomainService = productDomainService ?? throw new ArgumentNullException(nameof(productDomainService));
     }
 
-    public IReadOnlyCollection<Core.Entities.Dish> Get () => _unitOfWork.DishRepository.Get();
+    public IReadOnlyCollection<Core.Dish.Dish> Get () => _unitOfWork.DishRepository.Get();
 
-    public Result<Core.Entities.Dish> Get (Guid id)
+    public Result<Core.Dish.Dish> Get (Guid id)
     {
         var dish = _unitOfWork.DishRepository.GetById(id);
 
         if (dish == null)
-            return Result.Failure<Core.Entities.Dish>(
+            return Result.Failure<Core.Dish.Dish>(
                 _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
 
         return Result.Success(dish);
     }
 
-    public Result<Core.Entities.Dish> Create (
+    public Result<Core.Dish.Dish> Create (
         string name,
         string description,
         int servingSize,
-        IEnumerable<Core.Entities.MealOfTheDayType> mealOfTheDayTypes,
+        IEnumerable<Core.MealOfTheDayType.MealOfTheDayType> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsDtos)
     {
-        return ValidateInputs(name, description, servingSize, mealOfTheDayTypes, ingredientsDtos, Core.Entities.Dish.Create)
+        return ValidateInputs(name, description, servingSize, mealOfTheDayTypes, ingredientsDtos, Core.Dish.Dish.Create)
             .Tap(dish =>
             {
                 _unitOfWork.DishRepository.Insert(dish);
@@ -60,12 +59,12 @@ public class DishService : IDishService
             });
     }
 
-    public Result<Core.Entities.Dish> Update (
+    public Result<Core.Dish.Dish> Update (
         Guid id,
         string name,
         string description,
         int servingSize,
-        IEnumerable<Core.Entities.MealOfTheDayType> mealOfTheDayTypes,
+        IEnumerable<Core.MealOfTheDayType.MealOfTheDayType> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsDtos)
     {
         var dishResult = Get(id);
@@ -99,13 +98,13 @@ public class DishService : IDishService
             });
     }
 
-    private Result<Core.Entities.Dish> ValidateInputs (
+    private Result<Core.Dish.Dish> ValidateInputs (
         string name,
         string description,
         int servingSize,
-        IEnumerable<Core.Entities.MealOfTheDayType> mealOfTheDayTypes,
+        IEnumerable<Core.MealOfTheDayType.MealOfTheDayType> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsDtos,
-        Func<string, string, int, IEnumerable<Core.Entities.MealOfTheDayType>, IEnumerable<Ingredient>, IResources, Result<Core.Entities.Dish>> callbackFunc)
+        Func<string, string, int, IEnumerable<Core.MealOfTheDayType.MealOfTheDayType>, IEnumerable<Ingredient>, IResources, Result<Core.Dish.Dish>> callbackFunc)
     {
         //TODO: Implement cacheing
         var allMeasureUnits = _measureUnitDomainService.Get();
@@ -153,7 +152,7 @@ public class DishService : IDishService
         }
 
         if (errors.Any())
-            return Result.Failure<Core.Entities.Dish>(string.Join(";", errors));
+            return Result.Failure<Core.Dish.Dish>(string.Join(";", errors));
 
         return callbackFunc(name, description, servingSize, mealOfTheDayTypes, ingredients, _resources);
     }

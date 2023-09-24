@@ -1,4 +1,4 @@
-﻿using PieceOfCake.Core.Enumerations;
+﻿using PieceOfCake.Core.Dish.Enumerations;
 
 namespace PieceOfCake.Core.Resources;
 
@@ -9,6 +9,6 @@ public interface ICommonTerms
     public string Dish { get; }
     public string MealOfTheDayType { get; }
 
-    string DishState(DishState state);
-    string DayOfWeek(DayOfWeek dayOfWeek);
+    string DishState (DishState state);
+    string DayOfWeek (DayOfWeek dayOfWeek);
 }

@@ -2,14 +2,13 @@ using AutoFixture;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
-using PieceOfCake.Core.Entities;
-using PieceOfCake.Core.Persistence;
+using PieceOfCake.Core.Common.Persistence;
+using PieceOfCake.Core.Common.ValueObjects;
 using PieceOfCake.Core.Resources;
-using PieceOfCake.Core.ValueObjects;
 using System.Linq.Expressions;
 using System.Resources;
 
-namespace PieceOfCake.UnitTests.Core.Entities;
+namespace PieceOfCake.Core.Tests.Entities;
 
 public class ProductUnitTests
 {
@@ -17,15 +16,15 @@ public class ProductUnitTests
     private Mock<IUnitOfWork> _uowMock;
     private Mock<IProductRepository> _productRepoMock;
     private Fixture _fixture;
-    private Mock<Product> _productMock;
+    private Mock<Product.Product> _productMock;
     private Mock<Name> _nameMock;
 
     [SetUp]
-    public void BeforeEachTest()
+    public void BeforeEachTest ()
     {
         ResourceManager resMgr = new ResourceManager("ProductUnitTests.Properties.Resource", typeof(ProductUnitTests).Assembly);
         var test = resMgr.GetResourceSet(System.Globalization.CultureInfo.InvariantCulture, false, false);
-        
+
         _fixture = new Fixture();
         IServiceCollection services = new ServiceCollection();
         services.AddResources();
@@ -36,32 +35,32 @@ public class ProductUnitTests
         _uowMock.Setup(x => x.ProductRepository)
             .Returns(_productRepoMock.Object);
         _productRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns((Product)null);
-        _productMock = new Mock<Product>();
+            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product.Product, bool>>>()))
+            .Returns((Product.Product)null);
+        _productMock = new Mock<Product.Product>();
         _nameMock = new Mock<Name>();
     }
 
     [TestCase("")]
     [TestCase("  ")]
     [TestCase(null)]
-    public void Create_Should_Return_User_Error_If_Created_Without_Name(string productName)
+    public void Create_Should_Return_User_Error_If_Created_Without_Name (string productName)
     {
-        var productResult = Product.Create(productName, _resources, _uowMock.Object);
+        var productResult = Product.Product.Create(productName, _resources, _uowMock.Object);
         Assert.IsTrue(productResult.IsFailure);
         Assert.AreEqual("Product must have name.", productResult.Error);
     }
 
     [Test]
-    public void Create_Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit()
+    public void Create_Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit ()
     {
-        var productResult = Product.Create(new string('|', 51), _resources, _uowMock.Object);
+        var productResult = Product.Product.Create(new string('|', 51), _resources, _uowMock.Object);
         Assert.IsTrue(productResult.IsFailure);
         Assert.AreEqual("Product name should not exceed 50 symbols.", productResult.Error);
     }
 
     [Test]
-    public void Create_Should_Return_User_Error_If_Name_Already_Exists()
+    public void Create_Should_Return_User_Error_If_Name_Already_Exists ()
     {
         //Arrange
         var alreadyExistingName = _fixture.Create<string>();
@@ -73,11 +72,11 @@ public class ProductUnitTests
             .Returns(_nameMock.Object);
 
         _productRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product.Product, bool>>>()))
             .Returns(_productMock.Object);
 
         //Act
-        var productResult = Product.Create(alreadyExistingName, _resources, _uowMock.Object);
+        var productResult = Product.Product.Create(alreadyExistingName, _resources, _uowMock.Object);
 
         //Assert
         Assert.IsTrue(productResult.IsFailure);
@@ -85,16 +84,16 @@ public class ProductUnitTests
     }
 
     [Test]
-    public void Create_Should_Succseed_If_Name_Meets_Requirenements()
+    public void Create_Should_Succseed_If_Name_Meets_Requirenements ()
     {
         //Arrange
         var validName = new string('|', 50);
         _productRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns((Product)null);
+            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product.Product, bool>>>()))
+            .Returns((Product.Product)null);
 
         //Act
-        var result = Product.Create(validName, _resources, _uowMock.Object);
+        var result = Product.Product.Create(validName, _resources, _uowMock.Object);
 
         //Assert
         Assert.IsTrue(result.IsSuccess);
@@ -104,11 +103,11 @@ public class ProductUnitTests
     [TestCase("")]
     [TestCase("  ")]
     [TestCase(null)]
-    public void Update_Should_Return_User_Error_If_Created_Without_Name(string productName)
+    public void Update_Should_Return_User_Error_If_Created_Without_Name (string productName)
     {
-        var product = Product.Create(_fixture.Create<string>(), _resources, _uowMock.Object).Value;
+        var product = Product.Product.Create(_fixture.Create<string>(), _resources, _uowMock.Object).Value;
         _productRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product.Product, bool>>>()))
             .Returns(product);
 
         //Act
@@ -119,13 +118,13 @@ public class ProductUnitTests
     }
 
     [Test]
-    public void Update_Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit()
+    public void Update_Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit ()
     {
         //Arrange
         var name = _fixture.Create<string>();
-        var product = Product.Create(name, _resources, _uowMock.Object).Value;
+        var product = Product.Product.Create(name, _resources, _uowMock.Object).Value;
         _productRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product.Product, bool>>>()))
             .Returns(product);
 
         //Act
@@ -136,10 +135,10 @@ public class ProductUnitTests
     }
 
     [Test]
-    public void Update_Should_Return_User_Error_If_Name_Already_Exists()
+    public void Update_Should_Return_User_Error_If_Name_Already_Exists ()
     {
         //Arrange
-        var product = Product
+        var product = Product.Product
             .Create(_fixture.Create<string>(), _resources, _uowMock.Object).Value;
         var alreadyExistingName = _fixture.Create<string>();
         _nameMock.SetupGet(x => x.Value)
@@ -148,7 +147,7 @@ public class ProductUnitTests
             .SetupGet(x => x.Name)
             .Returns(_nameMock.Object);
         _productRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product.Product, bool>>>()))
             .Returns(_productMock.Object);
 
         //Act
@@ -160,14 +159,14 @@ public class ProductUnitTests
     }
 
     [Test]
-    public void Update_Should_Succseed_If_Name_Meets_Requirenements()
+    public void Update_Should_Succseed_If_Name_Meets_Requirenements ()
     {
         //Arrange
         var name = new string('|', 50);
-        var product = Product.Create(name, _resources, _uowMock.Object).Value;
+        var product = Product.Product.Create(name, _resources, _uowMock.Object).Value;
         _productRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns((Product)null);
+            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product.Product, bool>>>()))
+            .Returns((Product.Product)null);
 
         //Act
         var result = product.Update(new string('|', 1), _resources, _uowMock.Object);

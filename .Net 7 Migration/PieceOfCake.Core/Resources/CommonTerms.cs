@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Localization;
-using PieceOfCake.Core.Enumerations;
+using PieceOfCake.Core.Dish.Enumerations;
 
 namespace PieceOfCake.Core.Resources;
 
@@ -7,7 +7,7 @@ public class CommonTerms : ICommonTerms
 {
     private readonly IStringLocalizer<CommonTerms> _localizer;
 
-    public CommonTerms(IStringLocalizer<CommonTerms> localizer)
+    public CommonTerms (IStringLocalizer<CommonTerms> localizer)
     {
         _localizer = localizer;
     }
@@ -20,15 +20,15 @@ public class CommonTerms : ICommonTerms
 
     public string MealOfTheDayType => GetString(nameof(MealOfTheDayType));
 
-    public string DishState(DishState state)
+    public string DishState (DishState state)
     {
         return GetString(state.ToString());
     }
 
-    public string DayOfWeek(DayOfWeek dayOfWeek)
+    public string DayOfWeek (DayOfWeek dayOfWeek)
     {
         return GetString(dayOfWeek.ToString());
     }
 
-    private string GetString(string name) => _localizer[name]!;
+    private string GetString (string name) => _localizer[name]!;
 }

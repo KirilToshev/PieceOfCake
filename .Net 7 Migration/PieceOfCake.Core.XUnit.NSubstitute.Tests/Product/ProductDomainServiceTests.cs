@@ -4,8 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using PieceOfCake.Application.Product.Services;
-using PieceOfCake.Core.Entities;
-using PieceOfCake.Core.Persistence;
+using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Resources;
 using System.Linq.Expressions;
 
@@ -18,7 +17,7 @@ public class ProductDomainServiceTests
     private IProductRepository _productRepoMock;
     private IDishRepository _dishRepoMock;
     private Fixture _fixture;
-    private Core.Entities.Product _productMock;
+    private Core.Product.Product _productMock;
 
     public ProductDomainServiceTests ()
     {
@@ -34,9 +33,9 @@ public class ProductDomainServiceTests
             .Returns(_productRepoMock);
         _uowMock.DishRepository
             .Returns(_dishRepoMock);
-        _productRepoMock.GetFirstOrDefault(Arg.Any<Expression<Func<Core.Entities.Product, bool>>>())
-            .Returns((Core.Entities.Product)null);
-        _productMock = Substitute.For<Core.Entities.Product>();
+        _productRepoMock.GetFirstOrDefault(Arg.Any<Expression<Func<Core.Product.Product, bool>>>())
+            .Returns((Core.Product.Product)null);
+        _productMock = Substitute.For<Core.Product.Product>();
     }
 
     [Fact]
@@ -44,7 +43,7 @@ public class ProductDomainServiceTests
     {
         var notExistingId = _fixture.Create<Guid>();
         _productRepoMock.GetById(notExistingId)
-            .Returns((Core.Entities.Product)null);
+            .Returns((Core.Product.Product)null);
 
         var sut = new ProductService(_resources, _uowMock);
 
@@ -74,7 +73,7 @@ public class ProductDomainServiceTests
     {
         var notExistingId = _fixture.Create<Guid>();
         _productRepoMock.GetById(notExistingId)
-            .Returns((Core.Entities.Product)null);
+            .Returns((Core.Product.Product)null);
 
         var sut = new ProductService(_resources, _uowMock);
 
@@ -123,8 +122,8 @@ public class ProductDomainServiceTests
         var id = _fixture.Create<Guid>();
         _productRepoMock.GetById(Arg.Is(id))
             .Returns(_productMock);
-        _dishRepoMock.Get(Arg.Any<Expression<Func<Core.Entities.Dish, bool>>>(), null)
-            .Returns(new Core.Entities.Dish[0]);
+        _dishRepoMock.Get(Arg.Any<Expression<Func<Core.Dish.Dish, bool>>>(), null)
+            .Returns(new Core.Dish.Dish[0]);
 
         var sut = new ProductService(_resources, _uowMock);
 
@@ -139,9 +138,9 @@ public class ProductDomainServiceTests
         var id = _fixture.Create<Guid>();
         _productRepoMock.GetById(id)
             .Returns(_productMock);
-        var dishMock = Substitute.For<Core.Entities.Dish>();
-        _dishRepoMock.Get(Arg.Any<Expression<Func<Core.Entities.Dish, bool>>>(), null)
-            .Returns(new Core.Entities.Dish[] { dishMock });
+        var dishMock = Substitute.For<Core.Dish.Dish>();
+        _dishRepoMock.Get(Arg.Any<Expression<Func<Core.Dish.Dish, bool>>>(), null)
+            .Returns(new Core.Dish.Dish[] { dishMock });
 
         var sut = new ProductService(_resources, _uowMock);
 

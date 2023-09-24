@@ -6,7 +6,7 @@ public class UserErrors : IUserErrors
 {
     private readonly IStringLocalizer<UserErrors> _localizer;
 
-    public UserErrors(IStringLocalizer<UserErrors> localizer)
+    public UserErrors (IStringLocalizer<UserErrors> localizer)
     {
         _localizer = localizer;
     }
@@ -55,5 +55,5 @@ public class UserErrors : IUserErrors
 
     public string MenuOfTheDayTypeAlreadyExists => GetString(nameof(MenuOfTheDayTypeAlreadyExists));
 
-    private string GetString(string name) => _localizer[name]!;
+    private string GetString (string name) => _localizer[name]!;
 }
