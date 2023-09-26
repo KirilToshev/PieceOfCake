@@ -1,16 +1,17 @@
 ﻿using CSharpFunctionalExtensions;
+using PieceOfCake.Core.DomainServices.Interfaces;
 using PieceOfCake.Core.Entities;
 using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
 
-namespace PieceOfCake.Application.Product.Services;
+namespace PieceOfCake.Core.DomainServices;
 
 public class ProductService : IProductService
 {
     private readonly IResources _resources;
     private readonly IUnitOfWork _unitOfWork;
 
-    public ProductService (
+    public ProductService(
         IResources resources,
         IUnitOfWork unitOfWork)
     {
@@ -18,48 +19,47 @@ public class ProductService : IProductService
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     }
 
-    public IReadOnlyCollection<Core.Entities.Product> Get () => _unitOfWork.ProductRepository.Get();
+    public IReadOnlyCollection<Product> Get() => _unitOfWork.ProductRepository.Get();
 
-    public Result<Core.Entities.Product> Get (Guid id)
+    public Result<Product> Get(Guid id)
     {
         var product = _unitOfWork.ProductRepository.GetById(id);
 
         if (product == null)
-            return Result.Failure<Core.Entities.Product>(
+            return Result.Failure<Product>(
                 _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
 
         return Result.Success(product);
     }
 
-    public Result<Core.Entities.Product> Update (Guid id, string? name)
+    public Result<Product> Update(Guid id, string? name)
     {
         var product = _unitOfWork.ProductRepository.GetById(id);
 
         if (product == null)
-            return Result.Failure<Core.Entities.Product>(
+            return Result.Failure<Product>(
                 _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
 
         return product.Update(name, _resources, _unitOfWork)
-            .Tap(x =>
+            .Tap(x => 
             {
                 _unitOfWork.ProductRepository.Update(x);
                 _unitOfWork.Save();
             });
     }
 
-    public Result<Core.Entities.Product> Create (string name)
+    public Result<Product> Create(string name)
     {
-        return Core.Entities.Product.Create(name, _resources, _unitOfWork)
-            .Tap(x =>
-            {
+        return Product.Create(name, _resources, _unitOfWork)
+            .Tap(x => {
                 _unitOfWork.ProductRepository.Insert(x);
-                _unitOfWork.Save();
+                _unitOfWork.Save(); 
             });
     }
 
-    public Result Delete (Guid id)
+    public Result Delete(Guid id)
     {
-        return Get(id)
+        return this.Get(id)
             .Bind(product =>
             {
                 var isProductInUse = _unitOfWork.DishRepository

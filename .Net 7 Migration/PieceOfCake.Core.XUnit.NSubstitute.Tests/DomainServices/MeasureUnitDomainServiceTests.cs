@@ -2,13 +2,13 @@ using AutoFixture;
 using CSharpFunctionalExtensions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
-using PieceOfCake.Application.MeasureUnit;
+using PieceOfCake.Core.DomainServices;
 using PieceOfCake.Core.Entities;
 using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
 using System.Linq.Expressions;
 
-namespace PieceOfCake.Application.Tests.MeasureUnit;
+namespace PieceOfCake.UnitTests.Core.DomainServices;
 
 public class MeasureUnitDomainServiceTests
 {
@@ -16,7 +16,7 @@ public class MeasureUnitDomainServiceTests
     private IUnitOfWork _uowMock;
     private IMeasureUnitRepository _measureUnitRepoMock;
     private Fixture _fixture;
-    private Core.Entities.MeasureUnit _measureUnitMock;
+    private MeasureUnit _measureUnitMock;
     private IDishRepository _dishRepoMock;
 
     public MeasureUnitDomainServiceTests ()
@@ -32,16 +32,16 @@ public class MeasureUnitDomainServiceTests
         _dishRepoMock = Substitute.For<IDishRepository>();
         _uowMock.MeasureUnitRepository.Returns(_measureUnitRepoMock);
         _uowMock.DishRepository.Returns(_dishRepoMock);
-        _measureUnitRepoMock.GetFirstOrDefault(Arg.Any<Expression<Func<Core.Entities.MeasureUnit, bool>>>()).Returns((Core.Entities.MeasureUnit)null);
-        _measureUnitMock = Substitute.For<Core.Entities.MeasureUnit>();
+        _measureUnitRepoMock.GetFirstOrDefault(Arg.Any<Expression<Func<MeasureUnit, bool>>>()).Returns((MeasureUnit)null);
+        _measureUnitMock = Substitute.For<MeasureUnit>();
     }
 
     [Fact]
-    public void Get_Should_Return_User_Error_If_Id_Is_Not_Found ()
+    public void Get_Should_Return_User_Error_If_Id_Is_Not_Found()
     {
         var notExistingId = _fixture.Create<Guid>();
         _measureUnitRepoMock.GetById(Arg.Is(notExistingId))
-            .Returns((Core.Entities.MeasureUnit)null);
+            .Returns((MeasureUnit)null);
 
         var sut = new MeasureUnitService(_resources, _uowMock);
 
@@ -52,7 +52,7 @@ public class MeasureUnitDomainServiceTests
     }
 
     [Fact]
-    public void Get_Should_Return_MeasureUnit_If_Id_Is_Found ()
+    public void Get_Should_Return_MeasureUnit_If_Id_Is_Found()
     {
         var id = _fixture.Create<Guid>();
         _measureUnitRepoMock.GetById(id).Returns(_measureUnitMock);
@@ -66,10 +66,10 @@ public class MeasureUnitDomainServiceTests
     }
 
     [Fact]
-    public void Update_Should_Return_User_Error_If_Id_Is_Not_Found ()
+    public void Update_Should_Return_User_Error_If_Id_Is_Not_Found()
     {
         var notExistingId = _fixture.Create<Guid>();
-        _measureUnitRepoMock.GetById(notExistingId).Returns((Core.Entities.MeasureUnit)null);
+        _measureUnitRepoMock.GetById(notExistingId).Returns((MeasureUnit)null);
 
         var sut = new MeasureUnitService(_resources, _uowMock);
 
@@ -80,7 +80,7 @@ public class MeasureUnitDomainServiceTests
     }
 
     [Fact]
-    public void Update_Should_Succseed_If_Id_Is_Found ()
+    public void Update_Should_Succseed_If_Id_Is_Found()
     {
         //Arrange
         var id = _fixture.Create<Guid>();
@@ -100,7 +100,7 @@ public class MeasureUnitDomainServiceTests
     }
 
     [Fact]
-    public void Delete_Should_Return_User_Error_If_Id_Is_Not_Found ()
+    public void Delete_Should_Return_User_Error_If_Id_Is_Not_Found()
     {
         var notExistingId = _fixture.Create<Guid>();
         var sut = new MeasureUnitService(_resources, _uowMock);
@@ -112,13 +112,13 @@ public class MeasureUnitDomainServiceTests
     }
 
     [Fact]
-    public void Delete_Should_Succseed_If_Id_Is_Found ()
+    public void Delete_Should_Succseed_If_Id_Is_Found()
     {
         var id = _fixture.Create<Guid>();
         _measureUnitRepoMock.GetById(id)
             .Returns(_measureUnitMock);
-        _dishRepoMock.Get(Arg.Any<Expression<Func<Core.Entities.Dish, bool>>>(), null)
-            .Returns(new Core.Entities.Dish[0]);
+        _dishRepoMock.Get(Arg.Any<Expression<Func<Dish, bool>>>(), null)
+            .Returns(new Dish[0]);
 
         var sut = new MeasureUnitService(_resources, _uowMock);
 
@@ -128,14 +128,14 @@ public class MeasureUnitDomainServiceTests
     }
 
     [Fact]
-    public void Delete_Should_Fail_If_MeasureUnit_Is_In_Use ()
+    public void Delete_Should_Fail_If_MeasureUnit_Is_In_Use()
     {
         var id = _fixture.Create<Guid>();
         _measureUnitRepoMock.GetById(id)
             .Returns(_measureUnitMock);
-        var dishMock = Substitute.For<Core.Entities.Dish>();
-        _dishRepoMock.Get(Arg.Any<Expression<Func<Core.Entities.Dish, bool>>>(), null)
-            .Returns(new Core.Entities.Dish[] { dishMock });
+        var dishMock = Substitute.For<Dish>();
+        _dishRepoMock.Get(Arg.Any<Expression<Func<Dish, bool>>>(), null)
+            .Returns(new Dish[] { dishMock });
 
         var sut = new MeasureUnitService(_resources, _uowMock);
 
