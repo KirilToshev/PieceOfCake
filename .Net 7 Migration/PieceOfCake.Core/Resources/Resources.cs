@@ -5,7 +5,7 @@ namespace PieceOfCake.Core.Resources;
 
 public class Resources : IResources
 {
-    public Resources (
+    public Resources(
         IStringLocalizer<UserErrors> userErrorsResource,
         IStringLocalizer<CommonTerms> commonTermsResource
         )
@@ -18,7 +18,7 @@ public class Resources : IResources
 
     public ICommonTerms CommonTerms { get; private set; }
 
-    public string GenereteSentence (Expression<Func<IResources, string>> sentenceBaseExpression, params Expression<Func<IResources, string?>>[] wordsExpressions)
+    public string GenereteSentence(Expression<Func<IResources, string>> sentenceBaseExpression, params Expression<Func<IResources, string?>>[] wordsExpressions)
     {
         var sentenceBase = sentenceBaseExpression.Compile().Invoke(this);
         var words = wordsExpressions.Select(we => we.Compile().Invoke(this));

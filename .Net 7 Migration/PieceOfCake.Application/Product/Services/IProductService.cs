@@ -2,6 +2,6 @@
 
 namespace PieceOfCake.Application.Product.Services;
 
-public interface IProductService : ICRUDService<Core.Product.Product, Guid>
+public interface IProductService : ICRUDService<Core.Entities.Product , Guid>
 {
 }

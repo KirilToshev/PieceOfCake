@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
-using PieceOfCake.Core.Common.Persistence;
+using PieceOfCake.Core.Entities;
+using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
 
 namespace PieceOfCake.Application.Product.Services;
@@ -17,25 +18,25 @@ public class ProductService : IProductService
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     }
 
-    public IReadOnlyCollection<Core.Product.Product> Get () => _unitOfWork.ProductRepository.Get();
+    public IReadOnlyCollection<Core.Entities.Product> Get () => _unitOfWork.ProductRepository.Get();
 
-    public Result<Core.Product.Product> Get (Guid id)
+    public Result<Core.Entities.Product> Get (Guid id)
     {
         var product = _unitOfWork.ProductRepository.GetById(id);
 
         if (product == null)
-            return Result.Failure<Core.Product.Product>(
+            return Result.Failure<Core.Entities.Product>(
                 _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
 
         return Result.Success(product);
     }
 
-    public Result<Core.Product.Product> Update (Guid id, string? name)
+    public Result<Core.Entities.Product> Update (Guid id, string? name)
     {
         var product = _unitOfWork.ProductRepository.GetById(id);
 
         if (product == null)
-            return Result.Failure<Core.Product.Product>(
+            return Result.Failure<Core.Entities.Product>(
                 _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
 
         return product.Update(name, _resources, _unitOfWork)
@@ -46,9 +47,9 @@ public class ProductService : IProductService
             });
     }
 
-    public Result<Core.Product.Product> Create (string name)
+    public Result<Core.Entities.Product> Create (string name)
     {
-        return Core.Product.Product.Create(name, _resources, _unitOfWork)
+        return Core.Entities.Product.Create(name, _resources, _unitOfWork)
             .Tap(x =>
             {
                 _unitOfWork.ProductRepository.Insert(x);

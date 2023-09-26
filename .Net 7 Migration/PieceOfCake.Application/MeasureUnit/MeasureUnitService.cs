@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
-using PieceOfCake.Core.Common.Persistence;
+using PieceOfCake.Core.Entities;
+using PieceOfCake.Core.Persistence;
 using PieceOfCake.Core.Resources;
 
 namespace PieceOfCake.Application.MeasureUnit;
@@ -17,25 +18,25 @@ public class MeasureUnitService : IMeasureUnitService
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     }
 
-    public IReadOnlyCollection<Core.MeasureUnit.MeasureUnit> Get () => _unitOfWork.MeasureUnitRepository.Get();
+    public IReadOnlyCollection<Core.Entities.MeasureUnit> Get () => _unitOfWork.MeasureUnitRepository.Get();
 
-    public Result<Core.MeasureUnit.MeasureUnit> Get (Guid id)
+    public Result<Core.Entities.MeasureUnit> Get (Guid id)
     {
         var measureUnit = _unitOfWork.MeasureUnitRepository.GetById(id);
 
         if (measureUnit == null)
-            return Result.Failure<Core.MeasureUnit.MeasureUnit>(
+            return Result.Failure<Core.Entities.MeasureUnit>(
                 _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
 
         return Result.Success(measureUnit);
     }
 
-    public Result<Core.MeasureUnit.MeasureUnit> Update (Guid id, string? name)
+    public Result<Core.Entities.MeasureUnit> Update (Guid id, string? name)
     {
         var measureUnit = _unitOfWork.MeasureUnitRepository.GetById(id);
 
         if (measureUnit == null)
-            return Result.Failure<Core.MeasureUnit.MeasureUnit>(
+            return Result.Failure<Core.Entities.MeasureUnit>(
                 _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
 
         return measureUnit.Update(name, _resources, _unitOfWork)
@@ -46,9 +47,9 @@ public class MeasureUnitService : IMeasureUnitService
             });
     }
 
-    public Result<Core.MeasureUnit.MeasureUnit> Create (string name)
+    public Result<Core.Entities.MeasureUnit> Create (string name)
     {
-        return Core.MeasureUnit.MeasureUnit.Create(name, _resources, _unitOfWork)
+        return Core.Entities.MeasureUnit.Create(name, _resources, _unitOfWork)
             .Tap(x =>
             {
                 _unitOfWork.MeasureUnitRepository.Insert(x);
