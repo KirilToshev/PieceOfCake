@@ -2,14 +2,15 @@ using AutoFixture;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
+using PieceOfCake.Core.Common.Persistence;
+using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.Entities;
-using PieceOfCake.Core.Persistence;
-using PieceOfCake.Core.Resources;
+using PieceOfCake.Core.Tests;
 using PieceOfCake.Core.ValueObjects;
 using System.Linq.Expressions;
 using System.Resources;
 
-namespace PieceOfCake.UnitTests.Core.Entities;
+namespace PieceOfCake.Core.Tests.Entities;
 
 public class ProductUnitTests
 {
@@ -21,11 +22,11 @@ public class ProductUnitTests
     private Mock<Name> _nameMock;
 
     [SetUp]
-    public void BeforeEachTest()
+    public void BeforeEachTest ()
     {
         ResourceManager resMgr = new ResourceManager("ProductUnitTests.Properties.Resource", typeof(ProductUnitTests).Assembly);
         var test = resMgr.GetResourceSet(System.Globalization.CultureInfo.InvariantCulture, false, false);
-        
+
         _fixture = new Fixture();
         IServiceCollection services = new ServiceCollection();
         services.AddResources();
@@ -45,7 +46,7 @@ public class ProductUnitTests
     [TestCase("")]
     [TestCase("  ")]
     [TestCase(null)]
-    public void Create_Should_Return_User_Error_If_Created_Without_Name(string productName)
+    public void Create_Should_Return_User_Error_If_Created_Without_Name (string productName)
     {
         var productResult = Product.Create(productName, _resources, _uowMock.Object);
         Assert.IsTrue(productResult.IsFailure);
@@ -53,7 +54,7 @@ public class ProductUnitTests
     }
 
     [Test]
-    public void Create_Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit()
+    public void Create_Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit ()
     {
         var productResult = Product.Create(new string('|', 51), _resources, _uowMock.Object);
         Assert.IsTrue(productResult.IsFailure);
@@ -61,7 +62,7 @@ public class ProductUnitTests
     }
 
     [Test]
-    public void Create_Should_Return_User_Error_If_Name_Already_Exists()
+    public void Create_Should_Return_User_Error_If_Name_Already_Exists ()
     {
         //Arrange
         var alreadyExistingName = _fixture.Create<string>();
@@ -85,7 +86,7 @@ public class ProductUnitTests
     }
 
     [Test]
-    public void Create_Should_Succseed_If_Name_Meets_Requirenements()
+    public void Create_Should_Succseed_If_Name_Meets_Requirenements ()
     {
         //Arrange
         var validName = new string('|', 50);
@@ -104,7 +105,7 @@ public class ProductUnitTests
     [TestCase("")]
     [TestCase("  ")]
     [TestCase(null)]
-    public void Update_Should_Return_User_Error_If_Created_Without_Name(string productName)
+    public void Update_Should_Return_User_Error_If_Created_Without_Name (string productName)
     {
         var product = Product.Create(_fixture.Create<string>(), _resources, _uowMock.Object).Value;
         _productRepoMock
@@ -119,7 +120,7 @@ public class ProductUnitTests
     }
 
     [Test]
-    public void Update_Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit()
+    public void Update_Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit ()
     {
         //Arrange
         var name = _fixture.Create<string>();
@@ -136,7 +137,7 @@ public class ProductUnitTests
     }
 
     [Test]
-    public void Update_Should_Return_User_Error_If_Name_Already_Exists()
+    public void Update_Should_Return_User_Error_If_Name_Already_Exists ()
     {
         //Arrange
         var product = Product
@@ -160,7 +161,7 @@ public class ProductUnitTests
     }
 
     [Test]
-    public void Update_Should_Succseed_If_Name_Meets_Requirenements()
+    public void Update_Should_Succseed_If_Name_Meets_Requirenements ()
     {
         //Arrange
         var name = new string('|', 50);

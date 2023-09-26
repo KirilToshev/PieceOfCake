@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Common;
-using PieceOfCake.Core.Resources;
+using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.ValueObjects;
 
 namespace PieceOfCake.Core.Entities;

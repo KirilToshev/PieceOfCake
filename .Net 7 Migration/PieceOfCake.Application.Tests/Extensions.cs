@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using PieceOfCake.Core.Common.Resources;
 
-namespace PieceOfCake.Core.Tests;
+namespace PieceOfCake.Application.Tests;
 
 internal static class Extensions
 {

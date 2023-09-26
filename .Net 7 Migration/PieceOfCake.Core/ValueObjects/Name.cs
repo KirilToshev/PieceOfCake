@@ -1,5 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
-using PieceOfCake.Core.Resources;
+using PieceOfCake.Core.Common.Resources;
 using System.Linq.Expressions;
 
 namespace PieceOfCake.Core.ValueObjects;

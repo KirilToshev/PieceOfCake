@@ -16,10 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Resources\CommonTerms.cs">
+    <Compile Update="Common\Resources\CommonTerms.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\UserErrors.cs">
+    <Compile Update="Common\Resources\UserErrors.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>
