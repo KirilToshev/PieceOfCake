@@ -1,19 +1,19 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Common.Resources;
 
-namespace PieceOfCake.Core.States;
+namespace PieceOfCake.Core.DishFeature.States;
 
 public class RejectedState : DishState
 {
     private IResources _resources;
-    public RejectedState(IResources resources)
+    public RejectedState (IResources resources)
     {
         _resources = resources;
     }
 
     public override Enumerations.DishState State => Enumerations.DishState.Rejected;
 
-    public override Result<DishState> Active(Func<Result> callback)
+    public override Result<DishState> Active (Func<Result> callback)
     {
         return Result.Failure<DishState>(_resources.GenereteSentence(x =>
         x.UserErrors.InvalidStateTransition,
@@ -21,7 +21,7 @@ public class RejectedState : DishState
         x => nameof(Enumerations.DishState.Active)));
     }
 
-    public override Result<DishState> AwaitingApproval(Func<Result> callback)
+    public override Result<DishState> AwaitingApproval (Func<Result> callback)
     {
         return Result.Failure<DishState>(_resources.GenereteSentence(x =>
         x.UserErrors.InvalidStateTransition,
@@ -29,13 +29,13 @@ public class RejectedState : DishState
         x => nameof(Enumerations.DishState.AwaitingApproval)));
     }
 
-    public override Result<DishState> Draft(Func<Result> callback)
+    public override Result<DishState> Draft (Func<Result> callback)
     {
         return callback.Invoke()
             .Map<DishState>(() => new DraftState(_resources));
     }
 
-    public override Result<DishState> Rejected(Func<Result> callback)
+    public override Result<DishState> Rejected (Func<Result> callback)
     {
         return callback.Invoke().Map<DishState>(() => this);
     }

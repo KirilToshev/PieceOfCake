@@ -1,9 +1,11 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Common;
 using PieceOfCake.Core.Common.Resources;
-using PieceOfCake.Core.ValueObjects;
+using PieceOfCake.Core.Common.ValueObjects;
+using PieceOfCake.Core.IngredientFeature.ValueObjects;
+using PieceOfCake.Core.MenuFeature.Entities;
 
-namespace PieceOfCake.Core.Entities;
+namespace PieceOfCake.Core.DishFeature.Entities;
 
 public class Dish : Entity<Guid>
 {
@@ -12,7 +14,7 @@ public class Dish : Entity<Guid>
 
     protected Dish ()
     {
-        
+
     }
 
     protected Dish (
@@ -42,8 +44,8 @@ public class Dish : Entity<Guid>
 
     public virtual IReadOnlyCollection<Menu> Menus { get => _menus.ToList().AsReadOnly(); }
 
-    public static Result<Dish> Create(
-        string name, 
+    public static Result<Dish> Create (
+        string name,
         string description,
         int servingSize,
         IEnumerable<MealOfTheDayType> mealOfTheDayTypes,
@@ -72,7 +74,7 @@ public class Dish : Entity<Guid>
         if (!ingredients.Any())
             return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.DishMustHaveIngredients));
 
-        if(ingredients.DistinctBy(x => x.Product).Count() != ingredients.Count())
+        if (ingredients.DistinctBy(x => x.Product).Count() != ingredients.Count())
             return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.IngredientAlreadyExists));
 
         return Result.Success(new Dish(nameResult.Value, description, servingSize, mealOfTheDayTypes, ingredients.ToList(), resources));
@@ -86,7 +88,7 @@ public class Dish : Entity<Guid>
         IEnumerable<Ingredient> ingredients,
         IResources resources)
     {
-        return this.DishState.Draft(() =>
+        return DishState.Draft(() =>
         {
             var dishResult = Create(name, description, servingSize, mealOfTheDayTypes, ingredients, resources);
             if (dishResult.IsFailure)

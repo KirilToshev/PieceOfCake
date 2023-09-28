@@ -1,7 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
-using PieceOfCake.Core.Entities;
+using PieceOfCake.Core.DishFeature.Entities;
+using PieceOfCake.Core.MenuFeature.Entities;
 
 namespace PieceOfCake.Application.MenuFeature.Services;
 

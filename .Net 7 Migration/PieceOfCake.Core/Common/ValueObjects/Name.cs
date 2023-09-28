@@ -2,7 +2,7 @@
 using PieceOfCake.Core.Common.Resources;
 using System.Linq.Expressions;
 
-namespace PieceOfCake.Core.ValueObjects;
+namespace PieceOfCake.Core.Common.ValueObjects;
 
 public class Name : ValueObject<Name, string>
 {

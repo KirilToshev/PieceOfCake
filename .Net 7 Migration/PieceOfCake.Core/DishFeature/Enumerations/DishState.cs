@@ -1,4 +1,4 @@
-﻿namespace PieceOfCake.Core.Enumerations;
+﻿namespace PieceOfCake.Core.DishFeature.Enumerations;
 
 public enum DishState
 {

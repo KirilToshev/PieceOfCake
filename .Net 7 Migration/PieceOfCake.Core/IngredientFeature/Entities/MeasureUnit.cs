@@ -2,25 +2,25 @@
 using PieceOfCake.Core.Common;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
-using PieceOfCake.Core.ValueObjects;
+using PieceOfCake.Core.Common.ValueObjects;
 
-namespace PieceOfCake.Core.Entities;
+namespace PieceOfCake.Core.IngredientFeature.Entities;
 
 public class MeasureUnit : Entity<Guid>
 {
     protected MeasureUnit ()
     {
-            
+
     }
 
-    private MeasureUnit(Name name)
+    private MeasureUnit (Name name)
     {
-        this.Name = name;
+        Name = name;
     }
 
     public Name Name { get; private set; }
 
-    public static Result<MeasureUnit> Create(string? name, IResources resources, IUnitOfWork unitOfWork)
+    public static Result<MeasureUnit> Create (string? name, IResources resources, IUnitOfWork unitOfWork)
     {
         var nameResult = Name.Create(name, resources, x => x.CommonTerms.MeasureUnit, Constants.FIFTY);
         if (nameResult.IsFailure)
@@ -34,13 +34,13 @@ public class MeasureUnit : Entity<Guid>
         return Result.Success(entity);
     }
 
-    public virtual Result<MeasureUnit> Update(string? name, IResources resources, IUnitOfWork unitOfWork)
+    public virtual Result<MeasureUnit> Update (string? name, IResources resources, IUnitOfWork unitOfWork)
     {
         var measureUnitResult = Create(name, resources, unitOfWork);
         if (measureUnitResult.IsFailure)
             return measureUnitResult.ConvertFailure<MeasureUnit>();
 
-        this.Name = measureUnitResult.Value.Name;
+        Name = measureUnitResult.Value.Name;
         return Result.Success(this);
     }
 }

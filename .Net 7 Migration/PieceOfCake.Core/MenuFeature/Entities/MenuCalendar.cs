@@ -1,6 +1,7 @@
-﻿using PieceOfCake.Core.ValueObjects;
+﻿using PieceOfCake.Core.DishFeature.Entities;
+using PieceOfCake.Core.MenuFeature.ValueObjects;
 
-namespace PieceOfCake.Core.Entities;
+namespace PieceOfCake.Core.MenuFeature.Entities;
 public class MenuCalendar
 {
     private readonly Dictionary<DateOnly, Dictionary<Guid, Dish[]>> _calendar;
@@ -9,8 +10,8 @@ public class MenuCalendar
     private readonly Dictionary<Guid, MealOfTheDayType> _mealOfTheDayTypes;
 
     public MenuCalendar (
-        TimePeriod duration, 
-        ushort numberOfPeople, 
+        TimePeriod duration,
+        ushort numberOfPeople,
         IEnumerable<MealOfTheDayType> mealOfTheDayTypes)
     {
         _calendar = new Dictionary<DateOnly, Dictionary<Guid, Dish[]>>(duration.DaysDifference);
@@ -19,7 +20,7 @@ public class MenuCalendar
             _calendar.Add(day, new Dictionary<Guid, Dish[]>(mealOfTheDayTypes.Count()));
             foreach (var mealType in mealOfTheDayTypes)
             {
-                
+
                 _calendar[day].Add(mealType.Id, new Dish[numberOfPeople]);
             }
         }

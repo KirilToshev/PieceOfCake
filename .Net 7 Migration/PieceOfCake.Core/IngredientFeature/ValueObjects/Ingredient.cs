@@ -1,8 +1,9 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Common.Resources;
-using PieceOfCake.Core.Entities;
+using PieceOfCake.Core.DishFeature.Entities;
+using PieceOfCake.Core.IngredientFeature.Entities;
 
-namespace PieceOfCake.Core.ValueObjects;
+namespace PieceOfCake.Core.IngredientFeature.ValueObjects;
 
 public class Ingredient : ValueObject<Ingredient>
 {

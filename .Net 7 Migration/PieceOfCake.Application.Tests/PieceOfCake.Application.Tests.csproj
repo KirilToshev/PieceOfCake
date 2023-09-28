@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -30,6 +30,11 @@
   <ItemGroup>
     <ProjectReference Include="..\PieceOfCake.Application\PieceOfCake.Application.csproj" />
     <ProjectReference Include="..\PieceOfCake.Core\PieceOfCake.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="MenuFeature\Services\" />
+    <Folder Include="DishFeature\Services\" />
   </ItemGroup>
 
 </Project>

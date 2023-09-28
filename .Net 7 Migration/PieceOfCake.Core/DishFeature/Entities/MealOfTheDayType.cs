@@ -2,9 +2,9 @@
 using PieceOfCake.Core.Common;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
-using PieceOfCake.Core.ValueObjects;
+using PieceOfCake.Core.Common.ValueObjects;
 
-namespace PieceOfCake.Core.Entities;
+namespace PieceOfCake.Core.DishFeature.Entities;
 public class MealOfTheDayType : Entity<Guid>
 {
     protected MealOfTheDayType ()
@@ -14,7 +14,7 @@ public class MealOfTheDayType : Entity<Guid>
 
     private MealOfTheDayType (Name name)
     {
-        this.Name = name;
+        Name = name;
     }
 
     public virtual Name Name { get; private set; }
@@ -39,7 +39,7 @@ public class MealOfTheDayType : Entity<Guid>
         if (mealOfTheDayTypeResult.IsFailure)
             return mealOfTheDayTypeResult.ConvertFailure<MealOfTheDayType>();
 
-        this.Name = mealOfTheDayTypeResult.Value.Name;
+        Name = mealOfTheDayTypeResult.Value.Name;
         return Result.Success(this);
     }
 }

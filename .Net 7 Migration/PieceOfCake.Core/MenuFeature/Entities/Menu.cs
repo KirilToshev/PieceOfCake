@@ -1,14 +1,15 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Common.Resources;
-using PieceOfCake.Core.ValueObjects;
+using PieceOfCake.Core.DishFeature.Entities;
+using PieceOfCake.Core.MenuFeature.ValueObjects;
 
-namespace PieceOfCake.Core.Entities;
+namespace PieceOfCake.Core.MenuFeature.Entities;
 
 public class Menu : Entity<Guid>
 {
     protected Menu ()
     {
-            
+
     }
 
     private Menu (
@@ -25,8 +26,8 @@ public class Menu : Entity<Guid>
     public TimePeriod Duration { get; private set; }
     public IEnumerable<MealOfTheDayType> MealOfTheDayTypes { get; private set; }
 
-    public static Result<Menu> Create(
-        DateTime startDate, 
+    public static Result<Menu> Create (
+        DateTime startDate,
         DateTime endDate,
         ushort numberOfPeople,
         IEnumerable<MealOfTheDayType> mealOfTheDayTypes,
@@ -45,7 +46,7 @@ public class Menu : Entity<Guid>
         return Result.Success(new Menu(duration.Value, numberOfPeople, mealOfTheDayTypes));
     }
 
-    public Result<Menu> Update(
+    public Result<Menu> Update (
         DateTime startDate,
         DateTime endDate,
         ushort numberOfPeople,
@@ -59,7 +60,7 @@ public class Menu : Entity<Guid>
         MealOfTheDayTypes = menuResult.Value.MealOfTheDayTypes;
         Duration = menuResult.Value.Duration;
         NumberOfPeople = numberOfPeople;
-        
+
         return Result.Success(this);
-    }    
+    }
 }

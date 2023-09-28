@@ -4,11 +4,10 @@ using Moq;
 using NUnit.Framework;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
-using PieceOfCake.Core.Entities;
-using PieceOfCake.Core.Tests;
+using PieceOfCake.Core.IngredientFeature.Entities;
 using System.Linq.Expressions;
 
-namespace PieceOfCake.Core.Tests.Entities;
+namespace PieceOfCake.Core.Tests.IngredientFeature.Entities;
 
 public class MeasureUnitTests
 {

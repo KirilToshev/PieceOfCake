@@ -1,4 +1,4 @@
-﻿namespace PieceOfCake.Core.ValueObjects;
+﻿namespace PieceOfCake.Core.Common.ValueObjects;
 
 public abstract class ValueObject<T, K> : CSharpFunctionalExtensions.ValueObject<T>
     where T : ValueObject<T, K>

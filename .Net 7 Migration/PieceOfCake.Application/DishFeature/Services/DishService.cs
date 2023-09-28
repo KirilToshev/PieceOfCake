@@ -1,11 +1,11 @@
 ﻿using CSharpFunctionalExtensions;
-using PieceOfCake.Core.Entities;
-using PieceOfCake.Core.ValueObjects;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Application.IngredientFeature.Services;
 using PieceOfCake.Application.IngredientFeature.Dtos;
 using PieceOfCake.Application.DishFeature.Dtos;
+using PieceOfCake.Core.DishFeature.Entities;
+using PieceOfCake.Core.IngredientFeature.ValueObjects;
 
 namespace PieceOfCake.Application.DishFeature.Services;
 

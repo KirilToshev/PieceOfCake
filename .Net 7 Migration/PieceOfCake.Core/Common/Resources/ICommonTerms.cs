@@ -1,4 +1,4 @@
-﻿using PieceOfCake.Core.Enumerations;
+﻿using PieceOfCake.Core.DishFeature.Enumerations;
 
 namespace PieceOfCake.Core.Common.Resources;
 

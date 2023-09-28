@@ -2,7 +2,7 @@
 using PieceOfCake.Core.Common.Resources;
 using System.Collections;
 
-namespace PieceOfCake.Core.ValueObjects;
+namespace PieceOfCake.Core.MenuFeature.ValueObjects;
 
 public class TimePeriod : ValueObject<TimePeriod>, IEnumerable<DateOnly>
 {

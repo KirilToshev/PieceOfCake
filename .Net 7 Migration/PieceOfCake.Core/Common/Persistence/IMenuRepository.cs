@@ -1,4 +1,4 @@
-﻿using PieceOfCake.Core.Entities;
+﻿using PieceOfCake.Core.MenuFeature.Entities;
 
 namespace PieceOfCake.Core.Common.Persistence;
 

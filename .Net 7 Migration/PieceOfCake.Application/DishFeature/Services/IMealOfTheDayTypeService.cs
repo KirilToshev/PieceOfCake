@@ -1,5 +1,5 @@
 ﻿using PieceOfCake.Application.Common.Services;
-using PieceOfCake.Core.Entities;
+using PieceOfCake.Core.DishFeature.Entities;
 
 namespace PieceOfCake.Application.DishFeature.Services;
 
