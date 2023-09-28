@@ -1,8 +1,10 @@
 ﻿using CSharpFunctionalExtensions;
-using PieceOfCake.Application.Dtos;
+using PieceOfCake.Application.Common.Services;
+using PieceOfCake.Application.DishFeature.Dtos;
+using PieceOfCake.Application.IngredientFeature.Dtos;
 using PieceOfCake.Core.Entities;
 
-namespace PieceOfCake.Application.Services.Interfaces;
+namespace PieceOfCake.Application.DishFeature.Services;
 
 public interface IDishService : ICRUDService<Dish, Guid>
 {

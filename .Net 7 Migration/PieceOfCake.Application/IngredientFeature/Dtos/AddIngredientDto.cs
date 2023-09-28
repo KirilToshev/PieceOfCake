@@ -1,4 +1,4 @@
-﻿namespace PieceOfCake.Application.Dtos;
+﻿namespace PieceOfCake.Application.IngredientFeature.Dtos;
 
 public record AddIngredientDto
 {

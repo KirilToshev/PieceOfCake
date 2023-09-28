@@ -1,12 +1,13 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Entities;
 using PieceOfCake.Core.ValueObjects;
-using PieceOfCake.Application.Services.Interfaces;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
-using PieceOfCake.Application.Dtos;
+using PieceOfCake.Application.IngredientFeature.Services;
+using PieceOfCake.Application.IngredientFeature.Dtos;
+using PieceOfCake.Application.DishFeature.Dtos;
 
-namespace PieceOfCake.Application.Services;
+namespace PieceOfCake.Application.DishFeature.Services;
 
 public class DishService : IDishService
 {
@@ -83,13 +84,15 @@ public class DishService : IDishService
         return Get(id)
             .Bind(dish =>
             {
-                var isDishInUse = _unitOfWork.MenuRepository
-                                    .Get(menu => menu.Dishes.Contains(dish))
-                                    .Any();
+                //TODO: Check if Dish is in use before deletion.
 
-                if (isDishInUse)
-                    return Result.Failure(_resources
-                        .GenereteSentence(x => x.UserErrors.ItemIsInUse, x => x.CommonTerms.Dish));
+                //var isDishInUse = _unitOfWork.MenuRepository
+                //                    .Get(menu => menu.Dishes.Contains(dish))
+                //                    .Any();
+
+                //if (isDishInUse)
+                //    return Result.Failure(_resources
+                //        .GenereteSentence(x => x.UserErrors.ItemIsInUse, x => x.CommonTerms.Dish));
 
                 _unitOfWork.DishRepository.Delete(dish);
                 _unitOfWork.Save();

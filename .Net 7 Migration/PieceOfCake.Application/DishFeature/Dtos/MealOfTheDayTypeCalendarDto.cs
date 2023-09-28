@@ -1,4 +1,4 @@
-﻿namespace PieceOfCake.Application.Dtos;
+﻿namespace PieceOfCake.Application.DishFeature.Dtos;
 
 public record MealOfTheDayTypeCalendarDto : MealOfTheDayTypeDto
 {

@@ -1,5 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
-using PieceOfCake.Application.Services.Interfaces;
+using PieceOfCake.Application.IngredientFeature.Services;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.Entities;

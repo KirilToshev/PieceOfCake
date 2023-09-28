@@ -17,8 +17,6 @@ public class Menu : Entity<Guid>
         IEnumerable<MealOfTheDayType> mealOfTheDayTypes)
     {
         Duration = duration;
-        
-        Dishes = new HashSet<Dish>();
         NumberOfPeople = numberOfPeople;
         MealOfTheDayTypes = mealOfTheDayTypes;
     }
@@ -26,7 +24,6 @@ public class Menu : Entity<Guid>
     public ushort NumberOfPeople { get; private set; }
     public TimePeriod Duration { get; private set; }
     public IEnumerable<MealOfTheDayType> MealOfTheDayTypes { get; private set; }
-    public virtual ICollection<Dish> Dishes { get; protected set; }
 
     public static Result<Menu> Create(
         DateTime startDate, 
@@ -64,12 +61,5 @@ public class Menu : Entity<Guid>
         NumberOfPeople = numberOfPeople;
         
         return Result.Success(this);
-    }
-
-    public void ClearAllRelatedDishes()
-    {
-        this.Dishes.Clear();
-    }
-
-    
+    }    
 }

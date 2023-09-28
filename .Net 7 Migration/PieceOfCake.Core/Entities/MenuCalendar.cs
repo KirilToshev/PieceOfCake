@@ -34,4 +34,6 @@ public class MenuCalendar
         get => _calendar[dateIndex][mealOfTheDayTypeIdIndex][personIndex];
         set => _calendar[dateIndex][mealOfTheDayTypeIdIndex][personIndex] = value;
     }
+
+
 }

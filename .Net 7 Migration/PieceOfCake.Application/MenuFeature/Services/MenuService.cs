@@ -1,10 +1,9 @@
 ﻿using CSharpFunctionalExtensions;
-using PieceOfCake.Application.Services.Interfaces;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.Entities;
 
-namespace PieceOfCake.Application.Services;
+namespace PieceOfCake.Application.MenuFeature.Services;
 
 public class MenuService : IMenuService
 {
@@ -60,8 +59,6 @@ public class MenuService : IMenuService
         var updateResult = menuResult.Value.Update(startDate, endDate, numberOfPeople, mealOfTheDayTypes, _resources);
         if (updateResult.IsFailure)
             return updateResult;
-
-        menuResult.Value.ClearAllRelatedDishes();
 
         _unitOfWork.MenuRepository.Update(menuResult.Value);
         _unitOfWork.Save();

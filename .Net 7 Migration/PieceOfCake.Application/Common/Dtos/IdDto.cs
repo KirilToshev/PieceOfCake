@@ -1,4 +1,4 @@
-﻿namespace PieceOfCake.Application.Dtos;
+﻿namespace PieceOfCake.Application.Common.Dtos;
 
 public record IdDto<TId>
 {

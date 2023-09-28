@@ -1,7 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
+using PieceOfCake.Application.Common.Services;
 using PieceOfCake.Core.Entities;
 
-namespace PieceOfCake.Application.Services.Interfaces;
+namespace PieceOfCake.Application.MenuFeature.Services;
 
 public interface IMenuService : ICRUDService<Menu, Guid>
 {
