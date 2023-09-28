@@ -1,11 +1,12 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Common;
+using PieceOfCake.Core.Common.Entities;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.Common.ValueObjects;
 
 namespace PieceOfCake.Core.DishFeature.Entities;
-public class MealOfTheDayType : Entity<Guid>
+public class MealOfTheDayType : GuidEntity
 {
     protected MealOfTheDayType ()
     {

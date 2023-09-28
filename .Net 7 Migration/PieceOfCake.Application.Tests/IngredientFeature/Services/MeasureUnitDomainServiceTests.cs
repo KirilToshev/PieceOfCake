@@ -2,7 +2,7 @@ using AutoFixture;
 using CSharpFunctionalExtensions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
-using PieceOfCake.Application.Services;
+using PieceOfCake.Application.IngredientFeature.Services;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.DishFeature.Entities;

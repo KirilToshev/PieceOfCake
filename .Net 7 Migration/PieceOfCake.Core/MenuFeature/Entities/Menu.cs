@@ -1,11 +1,15 @@
 ﻿using CSharpFunctionalExtensions;
+using PieceOfCake.Core.Common.Entities;
 using PieceOfCake.Core.Common.Resources;
+using PieceOfCake.Core.DishFeature.Calendar;
 using PieceOfCake.Core.DishFeature.Entities;
+using PieceOfCake.Core.MenuFeature.Calendar;
+using PieceOfCake.Core.MenuFeature.Factories;
 using PieceOfCake.Core.MenuFeature.ValueObjects;
 
 namespace PieceOfCake.Core.MenuFeature.Entities;
 
-public class Menu : Entity<Guid>
+public class Menu : GuidEntity
 {
     protected Menu ()
     {
@@ -15,17 +19,22 @@ public class Menu : Entity<Guid>
     private Menu (
         TimePeriod duration,
         ushort numberOfPeople,
-        IEnumerable<MealOfTheDayType> mealOfTheDayTypes)
+        IEnumerable<MealOfTheDayType> mealOfTheDayTypes,
+        MenuType type = MenuType.None)
     {
         Duration = duration;
         NumberOfPeople = numberOfPeople;
         MealOfTheDayTypes = mealOfTheDayTypes;
+        Type = type;
+        Calendar = new List<CalendarItem> ();
     }
 
     public ushort NumberOfPeople { get; private set; }
     public TimePeriod Duration { get; private set; }
+    public MenuType Type { get; private set; }
     public IEnumerable<MealOfTheDayType> MealOfTheDayTypes { get; private set; }
-
+    public IEnumerable<CalendarItem> Calendar { get; private set; }
+    
     public static Result<Menu> Create (
         DateTime startDate,
         DateTime endDate,
@@ -62,5 +71,17 @@ public class Menu : Entity<Guid>
         NumberOfPeople = numberOfPeople;
 
         return Result.Success(this);
+    }
+
+    public Result GenerateCalendar(IEnumerable<Dish> dishes)
+    {
+        var calendar = new MenuCalendar(Duration, NumberOfPeople, MealOfTheDayTypes);
+        var calculationStrategy = MenuCalculationFactory.Create(Type);
+        var result = calculationStrategy.Calculate(calendar, dishes);
+
+        if (result.IsSuccess)
+            Calendar = result.Value;
+
+        return result;
     }
 }

@@ -1,13 +1,10 @@
 ﻿using PieceOfCake.Core.DishFeature.Entities;
 using PieceOfCake.Core.MenuFeature.ValueObjects;
 
-namespace PieceOfCake.Core.MenuFeature.Entities;
-public class MenuCalendar
+namespace PieceOfCake.Core.MenuFeature.Calendar;
+internal class MenuCalendar
 {
     private readonly Dictionary<DateOnly, Dictionary<Guid, Dish[]>> _calendar;
-    private readonly TimePeriod _duration;
-    private readonly ushort _numberOfPeople;
-    private readonly Dictionary<Guid, MealOfTheDayType> _mealOfTheDayTypes;
 
     public MenuCalendar (
         TimePeriod duration,
@@ -24,10 +21,6 @@ public class MenuCalendar
                 _calendar[day].Add(mealType.Id, new Dish[numberOfPeople]);
             }
         }
-
-        _duration = duration;
-        _numberOfPeople = numberOfPeople;
-        _mealOfTheDayTypes = mealOfTheDayTypes.ToDictionary(key => key.Id, value => value);
     }
 
     public Dish this[DateOnly dateIndex, Guid mealOfTheDayTypeIdIndex, ushort personIndex]
@@ -36,5 +29,24 @@ public class MenuCalendar
         set => _calendar[dateIndex][mealOfTheDayTypeIdIndex][personIndex] = value;
     }
 
+    public IEnumerable<CalendarItem> Calendar
+    {
+        get
+        {
+            var selection = _calendar.Select(kv => new CalendarItem
+            {
+                Date = kv.Key,
+                MealOfTheDayTypeDtos = kv.Value.Select(x => new MealOfTheDayTypeInCalendar()
+                {
+                    Id = x.Key,
+                    Dishes = x.Value.Select(y => new DishInCalendar()
+                    {
+                        Id = y.Id,
+                    })
+                })
+            });
 
+            return selection;
+        }
+    }
 }

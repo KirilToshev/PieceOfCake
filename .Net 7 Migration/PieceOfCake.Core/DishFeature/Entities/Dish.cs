@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Common;
+using PieceOfCake.Core.Common.Entities;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.Common.ValueObjects;
 using PieceOfCake.Core.IngredientFeature.ValueObjects;
@@ -7,7 +8,7 @@ using PieceOfCake.Core.MenuFeature.Entities;
 
 namespace PieceOfCake.Core.DishFeature.Entities;
 
-public class Dish : Entity<Guid>
+public class Dish : GuidEntity
 {
     private IEnumerable<Ingredient> _ingredients;
     private IEnumerable<Menu> _menus;

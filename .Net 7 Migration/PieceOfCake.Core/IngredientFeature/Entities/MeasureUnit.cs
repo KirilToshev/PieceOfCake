@@ -1,12 +1,13 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Common;
+using PieceOfCake.Core.Common.Entities;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.Common.ValueObjects;
 
 namespace PieceOfCake.Core.IngredientFeature.Entities;
 
-public class MeasureUnit : Entity<Guid>
+public class MeasureUnit : GuidEntity
 {
     protected MeasureUnit ()
     {
