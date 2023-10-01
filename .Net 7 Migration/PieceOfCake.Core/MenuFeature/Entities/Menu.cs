@@ -1,9 +1,9 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Common.Entities;
 using PieceOfCake.Core.Common.Resources;
-using PieceOfCake.Core.DishFeature.Calendar;
 using PieceOfCake.Core.DishFeature.Entities;
 using PieceOfCake.Core.MenuFeature.Calendar;
+using PieceOfCake.Core.MenuFeature.Enumerations;
 using PieceOfCake.Core.MenuFeature.Factories;
 using PieceOfCake.Core.MenuFeature.ValueObjects;
 
@@ -73,11 +73,11 @@ public class Menu : GuidEntity
         return Result.Success(this);
     }
 
-    public Result GenerateCalendar(IEnumerable<Dish> dishes)
+    public Result GenerateCalendar(IEnumerable<Dish> dishes, IResources resources)
     {
         var calendar = new MenuCalendar(Duration, NumberOfPeople, MealOfTheDayTypes);
         var calculationStrategy = MenuCalculationFactory.Create(Type);
-        var result = calculationStrategy.Calculate(calendar, dishes);
+        var result = calculationStrategy.Calculate(calendar, dishes, resources);
 
         if (result.IsSuccess)
             Calendar = result.Value;

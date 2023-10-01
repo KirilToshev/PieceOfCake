@@ -1,4 +1,4 @@
-﻿namespace PieceOfCake.Core.DishFeature.Calendar;
+﻿namespace PieceOfCake.Core.MenuFeature.Enumerations;
 
 public enum MenuType
 {

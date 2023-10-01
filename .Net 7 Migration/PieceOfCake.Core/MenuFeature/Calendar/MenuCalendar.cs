@@ -1,8 +1,9 @@
 ﻿using PieceOfCake.Core.DishFeature.Entities;
 using PieceOfCake.Core.MenuFeature.ValueObjects;
+using System.Collections;
 
 namespace PieceOfCake.Core.MenuFeature.Calendar;
-internal class MenuCalendar
+internal class MenuCalendar : IEnumerable<KeyValuePair<DateOnly, Dictionary<Guid, Dish[]>>>
 {
     private readonly Dictionary<DateOnly, Dictionary<Guid, Dish[]>> _calendar;
 
@@ -21,7 +22,14 @@ internal class MenuCalendar
                 _calendar[day].Add(mealType.Id, new Dish[numberOfPeople]);
             }
         }
+
+        TotalDishCount = duration.DaysDifference * mealOfTheDayTypes.Count() * numberOfPeople;
+        MealOfTheDayTypes = mealOfTheDayTypes.ToDictionary(x => x.Id);
     }
+
+    public int TotalDishCount { get; }
+
+    public IDictionary<Guid, MealOfTheDayType> MealOfTheDayTypes { get; }
 
     public Dish this[DateOnly dateIndex, Guid mealOfTheDayTypeIdIndex, ushort personIndex]
     {
@@ -41,12 +49,25 @@ internal class MenuCalendar
                     Id = x.Key,
                     Dishes = x.Value.Select(y => new DishInCalendar()
                     {
-                        Id = y.Id,
+                        Id = y.Id
                     })
                 })
             });
 
             return selection;
         }
+    }
+
+    public IEnumerator<KeyValuePair<DateOnly, Dictionary<Guid, Dish[]>>> GetEnumerator ()
+    {
+        foreach (var kvPair in _calendar)
+        {
+            yield return kvPair;
+        }
+    }
+
+    IEnumerator IEnumerable.GetEnumerator ()
+    {
+        return GetEnumerator();
     }
 }

@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PieceOfCake.Core\PieceOfCake.Core.csproj" />
+    <ProjectReference Include="..\PieceOfCake.Tests.Common\PieceOfCake.Tests.Common.csproj" />
   </ItemGroup>
 
 </Project>

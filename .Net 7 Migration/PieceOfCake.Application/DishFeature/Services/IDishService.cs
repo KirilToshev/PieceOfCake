@@ -11,14 +11,14 @@ public interface IDishService : ICRUDService<Dish, Guid>
     Result<Dish> Create (
         string name,
         string description,
-        int servingSize,
+        byte servingSize,
         IEnumerable<MealOfTheDayTypeDto> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsVmList);
     Result<Dish> Update (
         Guid id,
         string name,
         string description,
-        int servingSize,
+        byte servingSize,
         IEnumerable<MealOfTheDayTypeDto> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsVmList);
 }

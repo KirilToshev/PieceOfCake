@@ -12,6 +12,7 @@ public interface IUserErrors
     public string DescriptionExceedsMaxLength { get; }
     public string DescriptionIsMandatory { get; }
     public string ServingSizeMustBeGraterThanOne { get; }
+    public string ServingSizeMustBeLessThanByteLimit { get; }
     public string InvalidStateTransition { get; }
     public string IngredientAlreadyExists { get; }
     public string ItemIsInUse { get; }
@@ -19,7 +20,7 @@ public interface IUserErrors
     public string MenuMustHaveAtLeastOneServing { get; }
     public string StartDateIsMandatory { get; }
     public string EndDateIsMandatory { get; }
-    public string NotEnoughDishes { get; }
+    public string NotEnoughDishesOfMenuType { get; }
     public string DishMustHaveIngredients { get; }
     public string DishMustHaveMenuOfTheDayType { get; }
     public string MenuOfTheDayTypeAlreadyExists { get; }

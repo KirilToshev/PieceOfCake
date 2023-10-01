@@ -47,7 +47,7 @@ public class DishService : IDishService
     public Result<Dish> Create (
         string name,
         string description,
-        int servingSize,
+        byte servingSize,
         IEnumerable<MealOfTheDayTypeDto> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsDtos)
     {
@@ -63,7 +63,7 @@ public class DishService : IDishService
         Guid id,
         string name,
         string description,
-        int servingSize,
+        byte servingSize,
         IEnumerable<MealOfTheDayTypeDto> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsDtos)
     {
@@ -103,10 +103,10 @@ public class DishService : IDishService
     private Result<Dish> ValidateInputs (
         string name,
         string description,
-        int servingSize,
+        byte servingSize,
         IEnumerable<MealOfTheDayTypeDto> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsDtos,
-        Func<string, string, int, IEnumerable<MealOfTheDayType>, IEnumerable<Ingredient>, IResources, Result<Dish>> callbackFunc)
+        Func<string, string, byte, IEnumerable<MealOfTheDayType>, IEnumerable<Ingredient>, IResources, Result<Dish>> callbackFunc)
     {
         //TODO: Implement cacheing
         var allMeasureUnits = _measureUnitDomainService.Get();
@@ -158,7 +158,6 @@ public class DishService : IDishService
         if (errors.Any())
             return Result.Failure<Dish>(string.Join(";", errors));
 
-        //TODO: Add Auto mapping
         return callbackFunc(name, description, servingSize, mappedMealOfTheDayTypes, ingredients, _resources);
     }
 }

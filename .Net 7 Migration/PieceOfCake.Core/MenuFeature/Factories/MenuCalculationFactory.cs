@@ -1,5 +1,5 @@
-﻿using PieceOfCake.Core.DishFeature.Calendar;
-using PieceOfCake.Core.MenuFeature.CalculationStrategies;
+﻿using PieceOfCake.Core.MenuFeature.CalculationStrategies;
+using PieceOfCake.Core.MenuFeature.Enumerations;
 
 namespace PieceOfCake.Core.MenuFeature.Factories;
 
@@ -10,8 +10,7 @@ internal static class MenuCalculationFactory
         switch (type)
         {
             case MenuType.None:
-                throw new NotImplementedException();
-                break;
+                return new DefaultMenuCalculationStrategy();
             case MenuType.HighProtein:
                 throw new NotImplementedException();
                 break;

@@ -26,9 +26,9 @@ public class MealOfTheDayType : GuidEntity
         if (nameResult.IsFailure)
             return nameResult.ConvertFailure<MealOfTheDayType>();
 
-        var product = unitOfWork.MealOfTheDayTypeRepository.GetFirstOrDefault(x => x.Name == name);
-        if (product != null)
-            return Result.Failure<MealOfTheDayType>(resources.GenereteSentence(x => x.UserErrors.NameAlreadyExists, x => product.Name));
+        var mealOfTheDayType = unitOfWork.MealOfTheDayTypeRepository.GetFirstOrDefault(x => x.Name == name);
+        if (mealOfTheDayType != null)
+            return Result.Failure<MealOfTheDayType>(resources.GenereteSentence(x => x.UserErrors.NameAlreadyExists, x => mealOfTheDayType.Name));
 
         var entity = new MealOfTheDayType(nameResult.Value);
         return Result.Success(entity);

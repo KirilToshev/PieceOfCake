@@ -165,8 +165,8 @@
   <data name="NameIsMandatory" xml:space="preserve">
     <value>{0} must have name.</value>
   </data>
-  <data name="NotEnoughDishes" xml:space="preserve">
-    <value>There are not enough dishes to complete your menu.</value>
+  <data name="NotEnoughDishesOfMenuType" xml:space="preserve">
+    <value>There are not enough dishes of menu type {0} to complete your menu.</value>
   </data>
   <data name="PeriodStartDateLaterThanEndDate" xml:space="preserve">
     <value>Start Date {0} of a time period must be less than its End Date {1}</value>
@@ -179,6 +179,9 @@
   </data>
   <data name="ServingSizeMustBeGraterThanOne" xml:space="preserve">
     <value>There should be at least one or more servings in a dish.</value>
+  </data>
+  <data name="ServingSizeMustBeLessThanByteLimit" xml:space="preserve">
+    <value>Dish can not have more than {0} servings.</value>
   </data>
   <data name="StartDateIsMandatory" xml:space="preserve">
     <value>Start Date is mandatory.</value>

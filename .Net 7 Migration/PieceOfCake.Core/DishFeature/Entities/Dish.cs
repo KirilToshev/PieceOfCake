@@ -21,7 +21,7 @@ public class Dish : GuidEntity
     protected Dish (
         Name name,
         string description,
-        int servingSize,
+        byte servingSize,
         IEnumerable<MealOfTheDayType> mealOfTheDayTypes,
         IEnumerable<Ingredient> ingredients,
         IResources resources)
@@ -36,7 +36,7 @@ public class Dish : GuidEntity
 
     public Name Name { get; protected set; }
     public string Description { get; protected set; }
-    public int ServingSize { get; protected set; }
+    public byte ServingSize { get; protected set; }
     public IEnumerable<MealOfTheDayType> MealOfTheDayTypes { get; protected set; }
 
     public States.DishState DishState { get; protected set; }
@@ -48,7 +48,7 @@ public class Dish : GuidEntity
     public static Result<Dish> Create (
         string name,
         string description,
-        int servingSize,
+        byte servingSize,
         IEnumerable<MealOfTheDayType> mealOfTheDayTypes,
         IEnumerable<Ingredient> ingredients,
         IResources resources)
@@ -63,8 +63,11 @@ public class Dish : GuidEntity
         if (servingSize < 1)
             return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.ServingSizeMustBeGraterThanOne));
 
+        if (servingSize > byte.MaxValue)
+            return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.ServingSizeMustBeLessThanByteLimit, x => byte.MaxValue));
+
         if (description.Length > Constants.FIFTY_THOUSAND)
-            return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.DescriptionExceedsMaxLength, x => x.CommonTerms.Dish, x => Constants.FIFTY_THOUSAND.ToString()));
+            return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.DescriptionExceedsMaxLength, x => x.CommonTerms.Dish, x => Constants.FIFTY_THOUSAND));
 
         if (!mealOfTheDayTypes.Any())
             return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.DishMustHaveMenuOfTheDayType));
@@ -84,7 +87,7 @@ public class Dish : GuidEntity
     public Result<Dish> Update (
         string name,
         string description,
-        int servingSize,
+        byte servingSize,
         IEnumerable<MealOfTheDayType> mealOfTheDayTypes,
         IEnumerable<Ingredient> ingredients,
         IResources resources)

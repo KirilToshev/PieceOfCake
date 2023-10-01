@@ -45,7 +45,7 @@ public class UserErrors : IUserErrors
 
     public string EndDateIsMandatory => GetString(nameof(EndDateIsMandatory));
 
-    public string NotEnoughDishes => GetString(nameof(NotEnoughDishes));
+    public string NotEnoughDishesOfMenuType => GetString(nameof(NotEnoughDishesOfMenuType));
 
     public string DishMustHaveIngredients => GetString(nameof(DishMustHaveIngredients));
 
@@ -54,6 +54,8 @@ public class UserErrors : IUserErrors
     public string DishMustHaveMenuOfTheDayType => GetString(nameof(DishMustHaveMenuOfTheDayType));
 
     public string MenuOfTheDayTypeAlreadyExists => GetString(nameof(MenuOfTheDayTypeAlreadyExists));
+
+    public string ServingSizeMustBeLessThanByteLimit => GetString(nameof(ServingSizeMustBeLessThanByteLimit));
 
     private string GetString (string name) => _localizer[name]!;
 }

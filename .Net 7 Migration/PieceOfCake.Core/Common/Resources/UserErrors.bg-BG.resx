@@ -165,8 +165,8 @@
   <data name="NameIsMandatory" xml:space="preserve">
     <value>{0} трябва има да име.</value>
   </data>
-  <data name="NotEnoughDishes" xml:space="preserve">
-    <value>Не съществуват достатъчен брой ястия за създаването на вашето меню.</value>
+  <data name="NotEnoughDishesOfMenuType" xml:space="preserve">
+    <value>Не съществуват достатъчен брой ястия от тип {0} за създаването на вашето меню.</value>
   </data>
   <data name="PeriodStartDateLaterThanEndDate" xml:space="preserve">
     <value>Стартовата дата {0} на времевия период трябва да е по-малка от крайната {1}</value>
@@ -179,6 +179,9 @@
   </data>
   <data name="ServingSizeMustBeGraterThanOne" xml:space="preserve">
     <value>Ястието трябва да има поне една порция.</value>
+  </data>
+  <data name="ServingSizeMustBeLessThanByteLimit" xml:space="preserve">
+    <value>Ястието не може да превишава {0} порции.</value>
   </data>
   <data name="StartDateIsMandatory" xml:space="preserve">
     <value>Стартова дата е задължителна.</value>
