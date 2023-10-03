@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Common.Resources;
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 namespace PieceOfCake.Core.MenuFeature.ValueObjects;
 
@@ -50,5 +51,10 @@ public class TimePeriod : ValueObject<TimePeriod>, IEnumerable<DateOnly>
     IEnumerator IEnumerable.GetEnumerator ()
     {
         return GetEnumerator();
+    }
+
+    public bool IsInPeriod(DateOnly date)
+    {
+        return date >= StartDate && date <= EndDate;
     }
 }

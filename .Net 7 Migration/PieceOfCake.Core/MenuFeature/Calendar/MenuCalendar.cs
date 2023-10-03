@@ -3,7 +3,7 @@ using PieceOfCake.Core.MenuFeature.ValueObjects;
 using System.Collections;
 
 namespace PieceOfCake.Core.MenuFeature.Calendar;
-internal class MenuCalendar : IEnumerable<KeyValuePair<DateOnly, Dictionary<Guid, Dish[]>>>
+public class MenuCalendar : IEnumerable<KeyValuePair<DateOnly, Dictionary<Guid, Dish[]>>>
 {
     private readonly Dictionary<DateOnly, Dictionary<Guid, Dish[]>> _calendar;
 
@@ -44,7 +44,7 @@ internal class MenuCalendar : IEnumerable<KeyValuePair<DateOnly, Dictionary<Guid
             var selection = _calendar.Select(kv => new CalendarItem
             {
                 Date = kv.Key,
-                MealOfTheDayTypeDtos = kv.Value.Select(x => new MealOfTheDayTypeInCalendar()
+                MealOfTheDayTypes = kv.Value.Select(x => new MealOfTheDayTypeInCalendar()
                 {
                     Id = x.Key,
                     Dishes = x.Value.Select(y => new DishInCalendar()

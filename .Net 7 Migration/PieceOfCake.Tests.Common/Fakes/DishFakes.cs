@@ -3,46 +3,55 @@ using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.DishFeature.Entities;
 using PieceOfCake.Core.IngredientFeature.ValueObjects;
+using PieceOfCake.Tests.Common.Fakes.Common;
+using PieceOfCake.Tests.Common.Fakes.Interfaces;
+using System.Linq.Expressions;
 
 namespace PieceOfCake.Tests.Common.Fakes;
 
-public class DishFakes : BaseFakes
+public class DishFakes : EntitieFakes<string, Dish>, IDishFakes
 {
-    private MealOfTheDayTypeFakes _mealOfTheDayTypeFakes;
-    private IngredientFakes _ingredientFakes;
+    private IMealOfTheDayTypeFakes _mealOfTheDayTypeFakes;
+    private IIngredientFakes _ingredientFakes;
 
-    public DishFakes (IResources resources, IUnitOfWork uowMock)
+    public override Expression<Func<Dish, string>> KeyExpression => x => x.Name.Value;
+
+    public DishFakes (
+        IResources resources,
+        IUnitOfWork uowMock,
+        IMealOfTheDayTypeFakes mealOfTheDayTypeFakes,
+        IIngredientFakes ingredientFakes)
         : base(resources, uowMock)
     {
-        _mealOfTheDayTypeFakes = new MealOfTheDayTypeFakes(_resources, _uowMock);
-        _ingredientFakes = new IngredientFakes(_resources, _uowMock);
+        _mealOfTheDayTypeFakes = mealOfTheDayTypeFakes ?? throw new ArgumentNullException(nameof(mealOfTheDayTypeFakes));
+        _ingredientFakes = ingredientFakes ?? throw new ArgumentNullException(nameof(ingredientFakes));
     }
 
-    public Dish Breakfast (byte servingSize) => Create(
+    public Dish Breakfast (byte? servingSize = null) => Create(
         name: TestsConstants.Dishes.BREAKFAST_DISH,
         servingSize: servingSize,
-        mealOfTheDayTypes: new [] {_mealOfTheDayTypeFakes.Breakfast});
+        mealOfTheDayTypes: new[] { _mealOfTheDayTypeFakes.Breakfast });
 
-    public Dish Lunch (byte servingSize) => Create(
+    public Dish Lunch (byte? servingSize = null) => Create(
         name: TestsConstants.Dishes.LUNCH_DISH,
         servingSize: servingSize,
         mealOfTheDayTypes: new[] { _mealOfTheDayTypeFakes.Lunch });
 
-    public Dish Dinner (byte servingSize) => Create(
+    public Dish Dinner (byte? servingSize = null) => Create(
         name: TestsConstants.Dishes.DINNER_DISH,
         servingSize: servingSize,
         mealOfTheDayTypes: new[] { _mealOfTheDayTypeFakes.Dinner });
 
-    public Dish LunchAndDinner (byte servingSize) => Create(
+    public Dish LunchAndDinner (byte? servingSize = null) => Create(
         name: TestsConstants.Dishes.LUNCH_AND_DINNER_DISH,
         servingSize: servingSize,
         mealOfTheDayTypes: new[] { _mealOfTheDayTypeFakes.Lunch, _mealOfTheDayTypeFakes.Dinner });
 
-    public Dish BreakfastLunchAndDinner (byte servingSize) => Create(
+    public Dish BreakfastLunchAndDinner (byte? servingSize = null) => Create(
         name: TestsConstants.Dishes.BREAKFAST_LUNCH_AND_DINNER_DISH,
         servingSize: servingSize,
-        mealOfTheDayTypes: new[] { 
-            _mealOfTheDayTypeFakes.Breakfast, 
+        mealOfTheDayTypes: new[] {
+            _mealOfTheDayTypeFakes.Breakfast,
             _mealOfTheDayTypeFakes.Lunch,
             _mealOfTheDayTypeFakes.Dinner });
 
@@ -69,12 +78,14 @@ public class DishFakes : BaseFakes
                 _ingredientFakes.Two_Kilogram_Of_Peppers,
                 _ingredientFakes.Three_Litters_Of_Water);
 
-        return Dish.Create(
+        var dish = Dish.Create(
             name,
             description,
             servingSize ?? _fixture.Create<byte>(),
             mealOfTheDayTypes,
             ingredients,
             _resources).Value;
+
+        return GetFromCache(dish);
     }
 }

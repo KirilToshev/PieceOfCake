@@ -7,6 +7,4 @@ public class GuidEntity : Entity<Guid>
     {
         Id = Guid.NewGuid ();
     }
-
-    public new Guid Id { get; init; }
 }

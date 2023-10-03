@@ -2,5 +2,5 @@
 public class CalendarItem
 {
     public required DateOnly Date { get; init; }
-    public required IEnumerable<MealOfTheDayTypeInCalendar> MealOfTheDayTypeDtos { get; init; }
+    public required IEnumerable<MealOfTheDayTypeInCalendar> MealOfTheDayTypes { get; init; }
 }

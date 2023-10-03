@@ -2,8 +2,6 @@
 
 public static class TestsConstants
 {
-    
-
     public static class Dishes
     {
         public const string BREAKFAST_DISH = "Breakfast_Dish";

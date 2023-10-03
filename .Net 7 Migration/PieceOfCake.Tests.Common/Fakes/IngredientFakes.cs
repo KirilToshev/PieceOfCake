@@ -3,26 +3,32 @@ using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.IngredientFeature.Entities;
 using PieceOfCake.Core.IngredientFeature.ValueObjects;
+using PieceOfCake.Tests.Common.Fakes.Common;
+using PieceOfCake.Tests.Common.Fakes.Interfaces;
 
 namespace PieceOfCake.Tests.Common.Fakes;
 
-public class IngredientFakes : BaseFakes
+public class IngredientFakes : BaseFakes, IIngredientFakes
 {
-    private ProductFakes _productFakes;
-    private MeasureUnitFakes _measureUnitFakes;
+    private IProductFakes _productFakes;
+    private IMeasureUnitFakes _measureUnitFakes;
 
-    public IngredientFakes (IResources resources, IUnitOfWork uowMock) 
+    public IngredientFakes (
+        IResources resources,
+        IUnitOfWork uowMock,
+        IProductFakes productFakes,
+        IMeasureUnitFakes measureUnitFakes)
         : base(resources, uowMock)
     {
-        _productFakes = new ProductFakes(_resources, _uowMock);
-        _measureUnitFakes = new MeasureUnitFakes(_resources, _uowMock);
+        _productFakes = productFakes ?? throw new ArgumentNullException(nameof(productFakes));
+        _measureUnitFakes = measureUnitFakes ?? throw new ArgumentNullException(nameof(measureUnitFakes));
     }
 
     public Ingredient One_Number_Of_Carrots => Create(1, _measureUnitFakes.Number, _productFakes.Carrot);
     public Ingredient Two_Kilogram_Of_Peppers => Create(2, _measureUnitFakes.Kg, _productFakes.Pepper);
     public Ingredient Three_Litters_Of_Water => Create(3, _measureUnitFakes.Litter, _productFakes.Water);
 
-    public Ingredient Create(
+    public Ingredient Create (
         float? quantity = null,
         MeasureUnit? measureUnit = null,
         Product? product = null)
@@ -39,9 +45,9 @@ public class IngredientFakes : BaseFakes
                 _productFakes.Carrot);
 
         return Ingredient.Create(
-            quantity ?? _fixture.Create<ushort>(), 
-            measureUnit, 
-            product, 
+            quantity ?? _fixture.Create<ushort>(),
+            measureUnit,
+            product,
             _resources).Value;
     }
 }

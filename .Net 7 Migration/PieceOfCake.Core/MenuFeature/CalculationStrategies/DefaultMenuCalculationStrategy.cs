@@ -5,16 +5,20 @@ using PieceOfCake.Core.MenuFeature.Calendar;
 
 namespace PieceOfCake.Core.MenuFeature.CalculationStrategies;
 
-internal class DefaultMenuCalculationStrategy : IMenuCalculationStrategy
+public class DefaultMenuCalculationStrategy : IMenuCalculationStrategy
 {
-    private Dictionary<Guid, int> _servingsPerDishCounter ;
+    private readonly IResources _resources;
+
+    public DefaultMenuCalculationStrategy (IResources resources)
+    {
+        _resources = resources;
+    }
 
     public Result<IEnumerable<CalendarItem>> Calculate (
         MenuCalendar calendar,
-        IEnumerable<Dish> dishes,
-        IResources resources)
+        IEnumerable<Dish> dishes)
     {
-        _servingsPerDishCounter = dishes.ToDictionary(key => key.Id, value => 0);
+        var servingsPerDishCounter = dishes.ToDictionary(key => key.Id, value => 0);
         var dishIndex = 0;
 
         // Iterate each day (e.g Mondary, Thusday, etc..)
@@ -33,7 +37,7 @@ internal class DefaultMenuCalculationStrategy : IMenuCalculationStrategy
                     .Contains(mealTypeId))
                     .ToArray();
                 if (!dishesOfCurrentMealType.Any())
-                    return Result.Failure<IEnumerable<CalendarItem>>(resources
+                    return Result.Failure<IEnumerable<CalendarItem>>(_resources
                         .GenereteSentence(x => x.UserErrors.NotEnoughDishesOfMenuType,
                             x => calendar.MealOfTheDayTypes[mealTypeId].Name));
 
@@ -42,13 +46,13 @@ internal class DefaultMenuCalculationStrategy : IMenuCalculationStrategy
                 for (ushort personIndex = 0; personIndex < mealType.Value.Length; personIndex++)
                 {
                     dish = dishesOfCurrentMealType[dishIndex];
-                    _servingsPerDishCounter[dish.Id]++;
-                    if (dish.ServingSize == _servingsPerDishCounter[dish.Id])
+                    servingsPerDishCounter[dish.Id]++;
+                    if (dish.ServingSize == servingsPerDishCounter[dish.Id])
                     {
-                        _servingsPerDishCounter.Remove(dish.Id);
-                        if (!_servingsPerDishCounter.Any())
+                        servingsPerDishCounter.Remove(dish.Id);
+                        if (!servingsPerDishCounter.Any())
                         {
-                            _servingsPerDishCounter = dishes.ToDictionary(key => key.Id, value => 0);
+                            servingsPerDishCounter = dishes.ToDictionary(key => key.Id, value => 0);
                         }
 
                         dishIndex++;
