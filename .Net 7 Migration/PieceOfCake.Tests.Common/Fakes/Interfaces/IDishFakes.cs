@@ -9,5 +9,5 @@ public interface IDishFakes
     Dish Create (string? name = null, string? description = null, byte? servingSize = null, IEnumerable<MealOfTheDayType>? mealOfTheDayTypes = null, IEnumerable<Ingredient>? ingredients = null);
     Dish Dinner (byte? servingSize = null);
     Dish Lunch (byte? servingSize = null);
-    Dish LunchAndDinner (byte? servingSize = null);
+    Dish LunchAndDinner (string? name = null, byte? servingSize = null);
 }

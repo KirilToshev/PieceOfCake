@@ -42,8 +42,8 @@ public class DishFakes : EntitieFakes<string, Dish>, IDishFakes
         servingSize: servingSize,
         mealOfTheDayTypes: new[] { _mealOfTheDayTypeFakes.Dinner });
 
-    public Dish LunchAndDinner (byte? servingSize = null) => Create(
-        name: TestsConstants.Dishes.LUNCH_AND_DINNER_DISH,
+    public Dish LunchAndDinner (string? name = null, byte? servingSize = null) => Create(
+        name: name ?? TestsConstants.Dishes.LUNCH_AND_DINNER_DISH,
         servingSize: servingSize,
         mealOfTheDayTypes: new[] { _mealOfTheDayTypeFakes.Lunch, _mealOfTheDayTypeFakes.Dinner });
 
