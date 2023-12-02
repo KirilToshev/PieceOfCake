@@ -1,6 +1,8 @@
-﻿using PieceOfCake.Core.Common.Resources;
+﻿using CSharpFunctionalExtensions;
+using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.DishFeature.Entities;
 using PieceOfCake.Core.MenuFeature.Calendar;
+using PieceOfCake.Core.MenuFeature.Utils;
 
 namespace PieceOfCake.Core.MenuFeature.CalculationStrategies;
 
@@ -17,8 +19,13 @@ public class DefaultMenuCalculationStrategy : IMenuCalculationStrategy
         MenuCalendar calendar,
         IEnumerable<Dish> dishes)
     {
+        var queuesResult = DishesQueues.Create(dishes, _resources);
+        if (queuesResult.IsFailure)
+            queuesResult.ConvertFailure();
+
+        var dishesPerMealTypeQueues = queuesResult.Value;
         var servingsPerDishCounter = dishes.ToDictionary(key => key.Id, value => 0);
-        var mealTypeIndexConter = calendar.MealOfTheDayTypes.ToDictionary(key => key.Key, value => 0);
+        var dishesForDequeue = new List<Dish>();
        
         // Iterate each day (e.g Mondary, Thusday, etc..)
         foreach (var kvPair in calendar)
@@ -26,77 +33,44 @@ public class DefaultMenuCalculationStrategy : IMenuCalculationStrategy
             var date = kvPair.Key;
 
             // Iterate each Meal Type (e.g Breakfast, Lunch, etc...)
-            foreach (var mealType in kvPair.Value)
+            foreach (var mealTypeKvPair in kvPair.Value)
             {
-                var mealTypeId = mealType.Key;
-                var dishesOfCurrentMealType = dishes
+                var mealType = mealTypeKvPair.Key;
+                var dishesOfCurrentMealTypeQueue = new Queue<Dish>(dishes
                     .Where(x => x.MealOfTheDayTypes
                     .Select(mt => mt.Id)
-                    .Contains(mealTypeId))
-                    .ToArray();
-                if (!dishesOfCurrentMealType.Any())
+                    .Contains(mealType.Id)));
+                if (!dishesOfCurrentMealTypeQueue.Any())
                     return Result.Failure<IEnumerable<CalendarItem>>(_resources
                         .GenereteSentence(x => x.UserErrors.NotEnoughDishesOfMenuType,
-                            x => calendar.MealOfTheDayTypes[mealTypeId].Name));
+                            x => mealType.Name));
 
                 // TODO: It is possible to connect users Ids in the future instead of just a number.
                 // Iterate each person.
-                for (ushort personIndex = 0; personIndex < mealType.Value.Length; personIndex++)
+                for (ushort personIndex = 0; personIndex < mealTypeKvPair.Value.Length; personIndex++)
                 {
-                    var dish = dishesOfCurrentMealType[mealTypeIndexConter[mealTypeId]];
-                    servingsPerDishCounter[dish.Id]++;
-                    if (dish.ServingSize == servingsPerDishCounter[dish.Id])
+                    var dish = dishesOfCurrentMealTypeQueue.Peek();
+                    while (dishesForDequeue.Contains(dish) && servingsPerDishCounter[dish.Id] == 0)
                     {
-                        servingsPerDishCounter.Remove(dish.Id);
-                        if (!servingsPerDishCounter.Any())
-                        {
-                            servingsPerDishCounter = dishes.ToDictionary(key => key.Id, value => 0);
-                        }
-
-                        mealTypeIndexConter[mealTypeId]++;
-                        if (mealTypeIndexConter[mealTypeId] >= dishesOfCurrentMealType.Length)
-                        {
-                            mealTypeIndexConter[mealTypeId] = 0;
-                            //servingsPerDishCounter = servingsPerDishCounter
-                            //    .Concat(dishesOfCurrentMealType
-                            //    .ToDictionary(key => key.Id, value => 0))
-                            //    .ToDictionary(kv => kv.Key, kv => kv.Value);
-                        }
+                        dishesOfCurrentMealTypeQueue.Dequeue();
+                        dishesOfCurrentMealTypeQueue.Enqueue(dish);
+                        dishesForDequeue.Remove(dish);
+                        dish = dishesOfCurrentMealTypeQueue.Peek();
                     }
-                    calendar[date, mealTypeId, personIndex] = dish;
+
+                    calendar[date, mealType, personIndex] = dish;
+                    servingsPerDishCounter[dish.Id]++;
+
+                    if (dish.ServingSize >= servingsPerDishCounter[dish.Id])
+                    {
+                        dishesOfCurrentMealTypeQueue.Enqueue(dishesOfCurrentMealTypeQueue.Dequeue());
+                        servingsPerDishCounter[dish.Id] = 0;
+                        dishesForDequeue.Add(dish);
+                    }
                 }
             }
         }
 
         return Result.Success(calendar.Calendar);
-    }
-
-    private class DishCalculations
-    {
-        private Dish _dish;
-        private int _servingsCounter;
-
-        public DishCalculations (Dish dish)
-        {
-            _dish = dish;
-            _servingsCounter = _dish.ServingSize;
-        }
-
-        public bool HasNoMoreServings => _servingsCounter == 0;
-        public MealOfTheDayType LastServedIn { get; private set; }
-        public Dish ServeDish(MealOfTheDayType mealOfTheDayType)
-        {
-            if (HasNoMoreServings)
-                throw new InvalidOperationException("No more servings left");
-
-            LastServedIn = mealOfTheDayType;
-            _servingsCounter--;
-            return _dish;
-        }
-
-        public bool CanBeServedIn(MealOfTheDayType mealOfTheDayType) 
-        {
-            
-        }
     }
 }
