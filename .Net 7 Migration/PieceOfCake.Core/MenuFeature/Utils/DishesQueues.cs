@@ -18,14 +18,6 @@ public class DishesQueues
         get => _dishesQueues[mealOfTheDayType];
     }
 
-    public void MoveFirstAsLast()
-    {
-        foreach (var queue in _dishesQueues.Values)
-        {
-            queue.Enqueue(queue.Dequeue());
-        }
-    }
-
     public static Result<DishesQueues> Create(IEnumerable<Dish> dishes, IResources resources)
     {
         var dishesQueues = new Dictionary<MealOfTheDayType, Queue<Dish>>();

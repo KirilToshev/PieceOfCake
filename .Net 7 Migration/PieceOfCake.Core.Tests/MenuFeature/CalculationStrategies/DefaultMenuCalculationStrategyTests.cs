@@ -121,7 +121,7 @@ public class DefaultMenuCalculationStrategyTests
             Assert.That(calendarItem.MealOfTheDayTypes.Count() == 3);
             foreach (var calendarMealOfTheDayType in calendarItem.MealOfTheDayTypes)
             {
-                Assert.IsTrue(menuCalendar.MealOfTheDayTypes.ContainsKey(calendarMealOfTheDayType.Id));
+                Assert.IsTrue(menuCalendar.MealOfTheDayTypes.Any(x => x.Id == calendarMealOfTheDayType.Id));
                 Assert.That(calendarMealOfTheDayType.Dishes.Count() == 2);
                 foreach (var dish in calendarMealOfTheDayType.Dishes)
                 {
@@ -131,7 +131,25 @@ public class DefaultMenuCalculationStrategyTests
         }
     }
 
-    [Test]
+    /// <summary>
+    ///  |------------Lunch------------|-----------Dinner------------|
+    /// D|1.Person 1                   |1.Person 1                   |
+    /// a|  lunchAndDinnerDish3Servings|  lunchAndDinnerDish3Servings|
+    /// y|2.Person 2                   |2.Person 2                   |
+    /// 1|  lunchAndDinnerDish3Servings|  lunchAndDinnerDish2Servings|
+    /// -|------------Lunch------------|-----------Dinner------------|
+    /// D|1.Person 1                   |1.Person 1                   |
+    /// a|  lunchAndDinnerDish2Servings|  lunchAndDinnerDish3Servings|
+    /// y|2.Person 2                   |2.Person 2                   |
+    /// 2|  lunchAndDinnerDish3Servings|  lunchAndDinnerDish3Servings|
+    /// -|------------Lunch------------|-----------Dinner------------|
+    /// D|1.Person 1                   |1.Person 1                   |
+    /// a|  lunchAndDinnerDish2Servings|  dinnerDish                 |
+    /// y|2.Person 2                   |2.Person 2                   |
+    /// 3|  lunchAndDinnerDish2Servings|  lunchAndDinnerDish3Servings|
+    /// -|-----------------------------|-----------------------------|
+    /// </summary>                     
+    [Test]                             
     public void Calculate_Should_Fill_Calendar_For_Two_Days_With_Lunch_And_Dinner_For_Two_People ()
     {
         var lunchAndDinnerDish3Servings = _dishFakes.LunchAndDinner(TestsConstants.Dishes.LUNCH_AND_DINNER_DISH + "with 3 servings", 3);
@@ -165,8 +183,7 @@ public class DefaultMenuCalculationStrategyTests
             lunchAndDinnerDish2Servings.Id,
             lunchAndDinnerDish2Servings.Id,
             dinnerDish.Id,
-            lunchAndDinnerDish3Servings.Id,
-            lunchAndDinnerDish3Servings.Id,
+            lunchAndDinnerDish3Servings.Id
         };
 
         Assert.That(result.Value.Count() == 3);
@@ -176,7 +193,7 @@ public class DefaultMenuCalculationStrategyTests
             Assert.That(calendarItem.MealOfTheDayTypes.Count() == 2);
             foreach (var calendarMealOfTheDayType in calendarItem.MealOfTheDayTypes)
             {
-                Assert.IsTrue(menuCalendar.MealOfTheDayTypes.ContainsKey(calendarMealOfTheDayType.Id));
+                Assert.IsTrue(menuCalendar.MealOfTheDayTypes.Any(x => x.Id == calendarMealOfTheDayType.Id));
                 Assert.That(calendarMealOfTheDayType.Dishes.Count() == 2);
                 foreach (var dish in calendarMealOfTheDayType.Dishes)
                 {
@@ -188,11 +205,19 @@ public class DefaultMenuCalculationStrategyTests
         }
     }
 
+    /// <summary>
+    ///  |------------Lunch------------|-----------Dinner------------|
+    /// D|1.Person 1                   |1.Person 1                   |
+    /// a|  lunchAndDinnerDish1        |  lunchAndDinnerDish2        |
+    /// y|2.Person 2                   |2.Person 2                   |
+    /// 1|  lunchAndDinnerDish2        |  dinnerDish                 |
+    /// -|-----------------------------|-----------------------------|
+    /// </summary>
     [Test]
     public void Calculate_Should_Fill_Calendar_For_One_Day_With_Lunch_And_Dinner_For_Two_People ()
     {
         var lunchAndDinnerDish1 = _dishFakes.LunchAndDinner(TestsConstants.Dishes.LUNCH_AND_DINNER_DISH + "1", 1);
-        var lunchAndDinnerDish2 = _dishFakes.LunchAndDinner(TestsConstants.Dishes.LUNCH_AND_DINNER_DISH + "2", 1);
+        var lunchAndDinnerDish2 = _dishFakes.LunchAndDinner(TestsConstants.Dishes.LUNCH_AND_DINNER_DISH + "2", 2);
         var dinnerDish = _dishFakes.Dinner(1);
         var dishes = new[] { lunchAndDinnerDish1, lunchAndDinnerDish2, dinnerDish };
         ushort numberOfPeople = 2;
@@ -213,8 +238,8 @@ public class DefaultMenuCalculationStrategyTests
         {
             lunchAndDinnerDish1.Id,
             lunchAndDinnerDish2.Id,
-            dinnerDish.Id,
-            lunchAndDinnerDish1.Id
+            lunchAndDinnerDish2.Id,
+            dinnerDish.Id
         };
 
         Assert.That(result.Value.Count() == 1);
@@ -224,7 +249,7 @@ public class DefaultMenuCalculationStrategyTests
             Assert.That(calendarItem.MealOfTheDayTypes.Count() == 2);
             foreach (var calendarMealOfTheDayType in calendarItem.MealOfTheDayTypes)
             {
-                Assert.IsTrue(menuCalendar.MealOfTheDayTypes.ContainsKey(calendarMealOfTheDayType.Id));
+                Assert.IsTrue(menuCalendar.MealOfTheDayTypes.Any(x => x.Id == calendarMealOfTheDayType.Id));
                 Assert.That(calendarMealOfTheDayType.Dishes.Count() == 2);
                 foreach (var dish in calendarMealOfTheDayType.Dishes)
                 {

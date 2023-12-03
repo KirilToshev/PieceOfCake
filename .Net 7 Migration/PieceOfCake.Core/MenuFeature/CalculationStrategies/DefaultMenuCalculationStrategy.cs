@@ -36,14 +36,7 @@ public class DefaultMenuCalculationStrategy : IMenuCalculationStrategy
             foreach (var mealTypeKvPair in kvPair.Value)
             {
                 var mealType = mealTypeKvPair.Key;
-                var dishesOfCurrentMealTypeQueue = new Queue<Dish>(dishes
-                    .Where(x => x.MealOfTheDayTypes
-                    .Select(mt => mt.Id)
-                    .Contains(mealType.Id)));
-                if (!dishesOfCurrentMealTypeQueue.Any())
-                    return Result.Failure<IEnumerable<CalendarItem>>(_resources
-                        .GenereteSentence(x => x.UserErrors.NotEnoughDishesOfMenuType,
-                            x => mealType.Name));
+                var dishesOfCurrentMealTypeQueue = dishesPerMealTypeQueues[mealType];
 
                 // TODO: It is possible to connect users Ids in the future instead of just a number.
                 // Iterate each person.
@@ -61,9 +54,10 @@ public class DefaultMenuCalculationStrategy : IMenuCalculationStrategy
                     calendar[date, mealType, personIndex] = dish;
                     servingsPerDishCounter[dish.Id]++;
 
-                    if (dish.ServingSize >= servingsPerDishCounter[dish.Id])
+                    if (dish.ServingSize < servingsPerDishCounter[dish.Id] + 1)
                     {
-                        dishesOfCurrentMealTypeQueue.Enqueue(dishesOfCurrentMealTypeQueue.Dequeue());
+                        dishesOfCurrentMealTypeQueue.Dequeue();
+                        dishesOfCurrentMealTypeQueue.Enqueue(dish);
                         servingsPerDishCounter[dish.Id] = 0;
                         dishesForDequeue.Add(dish);
                     }
