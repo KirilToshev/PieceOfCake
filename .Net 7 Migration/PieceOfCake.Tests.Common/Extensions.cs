@@ -1,9 +1,19 @@
 ﻿using AutoFixture;
+using Microsoft.Extensions.DependencyInjection;
+using PieceOfCake.Core.Common.Resources;
 
 namespace PieceOfCake.Tests.Common;
 
 public static class Extensions
 {
+    public static void AddResources (this IServiceCollection services)
+    {
+        services.AddLogging();
+        services.AddLocalization();
+
+        services.AddTransient<IResources, Resources>();
+    }
+
     public static IEnumerable<T> RandomListOf<T>(this Fixture fixture, params T[]  objects)
     {
         var random = new Random();

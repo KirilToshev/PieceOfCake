@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using PieceOfCake.Core.Common.Persistence;
-using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Tests.Common.Fakes;
 using PieceOfCake.Tests.Common.Fakes.Interfaces;
 
@@ -12,10 +11,7 @@ public class DIProvider
     public DIProvider (IUnitOfWork uowMock)
     {
         IServiceCollection services = new ServiceCollection();
-        services.AddLogging();
-        services.AddLocalization();
-
-        services.AddTransient<IResources, Resources>();
+        services.AddResources();
         services.AddSingleton<IDishFakes, DishFakes>();
         services.AddSingleton<IIngredientFakes, IngredientFakes>();
         services.AddSingleton<IMealOfTheDayTypeFakes, MealOfTheDayTypeFakes>();

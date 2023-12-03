@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.DishFeature.Entities;
+using PieceOfCake.Core.MenuFeature.Enumerations;
 
 namespace PieceOfCake.Core.MenuFeature.Utils;
 
@@ -18,28 +19,37 @@ public class DishesQueues
         get => _dishesQueues[mealOfTheDayType];
     }
 
-    public static Result<DishesQueues> Create(IEnumerable<Dish> dishes, IResources resources)
+    public void MoveDishAtTheEndOfAllQueues(Dish dishToDequeue)
     {
-        var dishesQueues = new Dictionary<MealOfTheDayType, Queue<Dish>>();
-        foreach (var dish in dishes)
+        foreach (var currenDishesQueue in _dishesQueues.Values)
         {
-            foreach (var mealType in dish.MealOfTheDayTypes)
+            var dish = currenDishesQueue.Peek();
+            if (dishToDequeue.Equals(dish))
             {
-                if (!dishesQueues.ContainsKey(mealType))
-                {
-                    var dishesOfCurrentMealTypeQueue = new Queue<Dish>(dishes
-                    .Where(x => x.MealOfTheDayTypes
-                    .Select(mt => mt.Id)
-                    .Contains(mealType.Id)));
-
-                    if (!dishesOfCurrentMealTypeQueue.Any())
-                        return Result.Failure<DishesQueues>(resources
-                            .GenereteSentence(x => x.UserErrors.NotEnoughDishesOfMenuType,
-                                x => mealType.Name));
-
-                    dishesQueues.Add(mealType, dishesOfCurrentMealTypeQueue);
-                }
+                currenDishesQueue.Dequeue();
+                currenDishesQueue.Enqueue(dish);
             }
+        }
+    }
+
+    public static Result<DishesQueues> Create(
+        IEnumerable<Dish> dishes,
+        IEnumerable<MealOfTheDayType> mealTypes,
+        IResources resources)
+    {
+        var dishesQueues = dishes.Select(x => x.MealOfTheDayTypes)
+            .Aggregate((curr, next) => curr.Union(next))
+            .ToDictionary(key => key,
+            value => new Queue<Dish>(dishes
+                .Where(x => x.MealOfTheDayTypes
+                .Select(mt => mt.Id)
+                .Contains(value.Id))));
+
+        if (mealTypes.Except(dishesQueues.Keys).Any())
+        {
+            return Result.Failure<DishesQueues>(resources
+                        .GenereteSentence(x => x.UserErrors.NotEnoughDishesOfMenuType,
+                            x => string.Join(',', mealTypes.Select(x => x.Name.Value))));
         }
 
         return new DishesQueues(dishesQueues);

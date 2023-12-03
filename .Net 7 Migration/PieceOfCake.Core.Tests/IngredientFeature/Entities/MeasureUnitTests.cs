@@ -5,6 +5,7 @@ using NUnit.Framework;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.IngredientFeature.Entities;
+using PieceOfCake.Tests.Common;
 using System.Linq.Expressions;
 
 namespace PieceOfCake.Core.Tests.IngredientFeature.Entities;

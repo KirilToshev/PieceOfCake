@@ -19,7 +19,7 @@ public class DefaultMenuCalculationStrategy : IMenuCalculationStrategy
         MenuCalendar calendar,
         IEnumerable<Dish> dishes)
     {
-        var queuesResult = DishesQueues.Create(dishes, _resources);
+        var queuesResult = DishesQueues.Create(dishes, calendar.MealOfTheDayTypes, _resources);
         if (queuesResult.IsFailure)
             queuesResult.ConvertFailure();
 
@@ -43,21 +43,12 @@ public class DefaultMenuCalculationStrategy : IMenuCalculationStrategy
                 for (ushort personIndex = 0; personIndex < mealTypeKvPair.Value.Length; personIndex++)
                 {
                     var dish = dishesOfCurrentMealTypeQueue.Peek();
-                    while (dishesForDequeue.Contains(dish) && servingsPerDishCounter[dish.Id] == 0)
-                    {
-                        dishesOfCurrentMealTypeQueue.Dequeue();
-                        dishesOfCurrentMealTypeQueue.Enqueue(dish);
-                        dishesForDequeue.Remove(dish);
-                        dish = dishesOfCurrentMealTypeQueue.Peek();
-                    }
-
                     calendar[date, mealType, personIndex] = dish;
                     servingsPerDishCounter[dish.Id]++;
 
                     if (dish.ServingSize < servingsPerDishCounter[dish.Id] + 1)
                     {
-                        dishesOfCurrentMealTypeQueue.Dequeue();
-                        dishesOfCurrentMealTypeQueue.Enqueue(dish);
+                        dishesPerMealTypeQueues.MoveDishAtTheEndOfAllQueues(dish);
                         servingsPerDishCounter[dish.Id] = 0;
                         dishesForDequeue.Add(dish);
                     }
