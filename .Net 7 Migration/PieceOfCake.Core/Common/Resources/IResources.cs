@@ -9,5 +9,5 @@ public interface IResources
 
     public string GenereteSentence (
         Expression<Func<IResources, string>> sentenceBaseExpression, 
-        params Expression<Func<IResources, object>>[] wordsExpression);
+        params Expression<Func<IResources, string>>[] wordsExpression);
 }

@@ -9,12 +9,12 @@ using System.Linq.Expressions;
 
 namespace PieceOfCake.Tests.Common.Fakes;
 
-public class DishFakes : EntitieFakes<string, Dish>, IDishFakes
+public class DishFakes : EntityFakes<string, Dish>, IDishFakes
 {
     private IMealOfTheDayTypeFakes _mealOfTheDayTypeFakes;
     private IIngredientFakes _ingredientFakes;
 
-    public override Expression<Func<Dish, string>> KeyExpression => x => x.Name.Value;
+    public override Expression<Func<Dish, string>> CacheKey => x => x.Name.Value;
 
     public DishFakes (
         IResources resources,

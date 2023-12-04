@@ -21,7 +21,7 @@ public class DefaultMenuCalculationStrategy : IMenuCalculationStrategy
     {
         var queuesResult = DishesQueues.Create(dishes, calendar.MealOfTheDayTypes, _resources);
         if (queuesResult.IsFailure)
-            queuesResult.ConvertFailure();
+            return queuesResult.ConvertFailure<IEnumerable<CalendarItem>>();
 
         var dishesPerMealTypeQueues = queuesResult.Value;
         var servingsPerDishCounter = dishes.ToDictionary(key => key.Id, value => 0);

@@ -20,5 +20,5 @@ public class MealOfTheDayTypeFakes : NameFakes<MealOfTheDayType>, IMealOfTheDayT
 
     public override Func<string, IResources, IUnitOfWork, Result<MealOfTheDayType>> CreateFunction => MealOfTheDayType.Create;
 
-    public override Expression<Func<MealOfTheDayType, string>> KeyExpression => x => x.Name;
+    public override Expression<Func<MealOfTheDayType, string>> CacheKey => x => x.Name;
 }

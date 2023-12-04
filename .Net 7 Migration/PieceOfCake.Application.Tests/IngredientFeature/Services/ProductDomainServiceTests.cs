@@ -1,6 +1,5 @@
 using AutoFixture;
 using CSharpFunctionalExtensions;
-using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using PieceOfCake.Application.IngredientFeature.Services;
 using PieceOfCake.Core.Common.Persistence;
@@ -11,22 +10,15 @@ using System.Linq.Expressions;
 
 namespace PieceOfCake.Application.Tests.IngredientFeature.Services;
 
-public class ProductDomainServiceTests
+public class ProductDomainServiceTests : TestsBase
 {
-    private IResources _resources;
     private IUnitOfWork _uowMock;
     private IProductRepository _productRepoMock;
     private IDishRepository _dishRepoMock;
-    private Fixture _fixture;
     private Product _productMock;
 
-    public ProductDomainServiceTests ()
+    public ProductDomainServiceTests()
     {
-        _fixture = new Fixture();
-        IServiceCollection services = new ServiceCollection();
-        services.AddResources();
-        var serviceProvider = services.BuildServiceProvider();
-        _resources = serviceProvider.GetService<IResources>();
         _uowMock = Substitute.For<IUnitOfWork>();
         _productRepoMock = Substitute.For<IProductRepository>();
         _dishRepoMock = Substitute.For<IDishRepository>();
@@ -42,11 +34,11 @@ public class ProductDomainServiceTests
     [Fact]
     public void Get_Should_Return_User_Error_If_Id_Is_Not_Found ()
     {
-        var notExistingId = _fixture.Create<Guid>();
+        var notExistingId = Fixture.Create<Guid>();
         _productRepoMock.GetById(notExistingId)
             .Returns((Product)null);
 
-        var sut = new ProductService(_resources, _uowMock);
+        var sut = new ProductService(Resources, _uowMock);
 
         var result = sut.Get(notExistingId);
 
@@ -57,11 +49,11 @@ public class ProductDomainServiceTests
     [Fact]
     public void Get_Should_Return_MeasureUnit_If_Id_Is_Found ()
     {
-        var id = _fixture.Create<Guid>();
+        var id = Fixture.Create<Guid>();
         _productRepoMock.GetById(id)
             .Returns(_productMock);
 
-        var sut = new ProductService(_resources, _uowMock);
+        var sut = new ProductService(Resources, _uowMock);
 
         var result = sut.Get(id);
 
@@ -72,13 +64,13 @@ public class ProductDomainServiceTests
     [Fact]
     public void Update_Should_Return_User_Error_If_Id_Is_Not_Found ()
     {
-        var notExistingId = _fixture.Create<Guid>();
+        var notExistingId = Fixture.Create<Guid>();
         _productRepoMock.GetById(notExistingId)
             .Returns((Product)null);
 
-        var sut = new ProductService(_resources, _uowMock);
+        var sut = new ProductService(Resources, _uowMock);
 
-        var result = sut.Update(notExistingId, _fixture.Create<string>());
+        var result = sut.Update(notExistingId, Fixture.Create<string>());
 
         Assert.True(result.IsFailure);
         Assert.Equal(string.Format("Element with Id={0} does not exists.", notExistingId), result.Error);
@@ -88,13 +80,13 @@ public class ProductDomainServiceTests
     public void Update_Should_Succseed_If_Id_Is_Found ()
     {
         //Arrange
-        var id = _fixture.Create<Guid>();
-        var updatedName = _fixture.Create<string>();
+        var id = Fixture.Create<Guid>();
+        var updatedName = Fixture.Create<string>();
         _productMock.Update(updatedName, Arg.Any<IResources>(), Arg.Any<IUnitOfWork>())
             .Returns(Result.Success(_productMock));
         _productRepoMock.GetById(id)
             .Returns(_productMock);
-        var sut = new ProductService(_resources, _uowMock);
+        var sut = new ProductService(Resources, _uowMock);
 
         //Act
         var result = sut.Update(id, updatedName);
@@ -107,9 +99,9 @@ public class ProductDomainServiceTests
     [Fact]
     public void Delete_Should_Return_User_Error_If_Id_Is_Not_Found ()
     {
-        var notExistingId = _fixture.Create<Guid>();
+        var notExistingId = Fixture.Create<Guid>();
         _productRepoMock.GetById(Arg.Is(notExistingId)).Returns(x => null);
-        var sut = new ProductService(_resources, _uowMock);
+        var sut = new ProductService(Resources, _uowMock);
 
         var result = sut.Delete(notExistingId);
 
@@ -120,13 +112,13 @@ public class ProductDomainServiceTests
     [Fact]
     public void Delete_Should_Succseed_If_Id_Is_Found ()
     {
-        var id = _fixture.Create<Guid>();
+        var id = Fixture.Create<Guid>();
         _productRepoMock.GetById(Arg.Is(id))
             .Returns(_productMock);
         _dishRepoMock.Get(Arg.Any<Expression<Func<Dish, bool>>>(), null)
             .Returns(new Dish[0]);
 
-        var sut = new ProductService(_resources, _uowMock);
+        var sut = new ProductService(Resources, _uowMock);
 
         var result = sut.Delete(id);
 
@@ -136,18 +128,18 @@ public class ProductDomainServiceTests
     [Fact]
     public void Delete_Should_Fail_If_Product_Is_In_Use ()
     {
-        var id = _fixture.Create<Guid>();
+        var id = Fixture.Create<Guid>();
         _productRepoMock.GetById(id)
             .Returns(_productMock);
         var dishMock = Substitute.For<Dish>();
         _dishRepoMock.Get(Arg.Any<Expression<Func<Dish, bool>>>(), null)
             .Returns(new Dish[] { dishMock });
 
-        var sut = new ProductService(_resources, _uowMock);
+        var sut = new ProductService(Resources, _uowMock);
 
         var result = sut.Delete(id);
 
         Assert.True(result.IsFailure);
-        Assert.Equal($"{_resources.CommonTerms.Product} can't be deleted, because it is still being used.", result.Error);
+        Assert.Equal($"{Resources.CommonTerms.Product} can't be deleted, because it is still being used.", result.Error);
     }
 }

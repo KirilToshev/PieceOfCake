@@ -7,7 +7,7 @@ using PieceOfCake.Tests.Common.Fakes.Interfaces;
 
 namespace PieceOfCake.Tests.Common.Fakes.Common;
 
-public abstract class NameFakes<TValue> : EntitieFakes<string, TValue>, INameFakes<TValue> where TValue : GuidEntity
+public abstract class NameFakes<TValue> : EntityFakes<string, TValue>, INameFakes<TValue> where TValue : GuidEntity
 {
     public NameFakes (
         IResources resources,

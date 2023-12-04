@@ -1,5 +1,4 @@
 ﻿using PieceOfCake.Core.IngredientFeature.Entities;
-using System.Linq.Expressions;
 
 namespace PieceOfCake.Tests.Common.Fakes.Interfaces;
 public interface IProductFakes : INameFakes<Product>

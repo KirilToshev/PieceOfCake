@@ -18,7 +18,7 @@ public class Name : ValueObject<Name, string>
 
     public static implicit operator string (Name name) => name.Value;
 
-    public static Result<Name> Create (string name, IResources resources, Expression<Func<IResources, object>> entityName, uint maxLength, uint? minLength = null)
+    public static Result<Name> Create (string name, IResources resources, Expression<Func<IResources, string>> entityName, uint maxLength, uint? minLength = null)
     {
         if (maxLength == 0)
             throw new ArgumentOutOfRangeException(nameof(maxLength));

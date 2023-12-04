@@ -1,4 +1,3 @@
-using AutoFixture;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
@@ -9,50 +8,23 @@ using PieceOfCake.Core.IngredientFeature.Entities;
 using PieceOfCake.Core.MenuFeature.CalculationStrategies;
 using PieceOfCake.Core.MenuFeature.Calendar;
 using PieceOfCake.Tests.Common;
-using PieceOfCake.Tests.Common.Fakes;
 using PieceOfCake.Tests.Common.Fakes.Interfaces;
 using System.Linq.Expressions;
 
 namespace PieceOfCake.Core.Tests.MenuFeature.CalculationStrategies;
 
-public class DefaultMenuCalculationStrategyTests
+public class DefaultMenuCalculationStrategyTests : TestsBase
 {
-    private IResources _resources;
-    private Mock<IUnitOfWork> _uowMock;
-    private Mock<IProductRepository> _productRepoMock;
-    private Mock<IMeasureUnitRepository> _measureUnitRepoMock;
-    private Mock<IMealOfTheDayTypeRepository> _mealOfTheDayTypeRepository;
-    private IDishRepository _dishRepoMock;
     private IDishFakes _dishFakes;
     private ITimePeriodFakes _timePeriodFakes;
     private IMealOfTheDayTypeFakes _mealOfTheDayTypeFakes;
 
-    public DefaultMenuCalculationStrategyTests ()
+    public DefaultMenuCalculationStrategyTests() 
     {
-        _measureUnitRepoMock = new Mock<IMeasureUnitRepository>();
-        _measureUnitRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
-            .Returns<MeasureUnit>(null);
-
-        _productRepoMock = new Mock<IProductRepository>();
-        _productRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns<Product>(null);
-
-        _mealOfTheDayTypeRepository = new Mock<IMealOfTheDayTypeRepository>();
-        _mealOfTheDayTypeRepository
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MealOfTheDayType, bool>>>()))
-            .Returns<MealOfTheDayType>(null);
-
-        _uowMock = new Mock<IUnitOfWork>();
-        _uowMock.Setup(x => x.MeasureUnitRepository).Returns(_measureUnitRepoMock.Object);
-        _uowMock.Setup(x => x.ProductRepository).Returns(_productRepoMock.Object);
-        _uowMock.Setup(x => x.MealOfTheDayTypeRepository).Returns(_mealOfTheDayTypeRepository.Object);
-
-        var diProvider = new DIProvider(_uowMock.Object);
-        _dishFakes = diProvider.GetRequiredService<IDishFakes> ();
-        _timePeriodFakes = diProvider.GetRequiredService<ITimePeriodFakes> ();
-        _mealOfTheDayTypeFakes = diProvider.GetRequiredService<IMealOfTheDayTypeFakes> ();
+        
+        _dishFakes = GetRequiredService<IDishFakes>();
+        _timePeriodFakes = GetRequiredService<ITimePeriodFakes> ();
+        _mealOfTheDayTypeFakes = GetRequiredService<IMealOfTheDayTypeFakes> ();
     }
 
     [SetUp]
@@ -77,11 +49,11 @@ public class DefaultMenuCalculationStrategyTests
                 _mealOfTheDayTypeFakes.Dinner
             });
 
-        var sut = new DefaultMenuCalculationStrategy(_resources);
+        var sut = new DefaultMenuCalculationStrategy(Resources);
         var result = sut.Calculate(menuCalendar, dishes);
 
         Assert.IsTrue(result.IsFailure);
-        Assert.That(result.Error, Is.EqualTo($"There are not enough dishes of menu type {_mealOfTheDayTypeFakes.Lunch.Name},{_mealOfTheDayTypeFakes.Dinner} to complete your menu."));
+        Assert.That(result.Error, Is.EqualTo($"There are not enough dishes of menu type {_mealOfTheDayTypeFakes.Lunch.Name},{_mealOfTheDayTypeFakes.Dinner.Name} to complete your menu."));
     }
 
 
@@ -101,7 +73,7 @@ public class DefaultMenuCalculationStrategyTests
                 _mealOfTheDayTypeFakes.Breakfast
             });
 
-        var sut = new DefaultMenuCalculationStrategy(_resources);
+        var sut = new DefaultMenuCalculationStrategy(Resources);
         var result = sut.Calculate(menuCalendar, dishes);
 
         Assert.That(result.Value.Count() == 1);
@@ -135,7 +107,7 @@ public class DefaultMenuCalculationStrategyTests
                 _mealOfTheDayTypeFakes.Dinner
             });
 
-        var sut = new DefaultMenuCalculationStrategy(_resources);
+        var sut = new DefaultMenuCalculationStrategy(Resources);
         var result = sut.Calculate(menuCalendar, dishes);
 
         Assert.That(result.Value.Count() == 2);
@@ -191,7 +163,7 @@ public class DefaultMenuCalculationStrategyTests
                 _mealOfTheDayTypeFakes.Dinner
             });
 
-        var sut = new DefaultMenuCalculationStrategy(_resources);
+        var sut = new DefaultMenuCalculationStrategy(Resources);
         var result = sut.Calculate(menuCalendar, dishes);
         int dishesServingsIndex = 0;
         var expectedServings = new[]
@@ -255,7 +227,7 @@ public class DefaultMenuCalculationStrategyTests
                 _mealOfTheDayTypeFakes.Dinner
             });
 
-        var sut = new DefaultMenuCalculationStrategy(_resources);
+        var sut = new DefaultMenuCalculationStrategy(Resources);
         var result = sut.Calculate(menuCalendar, dishes);
         int dishesServingsIndex = 0;
         var expectedServings = new[]

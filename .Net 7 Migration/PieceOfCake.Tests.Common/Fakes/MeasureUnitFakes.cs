@@ -20,5 +20,5 @@ public class MeasureUnitFakes : NameFakes<MeasureUnit>, IMeasureUnitFakes
 
     public override Func<string, IResources, IUnitOfWork, Result<MeasureUnit>> CreateFunction => MeasureUnit.Create;
 
-    public override Expression<Func<MeasureUnit, string>> KeyExpression => x => x.Name;
+    public override Expression<Func<MeasureUnit, string>> CacheKey => x => x.Name;
 }

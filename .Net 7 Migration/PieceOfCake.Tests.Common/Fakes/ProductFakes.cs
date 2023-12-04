@@ -20,5 +20,5 @@ public class ProductFakes : NameFakes<Product>, IProductFakes
 
     public override Func<string, IResources, IUnitOfWork, Result<Product>> CreateFunction => Product.Create;
 
-    public override Expression<Func<Product, string>> KeyExpression => x => x.Name;
+    public override Expression<Func<Product, string>> CacheKey => x => x.Name;
 }
