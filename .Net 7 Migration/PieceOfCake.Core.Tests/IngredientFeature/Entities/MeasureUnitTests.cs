@@ -31,7 +31,7 @@ public class MeasureUnitTests : TestsBase
     {
         var measureUnit = MeasureUnit.Create(measureUnitName, Resources, _uowMock.Object);
         Assert.IsTrue(measureUnit.IsFailure);
-        Assert.AreEqual("Measure Unit must have name.", measureUnit.Error);
+        Assert.That(measureUnit.Error, Is.EqualTo("Measure Unit must have name."));
     }
 
     [Test]
@@ -39,7 +39,7 @@ public class MeasureUnitTests : TestsBase
     {
         var measureUnit = MeasureUnit.Create(new string('|', 51), Resources, _uowMock.Object);
         Assert.IsTrue(measureUnit.IsFailure);
-        Assert.AreEqual("Measure Unit name should not exceed 50 symbols.", measureUnit.Error);
+        Assert.That(measureUnit.Error, Is.EqualTo("Measure Unit name should not exceed 50 symbols."));
     }
 
     [Test]
@@ -65,23 +65,19 @@ public class MeasureUnitTests : TestsBase
     {
         //Arrange
         var validName = new string('|', 50);
-        var measureUnit = MeasureUnit.Create(validName, Resources, _uowMock.Object).Value;
-        _measureUnitRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
-            .Returns((MeasureUnit)null);
-
+        
         //Act
         var result = MeasureUnit.Create(validName, Resources, _uowMock.Object);
 
         //Assert
         Assert.IsTrue(result.IsSuccess);
-        Assert.NotNull(result.Value);
+        Assert.That(result.Value.Name.Value, Is.EqualTo(validName));
     }
 
     [TestCase("")]
     [TestCase("  ")]
     [TestCase(null)]
-    public void Update_Should_Return_User_Error_If_Created_Without_Name (string measureUnitName)
+    public void Update_Should_Return_User_Error_If_Updated_Without_Name (string measureUnitName)
     {
         var name = Fixture.Create<string>();
         var measureUnit = MeasureUnit.Create(name, Resources, _uowMock.Object).Value;
@@ -93,7 +89,7 @@ public class MeasureUnitTests : TestsBase
         var result = measureUnit.Update(measureUnitName, Resources, _uowMock.Object);
 
         Assert.IsTrue(result.IsFailure);
-        Assert.AreEqual("Measure Unit must have name.", result.Error);
+        Assert.That(result.Error, Is.EqualTo("Measure Unit must have name."));
     }
 
     [Test]
@@ -110,7 +106,7 @@ public class MeasureUnitTests : TestsBase
         var result = measureUnit.Update(new string('|', 51), Resources, _uowMock.Object);
 
         Assert.IsTrue(result.IsFailure);
-        Assert.AreEqual("Measure Unit name should not exceed 50 symbols.", result.Error);
+        Assert.That(result.Error, Is.EqualTo("Measure Unit name should not exceed 50 symbols."));
     }
 
     [Test]
@@ -128,7 +124,7 @@ public class MeasureUnitTests : TestsBase
 
         //Assert
         Assert.IsTrue(result.IsFailure);
-        Assert.AreEqual(string.Format("An entity with name {0} already exist.", name), result.Error);
+        Assert.That(result.Error, Is.EqualTo($"An entity with name {name} already exist."));
     }
 
     [Test]
@@ -137,15 +133,13 @@ public class MeasureUnitTests : TestsBase
         //Arrange
         var name = new string('|', 50);
         var measureUnit = MeasureUnit.Create(name, Resources, _uowMock.Object).Value;
-        _measureUnitRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
-            .Returns((MeasureUnit)null);
+        var updatedName = new string('|', 1);
 
         //Act
-        var result = measureUnit.Update(new string('|', 1), Resources, _uowMock.Object);
+        var result = measureUnit.Update(updatedName, Resources, _uowMock.Object);
 
         //Assert
         Assert.IsTrue(result.IsSuccess);
-        Assert.NotNull(result.Value);
+        Assert.That(result.Value.Name.Value, Is.EqualTo(updatedName));
     }
 }

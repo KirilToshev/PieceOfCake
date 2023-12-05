@@ -105,10 +105,44 @@ public class Dish : GuidEntity
             _ingredients = dishResult.Value.Ingredients;
 
             return Result.Success();
-        }).Map(state =>
+        }).Map(draftState =>
         {
-            DishState = state;
+            DishState = draftState;
             return this;
         });
+    }
+
+    public Result SubmitForApproval()
+    {
+        return DishState
+            .AwaitingApproval(() => Result.Success())
+            .Map(awaitingApprovalState =>
+            {
+                DishState = awaitingApprovalState;
+                return Result.Success();
+            });
+    }
+
+    public Result Appove ()
+    {
+        return DishState
+            .Active(() => Result.Success())
+            .Map(activeState =>
+            {
+                DishState = activeState;
+                return Result.Success();
+            });
+    }
+
+    public Result Reject ()
+    {
+        //TODO: Add Rejection entity with Reason inside it.
+        return DishState
+            .Rejected(() => Result.Success())
+            .Map(activeState =>
+            {
+                DishState = activeState;
+                return Result.Success();
+            });
     }
 }

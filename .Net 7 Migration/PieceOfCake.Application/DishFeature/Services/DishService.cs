@@ -125,7 +125,8 @@ public class DishService : IDishService
                     x => x.UserErrors.IdNotFound,
                     x => id.ToString())));
 
-        var mappedMealOfTheDayTypes = allMealOfTheDayTypes.IntersectBy(mealOfTheDayTypes.Select(x => x.Id), x => x.Id);
+        var mappedMealOfTheDayTypes = allMealOfTheDayTypes
+            .IntersectBy(mealOfTheDayTypes.Select(x => x.Id), x => x.Id);
 
         foreach (var ingredientDto in ingredientsDtos)
         {
@@ -141,7 +142,7 @@ public class DishService : IDishService
                 errors.Add(_resources.GenereteSentence(
                     x => x.UserErrors.IdNotFound,
                     x => ingredientDto.ProductId.ToString()));
-
+            //TODO: This check may not be correct.
             if (errors.Any())
                 continue;
 
@@ -156,7 +157,7 @@ public class DishService : IDishService
         }
 
         if (errors.Any())
-            return Result.Failure<Dish>(string.Join(";", errors));
+            return Result.Failure<Dish>(string.Join("; ", errors));
 
         return callbackFunc(name, description, servingSize, mappedMealOfTheDayTypes, ingredients, _resources);
     }
