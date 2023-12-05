@@ -144,14 +144,14 @@
   <data name="ItemIsInUse" xml:space="preserve">
     <value>{0} не може да бъде изтрит поради съществуваща употреба.</value>
   </data>
+  <data name="MealOfTheDayTypeAlreadyExists" xml:space="preserve">
+    <value>Типовете на хранене от деня трябва да бъдат уникални.</value>
+  </data>
   <data name="MenuMustHaveAtleastOnePerson" xml:space="preserve">
     <value>Менюто трябва да е съставено за един или повече човека.</value>
   </data>
   <data name="MenuMustHaveAtLeastOneServing" xml:space="preserve">
     <value>Невъзможно е създаване на меню без минимум една порция за ден.</value>
-  </data>
-  <data name="MenuOfTheDayTypeAlreadyExists" xml:space="preserve">
-    <value>Ястието може да съдържа два еднакви типа на хранене от деня.</value>
   </data>
   <data name="NameAlreadyExists" xml:space="preserve">
     <value>Запис с име {0} вече съществува.</value>

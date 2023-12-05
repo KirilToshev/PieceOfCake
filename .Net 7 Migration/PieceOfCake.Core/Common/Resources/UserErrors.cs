@@ -53,7 +53,7 @@ public class UserErrors : IUserErrors
 
     public string DishMustHaveMenuOfTheDayType => GetString(nameof(DishMustHaveMenuOfTheDayType));
 
-    public string MenuOfTheDayTypeAlreadyExists => GetString(nameof(MenuOfTheDayTypeAlreadyExists));
+    public string MealOfTheDayTypeAlreadyExists => GetString(nameof(MealOfTheDayTypeAlreadyExists));
 
     public string ServingSizeMustBeLessThanByteLimit => GetString(nameof(ServingSizeMustBeLessThanByteLimit));
 

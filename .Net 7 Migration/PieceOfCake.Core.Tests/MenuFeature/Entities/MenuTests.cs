@@ -1,0 +1,233 @@
+﻿using AutoFixture;
+using NUnit.Framework;
+using PieceOfCake.Core.DishFeature.Entities;
+using PieceOfCake.Core.MenuFeature.Entities;
+using PieceOfCake.Core.MenuFeature.Enumerations;
+using PieceOfCake.Tests.Common.Fakes.Interfaces;
+
+namespace PieceOfCake.Core.Tests.MenuFeature.Entities;
+public class MenuTests : TestsBase
+{
+    private IMealOfTheDayTypeFakes _mealOfTheDayTypeFakes;
+
+    public MenuTests ()
+    {
+        _mealOfTheDayTypeFakes = GetRequiredService<IMealOfTheDayTypeFakes>();
+    }
+
+    [Test]
+    public void Create_Should_Return_User_Error_If_StartDate_Is_Bigger_Than_EndDate ()
+    {
+        var startDate = DateTime.Now;
+        var endDate = DateTime.Now.AddDays(-1);
+        var numberOfPeople = Fixture.Create<ushort>();
+        var mealTypes = new MealOfTheDayType[]
+        {
+            _mealOfTheDayTypeFakes.Breakfast
+        };
+
+        var result = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
+
+        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.Error, Is.EqualTo($"Start Date {startDate.ToShortDateString()} " +
+            $"of a time period must be less than its End Date {endDate.ToShortDateString()}"));
+    }
+
+    [Test]
+    public void Create_Should_Return_User_Error_If_There_Are_No_MealTypes ()
+    {
+        var startDate = DateTime.Now;
+        var endDate = DateTime.Now.AddDays(1);
+        var numberOfPeople = Fixture.Create<ushort>();
+        var mealTypes = new MealOfTheDayType[] { };
+
+        var result = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
+
+        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.Error, Is.EqualTo($"It is impossible to have a menu without at " +
+            $"least one serving per day."));
+    }
+
+    [Test]
+    public void Create_Should_Return_User_Error_If_MealTypes_Are_Not_Unique ()
+    {
+        var startDate = DateTime.Now;
+        var endDate = DateTime.Now.AddDays(1);
+        var numberOfPeople = Fixture.Create<ushort>();
+        var mealTypes = new MealOfTheDayType[]
+        {
+            _mealOfTheDayTypeFakes.Breakfast,
+            _mealOfTheDayTypeFakes.Breakfast
+        };
+
+        var result = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
+
+        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.Error, Is.EqualTo($"Meals of the day must be unique."));
+    }
+
+    [Test]
+    public void Create_Should_Return_User_Error_If_There_Are_No_People ()
+    {
+        var startDate = DateTime.Now;
+        var endDate = DateTime.Now.AddDays(1);
+        ushort numberOfPeople = 0;
+        var mealTypes = new MealOfTheDayType[]
+        {
+            _mealOfTheDayTypeFakes.Breakfast
+        };
+
+        var result = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
+
+        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.Error, Is.EqualTo($"Menu should have one or more people."));
+    }
+
+    [Test]
+    public void Create_Should_Succseed_If_Data_Is_Valid ()
+    {
+        var expectedDaysDifference = 7;
+        var startDate = DateTime.Now;
+        var endDate = DateTime.Now.AddDays(6);
+        ushort numberOfPeople = 2;
+        var mealTypes = new MealOfTheDayType[]
+        {
+            _mealOfTheDayTypeFakes.Breakfast,
+            _mealOfTheDayTypeFakes.Lunch,
+            _mealOfTheDayTypeFakes.Dinner
+        };
+
+        var result = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
+
+        Assert.IsTrue(result.IsSuccess);
+        var menu = result.Value;
+        Assert.That(menu.NumberOfPeople, Is.EqualTo(numberOfPeople));
+        Assert.That(menu.Duration.DaysDifference, Is.EqualTo(expectedDaysDifference));
+        Assert.That(menu.Type, Is.EqualTo(MenuType.None));
+        Assert.That(menu.MealOfTheDayTypes, Is.EquivalentTo(mealTypes));
+        Assert.IsFalse(menu.Calendar.Any());
+    }
+
+    [Test]
+    public void Update_Should_Return_User_Error_If_StartDate_Is_Bigger_Than_EndDate ()
+    {
+        var startDate = DateTime.Now;
+        var endDate = DateTime.Now.AddDays(1);
+        var numberOfPeople = Fixture.Create<ushort>();
+        var mealTypes = new MealOfTheDayType[]
+        {
+            _mealOfTheDayTypeFakes.Breakfast
+        };
+
+        var menu = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
+        var result = menu.Value.Update(startDate, endDate.AddDays(-2), numberOfPeople, mealTypes, Resources);
+
+        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.Error, Is.EqualTo($"Start Date {startDate.ToShortDateString()} " +
+            $"of a time period must be less than its End Date {endDate.AddDays(-2).ToShortDateString()}"));
+    }
+
+    [Test]
+    public void Update_Should_Return_User_Error_If_There_Are_No_MealTypes ()
+    {
+        var startDate = DateTime.Now;
+        var endDate = DateTime.Now.AddDays(1);
+        var numberOfPeople = Fixture.Create<ushort>();
+        var mealTypes = new MealOfTheDayType[]
+        {
+            _mealOfTheDayTypeFakes.Breakfast
+        };
+
+        var menu = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
+        var result = menu.Value.Update(startDate, endDate, numberOfPeople, new MealOfTheDayType[] { }, Resources);
+
+        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.Error, Is.EqualTo($"It is impossible to have a menu without at " +
+            $"least one serving per day."));
+    }
+
+    [Test]
+    public void Update_Should_Return_User_Error_If_MealTypes_Are_Not_Unique ()
+    {
+        var startDate = DateTime.Now;
+        var endDate = DateTime.Now.AddDays(1);
+        var numberOfPeople = Fixture.Create<ushort>();
+        var mealTypes = new MealOfTheDayType[]
+        {
+            _mealOfTheDayTypeFakes.Breakfast
+        };
+
+        var menu = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
+        var result = menu.Value.Update(
+            startDate,
+            endDate,
+            numberOfPeople,
+            new MealOfTheDayType[]
+            {
+                _mealOfTheDayTypeFakes.Breakfast,
+                _mealOfTheDayTypeFakes.Breakfast
+            },
+            Resources);
+
+
+        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.Error, Is.EqualTo($"Meals of the day must be unique."));
+    }
+
+    [Test]
+    public void Update_Should_Return_User_Error_If_There_Are_No_People ()
+    {
+        var startDate = DateTime.Now;
+        var endDate = DateTime.Now.AddDays(1);
+        var numberOfPeople = Fixture.Create<ushort>();
+        var mealTypes = new MealOfTheDayType[]
+        {
+            _mealOfTheDayTypeFakes.Breakfast
+        };
+
+        var menu = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
+        var result = menu.Value.Update(startDate, endDate, 0, mealTypes, Resources);
+
+
+        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.Error, Is.EqualTo($"Menu should have one or more people."));
+    }
+
+    [Test]
+    public void Update_Should_Succseed_If_Data_Is_Valid ()
+    {
+        var startDate = DateTime.Now;
+        var endDate = DateTime.Now.AddDays(1);
+        var numberOfPeople = Fixture.Create<ushort>();
+        var mealTypes = new MealOfTheDayType[]
+        {
+            _mealOfTheDayTypeFakes.Breakfast
+        };
+        var menu = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
+
+        var expectedDaysDifference = 3;
+        var expectedStartDate = startDate.AddDays(1);
+        var expectedEndDate = expectedStartDate.AddDays(2);
+        var expectedNumberOfPeople = Fixture.Create<ushort>();
+        var expectedMealTypes = new MealOfTheDayType[]
+        {
+            _mealOfTheDayTypeFakes.Dinner,
+            _mealOfTheDayTypeFakes.Lunch,
+        };
+
+        var result = menu.Value.Update(
+            expectedStartDate, 
+            expectedEndDate, 
+            expectedNumberOfPeople,
+            expectedMealTypes, 
+            Resources);
+
+        Assert.IsTrue(result.IsSuccess);
+        var updatedMenu = result.Value;
+        Assert.That(updatedMenu.NumberOfPeople, Is.EqualTo(expectedNumberOfPeople));
+        Assert.That(updatedMenu.Duration.DaysDifference, Is.EqualTo(expectedDaysDifference));
+        Assert.That(updatedMenu.Type, Is.EqualTo(MenuType.None));
+        Assert.That(updatedMenu.MealOfTheDayTypes, Is.EquivalentTo(expectedMealTypes));
+        Assert.IsFalse(updatedMenu.Calendar.Any());
+    }
+}

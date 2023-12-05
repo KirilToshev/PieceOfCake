@@ -72,8 +72,8 @@ public class Dish : GuidEntity
         if (!mealOfTheDayTypes.Any())
             return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.DishMustHaveMenuOfTheDayType));
 
-        if (mealOfTheDayTypes.Distinct().Count() != mealOfTheDayTypes.Count())
-            return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.MenuOfTheDayTypeAlreadyExists));
+        if (mealOfTheDayTypes.HasUniqueValuesOnly())
+            return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.MealOfTheDayTypeAlreadyExists));
 
         if (!ingredients.Any())
             return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.DishMustHaveIngredients));

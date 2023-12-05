@@ -144,14 +144,14 @@
   <data name="ItemIsInUse" xml:space="preserve">
     <value>{0} can't be deleted, because it is still being used.</value>
   </data>
+  <data name="MealOfTheDayTypeAlreadyExists" xml:space="preserve">
+    <value>Meals of the day must be unique.</value>
+  </data>
   <data name="MenuMustHaveAtleastOnePerson" xml:space="preserve">
-    <value>Menu should have one or more persons.</value>
+    <value>Menu should have one or more people.</value>
   </data>
   <data name="MenuMustHaveAtLeastOneServing" xml:space="preserve">
     <value>It is impossible to have a menu without at least one serving per day.</value>
-  </data>
-  <data name="MenuOfTheDayTypeAlreadyExists" xml:space="preserve">
-    <value>A dish may have only one menu of the day type.</value>
   </data>
   <data name="NameAlreadyExists" xml:space="preserve">
     <value>An entity with name {0} already exist.</value>

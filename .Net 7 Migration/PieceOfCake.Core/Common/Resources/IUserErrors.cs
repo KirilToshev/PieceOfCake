@@ -23,7 +23,7 @@ public interface IUserErrors
     public string NotEnoughDishesOfMenuType { get; }
     public string DishMustHaveIngredients { get; }
     public string DishMustHaveMenuOfTheDayType { get; }
-    public string MenuOfTheDayTypeAlreadyExists { get; }
+    public string MealOfTheDayTypeAlreadyExists { get; }
     public string MenuMustHaveAtleastOnePerson { get; }
 
 }

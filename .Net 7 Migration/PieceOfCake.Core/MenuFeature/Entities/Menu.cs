@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using PieceOfCake.Core.Common;
 using PieceOfCake.Core.Common.Entities;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.DishFeature.Entities;
@@ -46,8 +47,11 @@ public class Menu : GuidEntity
         if (duration.IsFailure)
             return duration.ConvertFailure<Menu>();
 
-        if (mealOfTheDayTypes.Count() < 1)
+        if (!mealOfTheDayTypes.Any())
             return Result.Failure<Menu>(resources.GenereteSentence(x => x.UserErrors.MenuMustHaveAtLeastOneServing));
+
+        if (mealOfTheDayTypes.HasUniqueValuesOnly())
+            return Result.Failure<Menu>(resources.GenereteSentence(x => x.UserErrors.MealOfTheDayTypeAlreadyExists));
 
         if (numberOfPeople < 1)
             return Result.Failure<Menu>(resources.GenereteSentence(x => x.UserErrors.MenuMustHaveAtleastOnePerson));
