@@ -6,7 +6,7 @@ namespace PieceOfCake.Core.MenuFeature.Factories;
 
 internal static class MenuCalculationFactory
 {
-    internal static IMenuCalculationStrategy Create(MenuType type, IResources resources)
+    internal static IMenuCalculationStrategy GetStrategy(MenuType type, IResources resources)
     {
         switch (type)
         {

@@ -80,7 +80,7 @@ public class Menu : GuidEntity
     public Result GenerateCalendar(IEnumerable<Dish> dishes, IResources resources)
     {
         var calendar = new MenuCalendar(Duration, NumberOfPeople, MealOfTheDayTypes);
-        var calculationStrategy = MenuCalculationFactory.Create(Type, resources);
+        var calculationStrategy = MenuCalculationFactory.GetStrategy(Type, resources);
         var result = calculationStrategy.Calculate(calendar, dishes);
 
         if (result.IsSuccess)
