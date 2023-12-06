@@ -1,9 +1,11 @@
 using AutoFixture;
 using Moq;
 using NUnit.Framework;
+using PieceOfCake.Core.Common;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.ValueObjects;
 using PieceOfCake.Core.IngredientFeature.Entities;
+using PieceOfCake.Tests.Common;
 using System.Linq.Expressions;
 
 namespace PieceOfCake.Core.Tests.IngredientFeature.Entities;
@@ -42,9 +44,9 @@ public class ProductUnitTests : TestsBase
     [Test]
     public void Create_Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit ()
     {
-        var productResult = Product.Create(new string('|', 51), Resources, _uowMock.Object);
+        var productResult = Product.Create(Fixture.CreateStringOfLength(Constants.FIFTY + 1), Resources, _uowMock.Object);
         Assert.IsTrue(productResult.IsFailure);
-        Assert.AreEqual("Product name should not exceed 50 symbols.", productResult.Error);
+        Assert.That(productResult.Error, Is.EqualTo($"{Resources.CommonTerms.Product} name should not exceed {Constants.FIFTY} symbols."));
     }
 
     [Test]
@@ -68,14 +70,14 @@ public class ProductUnitTests : TestsBase
 
         //Assert
         Assert.IsTrue(productResult.IsFailure);
-        Assert.AreEqual(string.Format("An entity with name {0} already exist.", alreadyExistingName), productResult.Error);
+        Assert.That(productResult.Error, Is.EqualTo($"An entity with name {alreadyExistingName} already exist."));
     }
 
     [Test]
     public void Create_Should_Succseed_If_Name_Meets_Requirenements ()
     {
         //Arrange
-        var validName = new string('|', 50);
+        var validName = Fixture.CreateStringOfLength(Constants.FIFTY);
         _productRepoMock
             .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns((Product)null);
@@ -85,7 +87,7 @@ public class ProductUnitTests : TestsBase
 
         //Assert
         Assert.IsTrue(result.IsSuccess);
-        Assert.NotNull(result.Value);
+        Assert.That(result.Value.Name.Value, Is.EqualTo(validName));
     }
 
     [TestCase("")]
@@ -102,7 +104,7 @@ public class ProductUnitTests : TestsBase
         var result = product.Update(productName, Resources, _uowMock.Object);
 
         Assert.IsTrue(result.IsFailure);
-        Assert.AreEqual("Product must have name.", result.Error);
+        Assert.That(result.Error, Is.EqualTo($"{Resources.CommonTerms.Product} must have name."));
     }
 
     [Test]
@@ -116,10 +118,10 @@ public class ProductUnitTests : TestsBase
             .Returns(product);
 
         //Act
-        var result = product.Update(new string('|', 51), Resources, _uowMock.Object);
+        var result = product.Update(Fixture.CreateStringOfLength(Constants.FIFTY + 1), Resources, _uowMock.Object);
 
         Assert.IsTrue(result.IsFailure);
-        Assert.AreEqual("Product name should not exceed 50 symbols.", result.Error);
+        Assert.That(result.Error, Is.EqualTo($"{Resources.CommonTerms.Product} name should not exceed {Constants.FIFTY} symbols."));
     }
 
     [Test]
@@ -143,24 +145,25 @@ public class ProductUnitTests : TestsBase
 
         //Assert
         Assert.IsTrue(result.IsFailure);
-        Assert.AreEqual(string.Format("An entity with name {0} already exist.", alreadyExistingName), result.Error);
+        Assert.That(result.Error, Is.EqualTo($"An entity with name {alreadyExistingName} already exist."));
     }
 
     [Test]
     public void Update_Should_Succseed_If_Name_Meets_Requirenements ()
     {
         //Arrange
-        var name = new string('|', 50);
+        var name = Fixture.CreateStringOfLength(Constants.FIFTY);
         var product = Product.Create(name, Resources, _uowMock.Object).Value;
         _productRepoMock
             .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns((Product)null);
 
         //Act
-        var result = product.Update(new string('|', 1), Resources, _uowMock.Object);
+        var updatedName = Fixture.CreateStringOfLength(Constants.TWO);
+        var result = product.Update(updatedName, Resources, _uowMock.Object);
 
         //Assert
         Assert.IsTrue(result.IsSuccess);
-        Assert.NotNull(result.Value);
+        Assert.That(result.Value.Name.Value, Is.EqualTo(updatedName));
     }
 }

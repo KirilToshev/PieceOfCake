@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using System.Runtime.CompilerServices;
 
 namespace PieceOfCake.Tests.Common;
 
@@ -31,5 +32,13 @@ public static class Extensions
         var distinct = objects.Distinct().ToArray();
         var randomIndex = random.Next(1, distinct.Length - 1);
         return objects[randomIndex];
+    }
+
+    public static string CreateStringOfLength(this Fixture fixture, uint length, char value = '|')
+    {
+        if (length > int.MaxValue)
+            length = int.MaxValue;
+
+        return new string(value, (int)length);
     }
 }

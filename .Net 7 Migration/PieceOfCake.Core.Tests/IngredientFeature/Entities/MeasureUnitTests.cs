@@ -1,8 +1,10 @@
 using AutoFixture;
 using Moq;
 using NUnit.Framework;
+using PieceOfCake.Core.Common;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.IngredientFeature.Entities;
+using PieceOfCake.Tests.Common;
 using System.Linq.Expressions;
 
 namespace PieceOfCake.Core.Tests.IngredientFeature.Entities;
@@ -37,9 +39,9 @@ public class MeasureUnitTests : TestsBase
     [Test]
     public void Create_Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit ()
     {
-        var measureUnit = MeasureUnit.Create(new string('|', 51), Resources, _uowMock.Object);
+        var measureUnit = MeasureUnit.Create(Fixture.CreateStringOfLength(Constants.FIFTY + 1), Resources, _uowMock.Object);
         Assert.IsTrue(measureUnit.IsFailure);
-        Assert.That(measureUnit.Error, Is.EqualTo("Measure Unit name should not exceed 50 symbols."));
+        Assert.That(measureUnit.Error, Is.EqualTo($"{Resources.CommonTerms.MeasureUnit} name should not exceed {Constants.FIFTY} symbols."));
     }
 
     [Test]
@@ -64,7 +66,7 @@ public class MeasureUnitTests : TestsBase
     public void Create_Should_Succseed_If_Name_Meets_Requirenements ()
     {
         //Arrange
-        var validName = new string('|', 50);
+        var validName = Fixture.CreateStringOfLength(Constants.FIFTY);
         
         //Act
         var result = MeasureUnit.Create(validName, Resources, _uowMock.Object);
@@ -103,10 +105,10 @@ public class MeasureUnitTests : TestsBase
             .Returns(measureUnit);
 
         //Act
-        var result = measureUnit.Update(new string('|', 51), Resources, _uowMock.Object);
+        var result = measureUnit.Update(Fixture.CreateStringOfLength(Constants.FIFTY + 1), Resources, _uowMock.Object);
 
         Assert.IsTrue(result.IsFailure);
-        Assert.That(result.Error, Is.EqualTo("Measure Unit name should not exceed 50 symbols."));
+        Assert.That(result.Error, Is.EqualTo($"{Resources.CommonTerms.MeasureUnit} name should not exceed {Constants.FIFTY} symbols."));
     }
 
     [Test]
@@ -131,9 +133,9 @@ public class MeasureUnitTests : TestsBase
     public void Update_Should_Succseed_If_Name_Meets_Requirenements ()
     {
         //Arrange
-        var name = new string('|', 50);
+        var name = Fixture.CreateStringOfLength(Constants.FIFTY);
         var measureUnit = MeasureUnit.Create(name, Resources, _uowMock.Object).Value;
-        var updatedName = new string('|', 1);
+        var updatedName = Fixture.CreateStringOfLength(Constants.TWO);
 
         //Act
         var result = measureUnit.Update(updatedName, Resources, _uowMock.Object);
