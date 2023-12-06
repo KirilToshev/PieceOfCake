@@ -49,7 +49,6 @@ public class DefaultMenuCalculationStrategyTests : TestsBase
         Assert.That(result.Error, Is.EqualTo($"There are not enough dishes of menu type {_mealOfTheDayTypeFakes.Lunch.Name},{_mealOfTheDayTypeFakes.Dinner.Name} to complete your menu."));
     }
 
-
     [Test]
     public void Calculate_Should_Fill_Calendar_For_One_Day_With_Breakfast_For_One_Person ()
     {
@@ -71,16 +70,29 @@ public class DefaultMenuCalculationStrategyTests : TestsBase
 
         Assert.That(result.Value.Count() == 1);
         var calendarItem = result.Value.FirstOrDefault()!;
-        Assert.That(calendarItem.Date == _timePeriodFakes.OneDay.StartDate
-            && calendarItem.Date == _timePeriodFakes.OneDay.EndDate);
-        Assert.That(calendarItem.MealOfTheDayTypes.Count() == 1);
+        Assert.That(calendarItem.Date, Is.EqualTo(_timePeriodFakes.OneDay.StartDate));
+        Assert.That(calendarItem.Date, Is.EqualTo(_timePeriodFakes.OneDay.EndDate));
+        Assert.That(calendarItem.MealOfTheDayTypes.Count(), Is.EqualTo(1));
         var calendarMealOfTheDayType = calendarItem.MealOfTheDayTypes.FirstOrDefault()!;
-        Assert.That(calendarMealOfTheDayType.Id == _mealOfTheDayTypeFakes.Breakfast.Id);
-        Assert.That(calendarMealOfTheDayType.Dishes.Count() == numberOfPeople);
+        Assert.That(calendarMealOfTheDayType.Id, Is.EqualTo(_mealOfTheDayTypeFakes.Breakfast.Id));
+        Assert.That(calendarMealOfTheDayType.Dishes.Count(), Is.EqualTo(numberOfPeople));
         var dish = calendarMealOfTheDayType.Dishes.FirstOrDefault()!;
-        Assert.That(dish.Id == breakfastDish.Id);
+        Assert.That(dish.Id, Is.EqualTo(breakfastDish.Id));
     }
 
+    /// <summary>
+    ///  |----------Breakfast----------|------------Lunch------------|-----------Dinner------------|
+    /// D|1.Person 1                   |1.Person 1                   |1.Person 1                   |
+    /// a|  breakfastDish              |  lunchDish                  |  dinnerDish                 |
+    /// y|2.Person 2                   |2.Person 2                   |2.Person 2                   |
+    /// 1|  lunchAndDinnerDish3Servings|  lunchDish                  |  dinnerDish                 |
+    /// -|------------Lunch------------|------------Lunch------------|-----------Dinner------------|
+    /// D|1.Person 1                   |1.Person 1                   |1.Person 1                   |
+    /// a|  breakfastDish              |  lunchDish                  |  dinnerDish                 |
+    /// y|2.Person 2                   |2.Person 2                   |2.Person 2                   |
+    /// 2|  breakfastDish              |  lunchDish                  |  dinnerDish                 |
+    /// -|-----------------------------|-----------------------------|-----------------------------|
+    /// </summary>
     [Test]
     public void Calculate_Should_Fill_Calendar_For_Two_Days_With_Breakfast_Lunch_And_Dinner_For_Two_People ()
     {
@@ -100,6 +112,23 @@ public class DefaultMenuCalculationStrategyTests : TestsBase
                 _mealOfTheDayTypeFakes.Dinner
             });
 
+        int dishesServingsIndex = 0;
+        var expectedServings = new[]
+        {
+            breakfastDish,
+            breakfastDish,
+            lunchDish,
+            lunchDish,
+            dinnerDish,
+            dinnerDish,
+            breakfastDish,
+            breakfastDish,
+            lunchDish,
+            lunchDish,
+            dinnerDish,
+            dinnerDish
+        };
+
         var sut = new DefaultMenuCalculationStrategy(Resources);
         var result = sut.Calculate(menuCalendar, dishes);
 
@@ -114,7 +143,9 @@ public class DefaultMenuCalculationStrategyTests : TestsBase
                 Assert.That(calendarMealOfTheDayType.Dishes.Count() == 2);
                 foreach (var dish in calendarMealOfTheDayType.Dishes)
                 {
-                    Assert.IsTrue(dishes.Select(x => x.Id).Contains(dish.Id));
+                    Assert.That(dishes.First(x => x.Id == dish.Id).Name.Value,
+                        Is.EqualTo(expectedServings[dishesServingsIndex].Name.Value));
+                    dishesServingsIndex++;
                 }
             }
         }

@@ -1,5 +1,4 @@
 ﻿using AutoFixture;
-using System.Runtime.CompilerServices;
 
 namespace PieceOfCake.Tests.Common;
 
