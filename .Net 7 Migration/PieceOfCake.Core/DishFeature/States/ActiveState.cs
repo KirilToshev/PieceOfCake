@@ -28,19 +28,11 @@ public class ActiveState : DishState
 
     public override Result<DishState> Draft (Func<Result> callback)
     {
-        var callbackResult = callback.Invoke();
-        if (callbackResult.IsFailure)
-            return callbackResult.ConvertFailure<DishState>();
-
-        return Result.Success<DishState>(new DraftState(_resources));
+        return callback.Invoke().Map<DishState>(() => new DraftState(_resources));
     }
 
     public override Result<DishState> Rejected (Func<Result> callback)
     {
-        var callbackResult = callback.Invoke();
-        if (callbackResult.IsFailure)
-            return callbackResult.ConvertFailure<DishState>();
-
-        return Result.Success<DishState>(new RejectedState(_resources));
+        return callback.Invoke().Map<DishState>(() => new RejectedState(_resources));
     }
 }
