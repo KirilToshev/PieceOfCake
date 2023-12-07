@@ -6,7 +6,7 @@ using PieceOfCake.Core.DishFeature.Entities;
 
 namespace PieceOfCake.Application.DishFeature.Services;
 
-public interface IDishService : ICRUDService<Dish, Guid>
+public interface IDishService : IGetAndDeleteService<Dish, Guid>
 {
     Result<Dish> Create (
         string name,

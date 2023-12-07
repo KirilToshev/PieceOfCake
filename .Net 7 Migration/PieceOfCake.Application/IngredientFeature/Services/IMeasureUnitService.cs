@@ -3,6 +3,6 @@ using PieceOfCake.Core.IngredientFeature.Entities;
 
 namespace PieceOfCake.Application.IngredientFeature.Services;
 
-public interface IMeasureUnitService : ICRUDService<MeasureUnit, Guid>
+public interface IMeasureUnitService : ICRUDNameService<MeasureUnit, Guid>
 {
 }

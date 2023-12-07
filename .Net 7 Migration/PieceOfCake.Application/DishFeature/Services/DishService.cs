@@ -86,13 +86,10 @@ public class DishService : IDishService
             {
                 //TODO: Check if Dish is in use before deletion.
 
-                //var isDishInUse = _unitOfWork.MenuRepository
-                //                    .Get(menu => menu.Dishes.Contains(dish))
-                //                    .Any();
-
-                //if (isDishInUse)
-                //    return Result.Failure(_resources
-                //        .GenereteSentence(x => x.UserErrors.ItemIsInUse, x => x.CommonTerms.Dish));
+                var isDishInUse = _unitOfWork.DishRepository.IsDishInUse(id);
+                if (isDishInUse)
+                    return Result.Failure(_resources
+                        .GenereteSentence(x => x.UserErrors.ItemIsInUse, x => x.CommonTerms.Dish));
 
                 _unitOfWork.DishRepository.Delete(dish);
                 _unitOfWork.Save();
@@ -106,7 +103,7 @@ public class DishService : IDishService
         byte servingSize,
         IEnumerable<MealOfTheDayTypeDto> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsDtos,
-        Func<string, string, byte, IEnumerable<MealOfTheDayType>, IEnumerable<Ingredient>, IResources, Result<Dish>> callbackFunc)
+        Func<string, string, byte, IEnumerable<MealOfTheDayType>, IEnumerable<Ingredient>, IResources, Result<Dish>> callbackCreateFunc)
     {
         //TODO: Implement cacheing
         var allMeasureUnits = _measureUnitDomainService.Get();
@@ -142,7 +139,7 @@ public class DishService : IDishService
                 errors.Add(_resources.GenereteSentence(
                     x => x.UserErrors.IdNotFound,
                     x => ingredientDto.ProductId.ToString()));
-            //TODO: This check may not be correct.
+            
             if (errors.Any())
                 continue;
 
@@ -159,6 +156,6 @@ public class DishService : IDishService
         if (errors.Any())
             return Result.Failure<Dish>(string.Join("; ", errors));
 
-        return callbackFunc(name, description, servingSize, mappedMealOfTheDayTypes, ingredients, _resources);
+        return callbackCreateFunc(name, description, servingSize, mappedMealOfTheDayTypes, ingredients, _resources);
     }
 }

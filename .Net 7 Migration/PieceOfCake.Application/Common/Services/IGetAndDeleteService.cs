@@ -2,7 +2,7 @@
 
 namespace PieceOfCake.Application.Common.Services;
 
-public interface ICRUDService<TEntity, KId>
+public interface IGetAndDeleteService<TEntity, KId>
     where TEntity : Entity<KId>
     where KId : IComparable<KId>
 {

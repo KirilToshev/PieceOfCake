@@ -9,7 +9,7 @@ public class ProductService : IProductService
 {
     private readonly IResources _resources;
     private readonly IUnitOfWork _unitOfWork;
-
+    
     public ProductService (
         IResources resources,
         IUnitOfWork unitOfWork)

@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 
 namespace PieceOfCake.Application.Common.Services;
-public interface ICRUDNameService<TEntity, KId> : ICRUDService<TEntity, KId>
+public interface ICRUDNameService<TEntity, KId> : IGetAndDeleteService<TEntity, KId>
     where TEntity : Entity<KId>
     where KId : IComparable<KId>
 {

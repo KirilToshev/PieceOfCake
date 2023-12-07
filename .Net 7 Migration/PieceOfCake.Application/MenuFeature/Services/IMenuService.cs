@@ -5,7 +5,7 @@ using PieceOfCake.Core.MenuFeature.Entities;
 
 namespace PieceOfCake.Application.MenuFeature.Services;
 
-public interface IMenuService : ICRUDService<Menu, Guid>
+public interface IMenuService : IGetAndDeleteService<Menu, Guid>
 {
     Result<Menu> Create (DateTime startDate, DateTime endDate, ushort numberOfPeople, IEnumerable<MealOfTheDayType> mealOfTheDayTypes);
     Result<Menu> Update (Guid id, DateTime startDate, DateTime endDate, ushort numberOfPeople, IEnumerable<MealOfTheDayType> mealOfTheDayTypes);

@@ -56,15 +56,16 @@ public class MenuService : IMenuService
         var menuResult = Get(id);
         if (menuResult.IsFailure)
             return menuResult;
+        var menu = menuResult.Value;
 
-        var updateResult = menuResult.Value.Update(startDate, endDate, numberOfPeople, mealOfTheDayTypes, _resources);
+        var updateResult = menu.Update(startDate, endDate, numberOfPeople, mealOfTheDayTypes, _resources);
         if (updateResult.IsFailure)
             return updateResult;
 
-        _unitOfWork.MenuRepository.Update(menuResult.Value);
+        _unitOfWork.MenuRepository.Update(menu);
         _unitOfWork.Save();
 
-        return Result.Success(menuResult.Value);
+        return Result.Success(menu);
     }
 
     public Result Delete (Guid id)
