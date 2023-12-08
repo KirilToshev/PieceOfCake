@@ -80,23 +80,25 @@ public class MenuService : IMenuService
 
     public Result<Menu> GenerateDishesList (Guid id)
     {
-        //TODO: Implement generation of menu calendar.
-        throw new NotImplementedException();
-        //var menuResult = this.Get(id);
-        //if (menuResult.IsFailure)
-        //    return menuResult;
+        var menuResult = this.Get(id);
+        if (menuResult.IsFailure)
+            return menuResult;
+        var menu = menuResult.Value;
 
-        //menuResult.Value.ClearAllRelatedDishes();
-        //_unitOfWork.MenuRepository.Update(menuResult.Value);
-        //_unitOfWork.Save();
+        //TODO: Implement Specification Pattern
+        //https://enterprisecraftsmanship.com/posts/cqrs-vs-specification-pattern/
+        //TODO: Check this SQL Request !!!
+        var dishes = _unitOfWork.DishRepository
+            .Get(d => d.MealOfTheDayTypes
+                .Where(mt => menu.MealOfTheDayTypes.Contains(mt)).Any());
 
-        //var dishesListResult = menuResult.Value.GenerateDishesList(_unitOfWork, _resources);
-        //if (dishesListResult.IsFailure)
-        //    return dishesListResult.ConvertFailure<Menu>();
+        var result = menu.GenerateCalendar(dishes, _resources);
+        if (result.IsFailure)
+            return result.ConvertFailure<Menu>();
 
-        //_unitOfWork.MenuRepository.Update(menuResult.Value);
-        //_unitOfWork.Save();
+        _unitOfWork.MenuRepository.Update(menuResult.Value);
+        _unitOfWork.Save();
 
-        //return Result.Success(menuResult.Value);
+        return Result.Success(menuResult.Value);
     }
 }
