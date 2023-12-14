@@ -25,6 +25,7 @@ public class DefaultMenuCalculationStrategy : IMenuCalculationStrategy
 
         var dishesPerMealTypeQueues = queuesResult.Value;
         var servingsPerDishCounter = dishes.ToDictionary(key => key.Id, value => 0);
+        var numberOfTimesDishIsServed = dishes.ToDictionary(key => key.Id, value => 0);
         var dishesForDequeue = new List<Dish>();
        
         // Iterate each day (e.g Mondary, Thusday, etc..)
@@ -39,7 +40,7 @@ public class DefaultMenuCalculationStrategy : IMenuCalculationStrategy
                 var dishesOfCurrentMealTypeQueue = dishesPerMealTypeQueues[mealType];
 
                 // TODO: It is possible to connect users Ids in the future instead of just a number.
-                // Iterate each person.
+                // Iterate each person/serving.
                 for (ushort personIndex = 0; personIndex < mealTypeKvPair.Value.Length; personIndex++)
                 {
                     var dish = dishesOfCurrentMealTypeQueue.Peek();
@@ -50,6 +51,7 @@ public class DefaultMenuCalculationStrategy : IMenuCalculationStrategy
                     {
                         dishesPerMealTypeQueues.MoveDishAtTheEndOfAllQueues(dish);
                         servingsPerDishCounter[dish.Id] = 0;
+                        numberOfTimesDishIsServed[dish.Id]++;
                         dishesForDequeue.Add(dish);
                     }
                 }

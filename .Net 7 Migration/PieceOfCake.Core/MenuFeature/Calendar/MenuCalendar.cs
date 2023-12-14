@@ -23,12 +23,21 @@ public class MenuCalendar : IEnumerable<KeyValuePair<DateOnly, IDictionary<MealO
             }
         }
 
-        TotalDishCount = duration.DaysDifference * mealOfTheDayTypes.Count() * numberOfPeople;
+        TotalServingsCount = duration.DaysDifference * mealOfTheDayTypes.Count() * numberOfPeople;
         MealOfTheDayTypes = mealOfTheDayTypes.ToHashSet();
         NumberOfPeople = numberOfPeople;
     }
 
-    public int TotalDishCount { get; }
+    public int TotalServingsCount { get; }
+
+    public IDictionary<Guid, int>? TotalDishesCounter =>
+        _calendar.Select(c => c.Value.Values.ToList())
+            .Aggregate((curr, next) => { curr.AddRange(next); return curr; })
+            .Select(x => x.ToList())
+            .Aggregate((curr, next) => { curr.AddRange(next); return curr; })
+            //.Aggregate((curr, next) => curr.Union(next).ToArray())
+            .GroupBy(kvPair => kvPair.Id)
+            .ToDictionary(x => x.Key, x => x.Count());
 
     public ushort NumberOfPeople { get; }
 

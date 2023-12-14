@@ -233,8 +233,37 @@ public class MenuTests : TestsBase
         Assert.That(updatedMenu.Duration.DaysDifference, Is.EqualTo(expectedDaysDifference));
         Assert.That(updatedMenu.Type, Is.EqualTo(MenuType.None));
         Assert.That(updatedMenu.MealOfTheDayTypes, Is.EquivalentTo(expectedMealTypes));
-        Assert.IsFalse(updatedMenu.Calendar.Any());
+        Assert.IsEmpty(updatedMenu.Calendar);
     }
+
+
+    [Test]
+    public void Update_Should_Clear_Calendar_Data ()
+    {
+        var startDate = DateTime.Now;
+        var endDate = DateTime.Now.AddDays(1);
+        var numberOfPeople = Fixture.Create<ushort>();
+        var mealTypes = new MealOfTheDayType[]
+        {
+            _mealOfTheDayTypeFakes.Breakfast
+        };
+        var menuResult = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
+        var menu = menuResult.Value;
+        menu.GenerateCalendar(new Dish[] { _dishFakes.Breakfast() }, Resources);
+        Assert.IsNotNull(menu.Calendar);
+        Assert.IsTrue(menu.Calendar.Any());
+
+        var result = menu.Update(
+            startDate,
+            endDate,
+            numberOfPeople,
+            mealTypes,
+            Resources);
+
+        Assert.IsTrue(result.IsSuccess);
+        Assert.IsEmpty(menu.Calendar);
+    }
+
 
     [Test]
     public void GenerateCalendar_Should_Succseed_To_Fill_In_Calendar ()

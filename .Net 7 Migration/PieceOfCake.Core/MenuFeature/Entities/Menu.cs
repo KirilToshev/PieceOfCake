@@ -73,6 +73,7 @@ public class Menu : GuidEntity
         MealOfTheDayTypes = menuResult.Value.MealOfTheDayTypes;
         Duration = menuResult.Value.Duration;
         NumberOfPeople = numberOfPeople;
+        ClearCalendar();
 
         return Result.Success(this);
     }
@@ -84,8 +85,13 @@ public class Menu : GuidEntity
         var result = calculationStrategy.Calculate(calendar, dishes);
 
         if (result.IsSuccess)
-            Calendar = result.Value;
+            Calendar = calendar.Calendar;
 
         return result;
+    }
+
+    public void ClearCalendar()
+    {
+        Calendar = new List<CalendarItem>();
     }
 }
