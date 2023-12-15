@@ -7,6 +7,7 @@ using PieceOfCake.Core.MenuFeature.Calendar;
 using PieceOfCake.Core.MenuFeature.Enumerations;
 using PieceOfCake.Core.MenuFeature.Factories;
 using PieceOfCake.Core.MenuFeature.ValueObjects;
+using System.Globalization;
 
 namespace PieceOfCake.Core.MenuFeature.Entities;
 
@@ -35,7 +36,20 @@ public class Menu : GuidEntity
     public MenuType Type { get; private set; }
     public IEnumerable<MealOfTheDayType> MealOfTheDayTypes { get; private set; }
     public IEnumerable<CalendarItem> Calendar { get; private set; }
-    
+
+    //TODO: MenuSummary Feature
+    //public MenuSummary GetSummary(){}
+    //Move TotalServingsCount and TotalDishesCounter into MenuSummary object  
+    //together with 
+    public int TotalServingsCount => Duration.DaysDifference * MealOfTheDayTypes.Count() * NumberOfPeople;
+    public IDictionary<Guid, int>? TotalDishesCounter =>
+        Calendar?.Select(c => c.MealOfTheDayTypes.ToList())
+            .Aggregate((curr, next) => { curr.AddRange(next); return curr; })
+            .Select(x => x.Dishes.ToList())
+            .Aggregate((curr, next) => { curr.AddRange(next); return curr; })
+            .GroupBy(kvPair => kvPair.Id)
+            .ToDictionary(x => x.Key, x => x.Count());
+
     public static Result<Menu> Create (
         DateTime startDate,
         DateTime endDate,

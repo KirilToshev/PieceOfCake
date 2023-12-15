@@ -25,8 +25,6 @@ public class DefaultMenuCalculationStrategy : IMenuCalculationStrategy
 
         var dishesPerMealTypeQueues = queuesResult.Value;
         var servingsPerDishCounter = dishes.ToDictionary(key => key.Id, value => 0);
-        var numberOfTimesDishIsServed = dishes.ToDictionary(key => key.Id, value => 0);
-        var dishesForDequeue = new List<Dish>();
        
         // Iterate each day (e.g Mondary, Thusday, etc..)
         foreach (var kvPair in calendar)
@@ -51,8 +49,6 @@ public class DefaultMenuCalculationStrategy : IMenuCalculationStrategy
                     {
                         dishesPerMealTypeQueues.MoveDishAtTheEndOfAllQueues(dish);
                         servingsPerDishCounter[dish.Id] = 0;
-                        numberOfTimesDishIsServed[dish.Id]++;
-                        dishesForDequeue.Add(dish);
                     }
                 }
             }
