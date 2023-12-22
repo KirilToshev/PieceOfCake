@@ -1,23 +1,27 @@
 using AutoFixture;
 using CSharpFunctionalExtensions;
 using NSubstitute;
+using PieceOfCake.Application.IngredientFeature.Dtos;
 using PieceOfCake.Application.IngredientFeature.Services;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.DishFeature.Entities;
 using PieceOfCake.Core.IngredientFeature.Entities;
+using PieceOfCake.Tests.Common.Fakes;
+using PieceOfCake.Tests.Common.Fakes.Interfaces;
 using System.Linq.Expressions;
 
 namespace PieceOfCake.Application.Tests.IngredientFeature.Services;
 
-public class MeasureUnitDomainServiceTests : TestsBase
+public class MeasureUnitServiceTests : TestsBase
 {
     private IUnitOfWork _uowMock;
     private IMeasureUnitRepository _measureUnitRepoMock;
     private MeasureUnit _measureUnitMock;
     private IDishRepository _dishRepoMock;
+    private IMeasureUnitFakes _measureUnitFakes;
 
-    public MeasureUnitDomainServiceTests ()
+    public MeasureUnitServiceTests ()
     {
         _uowMock = Substitute.For<IUnitOfWork>();
         _measureUnitRepoMock = Substitute.For<IMeasureUnitRepository>();
@@ -26,6 +30,7 @@ public class MeasureUnitDomainServiceTests : TestsBase
         _uowMock.DishRepository.Returns(_dishRepoMock);
         _measureUnitRepoMock.GetFirstOrDefault(Arg.Any<Expression<Func<MeasureUnit, bool>>>()).Returns((MeasureUnit)null);
         _measureUnitMock = Substitute.For<MeasureUnit>();
+        _measureUnitFakes = GetRequiredService<IMeasureUnitFakes>();
     }
 
     [Fact]
@@ -47,7 +52,8 @@ public class MeasureUnitDomainServiceTests : TestsBase
     public void Get_Should_Return_MeasureUnit_If_Id_Is_Found ()
     {
         var id = Fixture.Create<Guid>();
-        _measureUnitRepoMock.GetById(id).Returns(_measureUnitMock);
+        var test = _measureUnitFakes.Litter;
+        _measureUnitRepoMock.GetById(id).Returns(test);
 
         var sut = new MeasureUnitService(Resources, _uowMock);
 
@@ -65,7 +71,7 @@ public class MeasureUnitDomainServiceTests : TestsBase
 
         var sut = new MeasureUnitService(Resources, _uowMock);
 
-        var result = sut.Update(notExistingId, Fixture.Create<string>());
+        var result = sut.Update(new MeasureUnitUpdateDto() { Id = notExistingId, Name = Fixture.Create<string>() });
 
         Assert.True(result.IsFailure);
         Assert.Equal(string.Format("Element with Id={0} does not exists.", notExistingId), result.Error);
@@ -77,14 +83,16 @@ public class MeasureUnitDomainServiceTests : TestsBase
         //Arrange
         var id = Fixture.Create<Guid>();
         var updatedName = Fixture.Create<string>();
+        var kg = _measureUnitFakes.Kg;
+        var liter = _measureUnitFakes.Litter;
         _measureUnitMock.Update(Arg.Is(updatedName), Arg.Any<IResources>(), Arg.Any<IUnitOfWork>())
-            .Returns(Result.Success(_measureUnitMock));
+            .Returns(Result.Success(liter));
         _measureUnitRepoMock.GetById(Arg.Is(id))
-            .Returns(_measureUnitMock);
+            .Returns(kg);
         var sut = new MeasureUnitService(Resources, _uowMock);
 
         //Act
-        var result = sut.Update(id, updatedName);
+        var result = sut.Update(new MeasureUnitUpdateDto() { Id = id, Name = updatedName });
 
         //Assert
         Assert.True(result.IsSuccess);

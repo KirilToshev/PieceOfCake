@@ -9,5 +9,5 @@ public record DishDto : IdNameDto<Guid>
     public required int ServingSize { get; init; }
     public required IEnumerable<MealOfTheDayTypeDto> MealOfTheDayTypes { get; init; }
     public required string DishState { get; init; }
-    public required IReadOnlyCollection<IngredientDto> Ingredients { get; init; }
+    public required IEnumerable<IngredientDto> Ingredients { get; init; }
 }

@@ -1,8 +1,9 @@
 ﻿using PieceOfCake.Application.Common.Services;
-using PieceOfCake.Core.IngredientFeature.Entities;
+using PieceOfCake.Application.IngredientFeature.Dtos;
 
 namespace PieceOfCake.Application.IngredientFeature.Services;
 
-public interface IMeasureUnitService : ICRUDNameService<MeasureUnit, Guid>
+public interface IMeasureUnitService : 
+    ICreateAndUpdateService<MeasureUnitGetDto, MeasureUnitCreateDto, MeasureUnitUpdateDto>
 {
 }

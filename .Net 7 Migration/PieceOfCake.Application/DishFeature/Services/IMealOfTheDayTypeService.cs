@@ -3,6 +3,6 @@ using PieceOfCake.Core.DishFeature.Entities;
 
 namespace PieceOfCake.Application.DishFeature.Services;
 
-public interface IMealOfTheDayTypeService : ICRUDNameService<MealOfTheDayType, Guid>
+public interface IMealOfTheDayTypeService //: ICreateAndUpdateService<MealOfTheDayType, Guid>
 {
 }

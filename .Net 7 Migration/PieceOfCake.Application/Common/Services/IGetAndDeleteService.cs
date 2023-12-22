@@ -2,11 +2,10 @@
 
 namespace PieceOfCake.Application.Common.Services;
 
-public interface IGetAndDeleteService<TEntity, KId>
-    where TEntity : Entity<KId>
+public interface IGetAndDeleteService<TDto, KId>
     where KId : IComparable<KId>
 {
-    IReadOnlyCollection<TEntity> Get ();
-    Result<TEntity> Get (KId id);
+    IReadOnlyCollection<TDto> Get ();
+    Result<TDto> Get (KId id);
     Result Delete (KId id);
 }

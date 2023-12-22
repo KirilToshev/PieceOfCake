@@ -2,5 +2,5 @@
 
 public record IdDto<TId>
 {
-    public TId? Id { get; init; }
+    public required TId Id { get; init; }
 }

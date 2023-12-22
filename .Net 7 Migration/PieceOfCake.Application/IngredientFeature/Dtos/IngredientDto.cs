@@ -3,6 +3,6 @@
 public record IngredientDto
 {
     public required float Quantity { get; init; }
-    public required MeasureUnitDto MeasureUnit { get; init; }
-    public required ProductDto Product { get; init; }
+    public required MeasureUnitGetDto MeasureUnit { get; init; }
+    public required ProductGetDto Product { get; init; }
 }

@@ -146,6 +146,7 @@ public class DishService : IDishService
                     x => x.UserErrors.IdNotFound,
                     x => string.Join("; ", invalidIds)));
         }
+
         if (errors.Any())
             return Result.Failure<Dish>(string.Join("; ", errors));
 
@@ -169,6 +170,12 @@ public class DishService : IDishService
             ingredients.Add(ingredientResult.Value);
         }
 
-        return callbackCreateFunc(name, description, servingSize, mappedMealOfTheDayTypes, ingredients, _resources);
+        return callbackCreateFunc(
+            name, 
+            description, 
+            servingSize, 
+            mappedMealOfTheDayTypes, 
+            ingredients, 
+            _resources);
     }
 }

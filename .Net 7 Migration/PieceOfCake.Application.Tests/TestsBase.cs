@@ -3,7 +3,7 @@
 namespace PieceOfCake.Application.Tests;
 public class TestsBase : TestsCommon
 {
-    public TestsBase () : base(ServicesRegistration.Register)
+    public TestsBase () : base(new ServicesRegistration().Register)
     {
     }
 }
