@@ -6,6 +6,7 @@ using PieceOfCake.Application.IngredientFeature.Dtos;
 using PieceOfCake.Application.DishFeature.Dtos;
 using PieceOfCake.Core.DishFeature.Entities;
 using PieceOfCake.Core.IngredientFeature.ValueObjects;
+using System.Linq;
 
 namespace PieceOfCake.Application.DishFeature.Services;
 
@@ -13,22 +14,13 @@ public class DishService : IDishService
 {
     private readonly IResources _resources;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IMealOfTheDayTypeService _mealOfTheDayTypeService;
-    private readonly IMeasureUnitService _measureUnitDomainService;
-    private readonly IProductService _productDomainService;
-
+    
     public DishService (
         IResources resources,
-        IUnitOfWork unitOfWork,
-        IMealOfTheDayTypeService measureUnitService,
-        IMeasureUnitService measureUnitDomainService,
-        IProductService productDomainService)
+        IUnitOfWork unitOfWork)
     {
         _resources = resources ?? throw new ArgumentNullException(nameof(resources));
-        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-        _mealOfTheDayTypeService = measureUnitService;
-        _measureUnitDomainService = measureUnitDomainService ?? throw new ArgumentNullException(nameof(measureUnitDomainService));
-        _productDomainService = productDomainService ?? throw new ArgumentNullException(nameof(productDomainService));
+        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));        
     }
 
     public IReadOnlyCollection<Dish> Get () => _unitOfWork.DishRepository.Get();
@@ -51,7 +43,13 @@ public class DishService : IDishService
         IEnumerable<MealOfTheDayTypeDto> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsDtos)
     {
-        return ValidateInputs(name, description, servingSize, mealOfTheDayTypes, ingredientsDtos, Dish.Create)
+        return ValidateInputs(
+            name, 
+            description, 
+            servingSize, 
+            mealOfTheDayTypes, 
+            ingredientsDtos, 
+            Dish.Create)
             .Tap(dish =>
             {
                 _unitOfWork.DishRepository.Insert(dish);
@@ -71,7 +69,13 @@ public class DishService : IDishService
         if (dishResult.IsFailure)
             return dishResult;
 
-        return ValidateInputs(name, description, servingSize, mealOfTheDayTypes, ingredientsDtos, dishResult.Value.Update)
+        return ValidateInputs(
+            name, 
+            description, 
+            servingSize, 
+            mealOfTheDayTypes, 
+            ingredientsDtos, 
+            dishResult.Value.Update)
             .Tap(dish =>
             {
                 _unitOfWork.DishRepository.Update(dish);
@@ -106,42 +110,54 @@ public class DishService : IDishService
         Func<string, string, byte, IEnumerable<MealOfTheDayType>, IEnumerable<Ingredient>, IResources, Result<Dish>> callbackCreateFunc)
     {
         //TODO: Implement cacheing
-        var allMeasureUnits = _measureUnitDomainService.Get();
-        var allProducts = _productDomainService.Get();
-        var allMealOfTheDayTypes = _mealOfTheDayTypeService.Get();
+        var measureUnitIds = ingredientsDtos.Select(x => x.MeasureUnitId).Distinct();
+        var productIds = ingredientsDtos.Select(x => x.ProductId).Distinct();
+        var mealTypeIds = mealOfTheDayTypes.Select(x => x.Id).Distinct();
+
+        var measureUnitEntities = _unitOfWork.MeasureUnitRepository
+            .Get(x => measureUnitIds.Contains(x.Id))
+            .AsEnumerable();
+        var productEntities = _unitOfWork.ProductRepository
+            .Get(x => productIds.Contains(x.Id));
+        var mealTypeEntities = _unitOfWork.MealOfTheDayTypeRepository
+            .Get(x => mealTypeIds.Contains(x.Id));
         var errors = new List<string>();
+        
+        if (measureUnitEntities.Count() < measureUnitIds.Count()) 
+        {
+            var invalidIds = measureUnitIds.Except(measureUnitEntities.Select(x => x.Id));
+            errors.Add(_resources.GenereteSentence(
+                    x => x.UserErrors.IdNotFound,
+                    x => string.Join("; ", invalidIds)));
+        }
+
+        if (productEntities.Count() < productIds.Count())
+        {
+            var invalidIds = productIds.Except(productEntities.Select(x => x.Id));
+            errors.Add(_resources.GenereteSentence(
+                    x => x.UserErrors.IdNotFound,
+                    x => string.Join("; ", invalidIds)));
+        }
+
+        if (mealTypeEntities.Count() < mealTypeIds.Count())
+        {
+            var invalidIds = mealTypeIds.Except(mealTypeEntities.Select(x => x.Id));
+            errors.Add(_resources.GenereteSentence(
+                    x => x.UserErrors.IdNotFound,
+                    x => string.Join("; ", invalidIds)));
+        }
+        if (errors.Any())
+            return Result.Failure<Dish>(string.Join("; ", errors));
+
         var ingredients = new List<Ingredient>(20);
 
-        var invalidMealOfTheDayTypes = mealOfTheDayTypes
-            .Select(x => x.Id)
-            .Except(allMealOfTheDayTypes.Select(y => y.Id));
-
-        if (invalidMealOfTheDayTypes.Any())
-            errors.AddRange(invalidMealOfTheDayTypes.Select(id =>
-                _resources.GenereteSentence(
-                    x => x.UserErrors.IdNotFound,
-                    x => id.ToString())));
-
-        var mappedMealOfTheDayTypes = allMealOfTheDayTypes
+        var mappedMealOfTheDayTypes = mealTypeEntities
             .IntersectBy(mealOfTheDayTypes.Select(x => x.Id), x => x.Id);
 
         foreach (var ingredientDto in ingredientsDtos)
         {
-            var measureUnit = allMeasureUnits.FirstOrDefault(mu => mu.Id == ingredientDto.MeasureUnitId);
-            var product = allProducts.FirstOrDefault(product => product.Id == ingredientDto.ProductId);
-
-            if (measureUnit is null)
-                errors.Add(_resources.GenereteSentence(
-                    x => x.UserErrors.IdNotFound,
-                    x => ingredientDto.MeasureUnitId.ToString()));
-
-            if (product is null)
-                errors.Add(_resources.GenereteSentence(
-                    x => x.UserErrors.IdNotFound,
-                    x => ingredientDto.ProductId.ToString()));
-            
-            if (errors.Any())
-                continue;
+            var measureUnit = measureUnitEntities.First(mu => mu.Id == ingredientDto.MeasureUnitId);
+            var product = productEntities.First(product => product.Id == ingredientDto.ProductId);
 
             var ingredientResult = Ingredient.Create(ingredientDto.Quantity, measureUnit!, product!, _resources);
             if (ingredientResult.IsFailure)
@@ -152,9 +168,6 @@ public class DishService : IDishService
 
             ingredients.Add(ingredientResult.Value);
         }
-
-        if (errors.Any())
-            return Result.Failure<Dish>(string.Join("; ", errors));
 
         return callbackCreateFunc(name, description, servingSize, mappedMealOfTheDayTypes, ingredients, _resources);
     }

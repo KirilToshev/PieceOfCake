@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Core.Common;
 using PieceOfCake.Core.Common.Entities;
+using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.DishFeature.Entities;
 using PieceOfCake.Core.MenuFeature.Calendar;
@@ -92,8 +93,15 @@ public class Menu : GuidEntity
         return Result.Success(this);
     }
 
-    public Result GenerateCalendar(IEnumerable<Dish> dishes, IResources resources)
+    public Result GenerateCalendar(IDishRepository dishRepository, IResources resources)
     {
+        //TODO: Implement Specification Pattern
+        //https://enterprisecraftsmanship.com/posts/cqrs-vs-specification-pattern/
+        //TODO: Check this SQL Request !!!
+        var dishes = dishRepository
+            .Get(d => d.MealOfTheDayTypes
+                .Where(mt => MealOfTheDayTypes.Contains(mt)).Any());
+
         var calendar = new MenuCalendar(Duration, NumberOfPeople, MealOfTheDayTypes);
         var calculationStrategy = MenuCalculationFactory.GetStrategy(Type, resources);
         var result = calculationStrategy.Calculate(calendar, dishes);

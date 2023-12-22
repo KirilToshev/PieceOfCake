@@ -1,21 +1,26 @@
 ﻿using AutoFixture;
+using Moq;
 using NUnit.Framework;
+using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.DishFeature.Entities;
-using PieceOfCake.Core.MenuFeature.Calendar;
 using PieceOfCake.Core.MenuFeature.Entities;
 using PieceOfCake.Core.MenuFeature.Enumerations;
 using PieceOfCake.Tests.Common.Fakes.Interfaces;
+using System.Linq.Expressions;
 
 namespace PieceOfCake.Core.Tests.MenuFeature.Entities;
+
 public class MenuTests : TestsBase
 {
     private IDishFakes _dishFakes;
     private IMealOfTheDayTypeFakes _mealOfTheDayTypeFakes;
+    private Mock<IDishRepository> _dishRepoMock;
 
     public MenuTests ()
     {
         _dishFakes = GetRequiredService<IDishFakes>();
         _mealOfTheDayTypeFakes = GetRequiredService<IMealOfTheDayTypeFakes>();
+        _dishRepoMock = new Mock<IDishRepository>();
     }
 
     [Test]
@@ -236,7 +241,6 @@ public class MenuTests : TestsBase
         Assert.IsEmpty(updatedMenu.Calendar);
     }
 
-
     [Test]
     public void Update_Should_Clear_Calendar_Data ()
     {
@@ -249,7 +253,11 @@ public class MenuTests : TestsBase
         };
         var menuResult = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
         var menu = menuResult.Value;
-        menu.GenerateCalendar(new Dish[] { _dishFakes.Breakfast() }, Resources);
+        _dishRepoMock
+            .Setup(x => x.Get(It.IsAny<Expression<Func<Dish, bool>>>(), null))
+            .Returns(new Dish[] { _dishFakes.Breakfast() }.AsReadOnly());
+
+        menu.GenerateCalendar(_dishRepoMock.Object, Resources);
         Assert.IsNotNull(menu.Calendar);
         Assert.IsTrue(menu.Calendar.Any());
 
@@ -263,7 +271,6 @@ public class MenuTests : TestsBase
         Assert.IsTrue(result.IsSuccess);
         Assert.IsEmpty(menu.Calendar);
     }
-
 
     [Test]
     public void GenerateCalendar_Should_Succseed_To_Fill_In_Calendar ()
@@ -281,9 +288,12 @@ public class MenuTests : TestsBase
             _dishFakes.Breakfast(),
             _dishFakes.Lunch()
         };
+        _dishRepoMock
+            .Setup(x => x.Get(It.IsAny<Expression<Func<Dish, bool>>>(), null))
+            .Returns(dishes.AsReadOnly());
 
         var menu = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources).Value;
-        var result = menu.GenerateCalendar(dishes, Resources);
+        var result = menu.GenerateCalendar(_dishRepoMock.Object, Resources);
 
         Assert.IsTrue(result.IsSuccess);
 

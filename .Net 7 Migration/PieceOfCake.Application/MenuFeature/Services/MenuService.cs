@@ -85,14 +85,7 @@ public class MenuService : IMenuService
             return menuResult;
         var menu = menuResult.Value;
 
-        //TODO: Implement Specification Pattern
-        //https://enterprisecraftsmanship.com/posts/cqrs-vs-specification-pattern/
-        //TODO: Check this SQL Request !!!
-        var dishes = _unitOfWork.DishRepository
-            .Get(d => d.MealOfTheDayTypes
-                .Where(mt => menu.MealOfTheDayTypes.Contains(mt)).Any());
-
-        var result = menu.GenerateCalendar(dishes, _resources);
+        var result = menu.GenerateCalendar(_unitOfWork.DishRepository, _resources);
         if (result.IsFailure)
             return result.ConvertFailure<Menu>();
 
