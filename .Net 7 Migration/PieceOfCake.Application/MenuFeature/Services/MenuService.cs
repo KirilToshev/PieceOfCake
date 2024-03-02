@@ -19,9 +19,9 @@ public class MenuService : IMenuService
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     }
 
-    public IReadOnlyCollection<Menu> Get () => _unitOfWork.MenuRepository.Get();
+    public IReadOnlyCollection<Menu> GetAllAsync () => _unitOfWork.MenuRepository.Get();
 
-    public Result<Menu> Get (Guid id)
+    public Result<Menu> GetByIdAsync (Guid id)
     {
         var menu = _unitOfWork.MenuRepository.GetById(id);
 
@@ -53,7 +53,7 @@ public class MenuService : IMenuService
         ushort numberOfPeople,
         IEnumerable<MealOfTheDayType> mealOfTheDayTypes)
     {
-        var menuResult = Get(id);
+        var menuResult = GetByIdAsync(id);
         if (menuResult.IsFailure)
             return menuResult;
         var menu = menuResult.Value;
@@ -68,9 +68,9 @@ public class MenuService : IMenuService
         return Result.Success(menu);
     }
 
-    public Result Delete (Guid id)
+    public Result DeleteAsync (Guid id)
     {
-        return Get(id)
+        return GetByIdAsync(id)
             .Tap(menu =>
             {
                 _unitOfWork.MenuRepository.Delete(menu);
@@ -80,7 +80,7 @@ public class MenuService : IMenuService
 
     public Result<Menu> GenerateDishesList (Guid id)
     {
-        var menuResult = this.Get(id);
+        var menuResult = this.GetByIdAsync(id);
         if (menuResult.IsFailure)
             return menuResult;
         var menu = menuResult.Value;

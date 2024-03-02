@@ -42,7 +42,7 @@ public class MeasureUnitServiceTests : TestsBase
 
         var sut = new MeasureUnitService(Resources, _uowMock);
 
-        var result = sut.Get(notExistingId);
+        var result = sut.GetByIdAsync(notExistingId);
 
         Assert.True(result.IsFailure);
         Assert.Equal(string.Format("Element with Id={0} does not exists.", notExistingId), result.Error);
@@ -57,7 +57,7 @@ public class MeasureUnitServiceTests : TestsBase
 
         var sut = new MeasureUnitService(Resources, _uowMock);
 
-        var result = sut.Get(id);
+        var result = sut.GetByIdAsync(id);
 
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Value);
@@ -71,7 +71,7 @@ public class MeasureUnitServiceTests : TestsBase
 
         var sut = new MeasureUnitService(Resources, _uowMock);
 
-        var result = sut.Update(new MeasureUnitUpdateDto() { Id = notExistingId, Name = Fixture.Create<string>() });
+        var result = sut.UpdateAsync(new MeasureUnitUpdateDto() { Id = notExistingId, Name = Fixture.Create<string>() });
 
         Assert.True(result.IsFailure);
         Assert.Equal(string.Format("Element with Id={0} does not exists.", notExistingId), result.Error);
@@ -92,7 +92,7 @@ public class MeasureUnitServiceTests : TestsBase
         var sut = new MeasureUnitService(Resources, _uowMock);
 
         //Act
-        var result = sut.Update(new MeasureUnitUpdateDto() { Id = id, Name = updatedName });
+        var result = sut.UpdateAsync(new MeasureUnitUpdateDto() { Id = id, Name = updatedName });
 
         //Assert
         Assert.True(result.IsSuccess);
@@ -105,7 +105,7 @@ public class MeasureUnitServiceTests : TestsBase
         var notExistingId = Fixture.Create<Guid>();
         var sut = new MeasureUnitService(Resources, _uowMock);
 
-        var result = sut.Delete(notExistingId);
+        var result = sut.DeleteAsync(notExistingId);
 
         Assert.True(result.IsFailure);
         Assert.Equal(string.Format("Element with Id={0} does not exists.", notExistingId), result.Error);
@@ -122,7 +122,7 @@ public class MeasureUnitServiceTests : TestsBase
 
         var sut = new MeasureUnitService(Resources, _uowMock);
 
-        var result = sut.Delete(id);
+        var result = sut.DeleteAsync(id);
 
         Assert.True(result.IsSuccess);
     }
@@ -139,7 +139,7 @@ public class MeasureUnitServiceTests : TestsBase
 
         var sut = new MeasureUnitService(Resources, _uowMock);
 
-        var result = sut.Delete(id);
+        var result = sut.DeleteAsync(id);
 
         Assert.True(result.IsFailure);
         Assert.Equal($"{Resources.CommonTerms.MeasureUnit} can't be deleted, because it is still being used.", result.Error);

@@ -23,9 +23,9 @@ public class DishService : IDishService
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));        
     }
 
-    public IReadOnlyCollection<Dish> Get () => _unitOfWork.DishRepository.Get();
+    public IReadOnlyCollection<Dish> GetAllAsync () => _unitOfWork.DishRepository.Get();
 
-    public Result<Dish> Get (Guid id)
+    public Result<Dish> GetByIdAsync (Guid id)
     {
         var dish = _unitOfWork.DishRepository.GetById(id);
 
@@ -65,7 +65,7 @@ public class DishService : IDishService
         IEnumerable<MealOfTheDayTypeDto> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsDtos)
     {
-        var dishResult = Get(id);
+        var dishResult = GetByIdAsync(id);
         if (dishResult.IsFailure)
             return dishResult;
 
@@ -83,9 +83,9 @@ public class DishService : IDishService
             });
     }
 
-    public Result Delete (Guid id)
+    public Result DeleteAsync (Guid id)
     {
-        return Get(id)
+        return GetByIdAsync(id)
             .Bind(dish =>
             {
                 //TODO: Check if Dish is in use before deletion.
