@@ -10,14 +10,14 @@ using System.Linq.Expressions;
 
 namespace PieceOfCake.Application.Tests.IngredientFeature.Services;
 
-public class ProductDomainServiceTests : TestsBase
+public class ProductServiceTests : TestsBase
 {
     private IUnitOfWork _uowMock;
     private IProductRepository _productRepoMock;
     private IDishRepository _dishRepoMock;
     private Product _productMock;
 
-    public ProductDomainServiceTests()
+    public ProductServiceTests()
     {
         _uowMock = Substitute.For<IUnitOfWork>();
         _productRepoMock = Substitute.For<IProductRepository>();

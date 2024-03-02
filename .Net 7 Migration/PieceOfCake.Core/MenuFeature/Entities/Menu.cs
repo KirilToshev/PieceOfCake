@@ -107,7 +107,7 @@ public class Menu : GuidEntity
         var result = calculationStrategy.Calculate(calendar, dishes);
 
         if (result.IsSuccess)
-            Calendar = calendar.Calendar;
+            Calendar = result.Value;
 
         return result;
     }
