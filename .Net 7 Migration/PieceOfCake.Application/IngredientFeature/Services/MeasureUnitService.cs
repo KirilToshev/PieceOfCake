@@ -25,7 +25,7 @@ public class MeasureUnitService : BaseService<IMeasureUnitRepository, MeasureUni
     }
 
     public IReadOnlyCollection<MeasureUnitGetDto> GetAllAsync () => 
-        Repository.Get()
+        Repository.GetAsync()
         .Select(x => x.MapToGetDto())
         .ToArray().AsReadOnly();
 
@@ -63,15 +63,14 @@ public class MeasureUnitService : BaseService<IMeasureUnitRepository, MeasureUni
             });
     }
 
-    public Result DeleteAsync (Guid id)
+    public async Task<Result> DeleteAsync (Guid id)
     {
-        return GetEntity(id)
-            .Bind(mu =>
+        return await GetEntity(id)
+            .Bind(async mu =>
             {
-                var isMeasureUnitInUse = _unitOfWork.DishRepository
-                                        .Get(dish => dish.Ingredients.Any(i => i.MeasureUnit.Id == mu.Id))
-                                        .Any();
-                if (isMeasureUnitInUse)
+                var isMeasureUnitInUse = await _unitOfWork.DishRepository
+                                        .GetAsync(dish => dish.Ingredients.Any(i => i.MeasureUnit.Id == mu.Id));
+                if (isMeasureUnitInUse.Any())
                     return Result.Failure(_resources
                         .GenereteSentence(x => x.UserErrors.ItemIsInUse, x => x.CommonTerms.MeasureUnit));
 

@@ -8,13 +8,13 @@ namespace PieceOfCake.Application.DishFeature.Services;
 
 public interface IDishService : IGetAndDeleteService<Dish, Guid>
 {
-    Result<Dish> Create (
+    Task<Result<Dish>> Create (
         string name,
         string description,
         byte servingSize,
         IEnumerable<MealOfTheDayTypeDto> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsVmList);
-    Result<Dish> Update (
+    Task<Result<Dish>> Update (
         Guid id,
         string name,
         string description,

@@ -19,7 +19,7 @@ public class MealOfTheDayTypeService : IMealOfTheDayTypeService
     }
 
     public IReadOnlyCollection<MealOfTheDayType> Get ()
-        => _unitOfWork.MealOfTheDayTypeRepository.Get();
+        => _unitOfWork.MealOfTheDayTypeRepository.GetAsync();
 
     public Result<MealOfTheDayType> Get (Guid id)
     {
@@ -63,12 +63,12 @@ public class MealOfTheDayTypeService : IMealOfTheDayTypeService
             .Bind(mu =>
             {
                 var isMealTypeInUse = _unitOfWork.DishRepository
-                                        .Get(dish => dish.MealOfTheDayTypes.Select(x => x.Id).Contains(id))
+                                        .GetAsync(dish => dish.MealOfTheDayTypes.Select(x => x.Id).Contains(id))
                                         .Any();
 
                 if (!isMealTypeInUse)
                     isMealTypeInUse = _unitOfWork.MenuRepository
-                        .Get(menu => menu.MealOfTheDayTypes.Contains(mu)).Any();
+                        .GetAsync(menu => menu.MealOfTheDayTypes.Contains(mu)).Any();
 
                 if (isMealTypeInUse)
                     return Result.Failure(_resources

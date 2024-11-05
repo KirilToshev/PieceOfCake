@@ -1,11 +1,12 @@
 ﻿using CSharpFunctionalExtensions;
+using PieceOfCake.Core.DishFeature.Entities;
 
 namespace PieceOfCake.Application.Common.Services;
 
 public interface IGetAndDeleteService<TDto, KId>
     where KId : IComparable<KId>
 {
-    IReadOnlyCollection<TDto> GetAllAsync ();
+    Task<IReadOnlyCollection<TDto>> GetAllAsync ();
     Result<TDto> GetByIdAsync (KId id);
     Result DeleteAsync (KId id);
 }

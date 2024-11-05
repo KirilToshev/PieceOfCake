@@ -254,8 +254,8 @@ public class MenuTests : TestsBase
         var menuResult = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
         var menu = menuResult.Value;
         _dishRepoMock
-            .Setup(x => x.Get(It.IsAny<Expression<Func<Dish, bool>>>(), null))
-            .Returns(new Dish[] { _dishFakes.Breakfast() }.AsReadOnly());
+            .Setup(x => x.GetAsync(It.IsAny<Expression<Func<Dish, bool>>>(), null))
+            .ReturnsAsync(new Dish[] { _dishFakes.Breakfast() }.AsReadOnly());
 
         menu.GenerateCalendar(_dishRepoMock.Object, Resources);
         Assert.IsNotNull(menu.Calendar);
@@ -273,7 +273,7 @@ public class MenuTests : TestsBase
     }
 
     [Test]
-    public void GenerateCalendar_Should_Succseed_To_Fill_In_Calendar ()
+    public async Task GenerateCalendar_Should_Succseed_To_Fill_In_Calendar ()
     {
         var startDate = DateTime.Now;
         var endDate = DateTime.Now.AddDays(1);
@@ -289,11 +289,11 @@ public class MenuTests : TestsBase
             _dishFakes.Lunch()
         };
         _dishRepoMock
-            .Setup(x => x.Get(It.IsAny<Expression<Func<Dish, bool>>>(), null))
-            .Returns(dishes.AsReadOnly());
+            .Setup(x => x.GetAsync(It.IsAny<Expression<Func<Dish, bool>>>(), null))
+            .ReturnsAsync(dishes.AsReadOnly());
 
         var menu = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources).Value;
-        var result = menu.GenerateCalendar(_dishRepoMock.Object, Resources);
+        var result = await menu.GenerateCalendar(_dishRepoMock.Object, Resources);
 
         Assert.IsTrue(result.IsSuccess);
 

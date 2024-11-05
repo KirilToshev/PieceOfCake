@@ -18,7 +18,7 @@ public class ProductService : IProductService
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     }
 
-    public IReadOnlyCollection<Product> Get () => _unitOfWork.ProductRepository.Get();
+    public IReadOnlyCollection<Product> Get () => _unitOfWork.ProductRepository.GetAsync();
 
     public Result<Product> Get (Guid id)
     {
@@ -63,7 +63,7 @@ public class ProductService : IProductService
             .Bind(product =>
             {
                 var isProductInUse = _unitOfWork.DishRepository
-                                        .Get(dish => dish.Ingredients.Any(i => i.Product.Id == product.Id))
+                                        .GetAsync(dish => dish.Ingredients.Any(i => i.Product.Id == product.Id))
                                         .Any();
                 if (isProductInUse)
                     return Result.Failure(_resources

@@ -93,13 +93,13 @@ public class Menu : GuidEntity
         return Result.Success(this);
     }
 
-    public Result GenerateCalendar(IDishRepository dishRepository, IResources resources)
+    public async Task<Result> GenerateCalendar(IDishRepository dishRepository, IResources resources)
     {
         //TODO: Implement Specification Pattern
         //https://enterprisecraftsmanship.com/posts/cqrs-vs-specification-pattern/
         //TODO: Check this SQL Request !!!
-        var dishes = dishRepository
-            .Get(d => d.MealOfTheDayTypes
+        var dishes = await dishRepository
+            .GetAsync(d => d.MealOfTheDayTypes
                 .Where(mt => MealOfTheDayTypes.Contains(mt)).Any());
 
         var calendar = new MenuCalendar(Duration, NumberOfPeople, MealOfTheDayTypes);

@@ -117,7 +117,7 @@ public class MeasureUnitServiceTests : TestsBase
         var id = Fixture.Create<Guid>();
         _measureUnitRepoMock.GetById(id)
             .Returns(_measureUnitMock);
-        _dishRepoMock.Get(Arg.Any<Expression<Func<Dish, bool>>>(), null)
+        _dishRepoMock.GetAsync(Arg.Any<Expression<Func<Dish, bool>>>(), null)
             .Returns(new Dish[0]);
 
         var sut = new MeasureUnitService(Resources, _uowMock);
@@ -134,7 +134,7 @@ public class MeasureUnitServiceTests : TestsBase
         _measureUnitRepoMock.GetById(id)
             .Returns(_measureUnitMock);
         var dishMock = Substitute.For<Dish>();
-        _dishRepoMock.Get(Arg.Any<Expression<Func<Dish, bool>>>(), null)
+        _dishRepoMock.GetAsync(Arg.Any<Expression<Func<Dish, bool>>>(), null)
             .Returns(new Dish[] { dishMock });
 
         var sut = new MeasureUnitService(Resources, _uowMock);

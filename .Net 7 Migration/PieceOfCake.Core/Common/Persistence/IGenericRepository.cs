@@ -11,7 +11,7 @@ public interface IGenericRepository<TEntity> where TEntity : class
     /// <param name="orderBy"></param>
     /// <param name="includes"></param>
     /// <returns></returns>
-    IReadOnlyCollection<TEntity> Get (
+    Task<IReadOnlyCollection<TEntity>> GetAsync (
         Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         params Expression<Func<TEntity, object>>[] includes);

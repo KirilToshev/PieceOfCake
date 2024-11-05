@@ -23,7 +23,7 @@ public class DishService : IDishService
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));        
     }
 
-    public IReadOnlyCollection<Dish> GetAllAsync () => _unitOfWork.DishRepository.Get();
+    public Task<IReadOnlyCollection<Dish>> GetAllAsync () => _unitOfWork.DishRepository.GetAsync();
 
     public Result<Dish> GetByIdAsync (Guid id)
     {
@@ -36,14 +36,14 @@ public class DishService : IDishService
         return Result.Success(dish);
     }
 
-    public Result<Dish> Create (
+    public async Task<Result<Dish>> Create (
         string name,
         string description,
         byte servingSize,
         IEnumerable<MealOfTheDayTypeDto> mealOfTheDayTypes,
         IEnumerable<AddIngredientDto> ingredientsDtos)
     {
-        return ValidateInputs(
+        return await ValidateInputs(
             name, 
             description, 
             servingSize, 
@@ -57,7 +57,7 @@ public class DishService : IDishService
             });
     }
 
-    public Result<Dish> Update (
+    public async Task<Result<Dish>> Update (
         Guid id,
         string name,
         string description,
@@ -69,7 +69,7 @@ public class DishService : IDishService
         if (dishResult.IsFailure)
             return dishResult;
 
-        return ValidateInputs(
+        return await ValidateInputs(
             name, 
             description, 
             servingSize, 
@@ -101,7 +101,7 @@ public class DishService : IDishService
             });
     }
 
-    private Result<Dish> ValidateInputs (
+    private async Task<Result<Dish>> ValidateInputs (
         string name,
         string description,
         byte servingSize,
@@ -114,13 +114,14 @@ public class DishService : IDishService
         var productIds = ingredientsDtos.Select(x => x.ProductId).Distinct();
         var mealTypeIds = mealOfTheDayTypes.Select(x => x.Id).Distinct();
 
-        var measureUnitEntities = _unitOfWork.MeasureUnitRepository
-            .Get(x => measureUnitIds.Contains(x.Id))
-            .AsEnumerable();
-        var productEntities = _unitOfWork.ProductRepository
-            .Get(x => productIds.Contains(x.Id));
-        var mealTypeEntities = _unitOfWork.MealOfTheDayTypeRepository
-            .Get(x => mealTypeIds.Contains(x.Id));
+        //TODO: Make these tree call paralel. Task.WhenAll()
+        var measureUnitEntities = await _unitOfWork.MeasureUnitRepository
+            .GetAsync(x => measureUnitIds.Contains(x.Id));
+        var productEntities = await _unitOfWork.ProductRepository
+            .GetAsync(x => productIds.Contains(x.Id));
+        var mealTypeEntities = await _unitOfWork.MealOfTheDayTypeRepository
+            .GetAsync(x => mealTypeIds.Contains(x.Id));
+
         var errors = new List<string>();
         
         if (measureUnitEntities.Count() < measureUnitIds.Count()) 

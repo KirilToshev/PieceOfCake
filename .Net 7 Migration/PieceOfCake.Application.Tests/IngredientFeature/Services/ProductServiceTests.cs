@@ -115,7 +115,7 @@ public class ProductServiceTests : TestsBase
         var id = Fixture.Create<Guid>();
         _productRepoMock.GetById(Arg.Is(id))
             .Returns(_productMock);
-        _dishRepoMock.Get(Arg.Any<Expression<Func<Dish, bool>>>(), null)
+        _dishRepoMock.GetAsync(Arg.Any<Expression<Func<Dish, bool>>>(), null)
             .Returns(new Dish[0]);
 
         var sut = new ProductService(Resources, _uowMock);
@@ -132,7 +132,7 @@ public class ProductServiceTests : TestsBase
         _productRepoMock.GetById(id)
             .Returns(_productMock);
         var dishMock = Substitute.For<Dish>();
-        _dishRepoMock.Get(Arg.Any<Expression<Func<Dish, bool>>>(), null)
+        _dishRepoMock.GetAsync(Arg.Any<Expression<Func<Dish, bool>>>(), null)
             .Returns(new Dish[] { dishMock });
 
         var sut = new ProductService(Resources, _uowMock);

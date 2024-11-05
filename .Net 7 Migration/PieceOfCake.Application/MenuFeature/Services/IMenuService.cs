@@ -9,5 +9,5 @@ public interface IMenuService : IGetAndDeleteService<Menu, Guid>
 {
     Result<Menu> Create (DateTime startDate, DateTime endDate, ushort numberOfPeople, IEnumerable<MealOfTheDayType> mealOfTheDayTypes);
     Result<Menu> Update (Guid id, DateTime startDate, DateTime endDate, ushort numberOfPeople, IEnumerable<MealOfTheDayType> mealOfTheDayTypes);
-    Result<Menu> GenerateDishesList (Guid id);
+    Task<Result<Menu>> GenerateDishesList (Guid id);
 }

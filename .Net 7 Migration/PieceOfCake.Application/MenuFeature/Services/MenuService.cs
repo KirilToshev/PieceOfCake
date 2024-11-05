@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using PieceOfCake.Application.Common.Services;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.DishFeature.Entities;
@@ -19,8 +20,8 @@ public class MenuService : IMenuService
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     }
 
-    public IReadOnlyCollection<Menu> GetAllAsync () => _unitOfWork.MenuRepository.Get();
-
+    public async Task<IReadOnlyCollection<Menu>> GetAllAsync () => await _unitOfWork.MenuRepository.GetAsync();
+    
     public Result<Menu> GetByIdAsync (Guid id)
     {
         var menu = _unitOfWork.MenuRepository.GetById(id);
@@ -78,14 +79,14 @@ public class MenuService : IMenuService
             });
     }
 
-    public Result<Menu> GenerateDishesList (Guid id)
+    public async Task<Result<Menu>> GenerateDishesList (Guid id)
     {
         var menuResult = this.GetByIdAsync(id);
         if (menuResult.IsFailure)
             return menuResult;
         var menu = menuResult.Value;
 
-        var result = menu.GenerateCalendar(_unitOfWork.DishRepository, _resources);
+        var result = await menu.GenerateCalendar(_unitOfWork.DishRepository, _resources);
         if (result.IsFailure)
             return result.ConvertFailure<Menu>();
 
