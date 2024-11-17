@@ -7,162 +7,144 @@ using PieceOfCake.Application.DishFeature.Dtos;
 using PieceOfCake.Core.DishFeature.Entities;
 using PieceOfCake.Core.IngredientFeature.ValueObjects;
 using System.Linq;
+using PieceOfCake.Application.Common.Services;
+using PieceOfCake.Application.DishFeature.Dtos.Mapping;
+using PieceOfCake.Core.Common.ValueObjects;
+using System.Xml.Linq;
 
 namespace PieceOfCake.Application.DishFeature.Services;
 
-public class DishService : IDishService
+public class DishService : BaseService<IDishRepository, Dish>, IDishService
 {
-    private readonly IResources _resources;
-    private readonly IUnitOfWork _unitOfWork;
-    
-    public DishService (
+    protected override IDishRepository Repository => UnitOfWork.DishRepository;
+
+    public DishService(
         IResources resources,
         IUnitOfWork unitOfWork)
+        : base(resources, unitOfWork)
     {
-        _resources = resources ?? throw new ArgumentNullException(nameof(resources));
-        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));        
     }
 
-    public Task<IReadOnlyCollection<Dish>> GetAllAsync () => _unitOfWork.DishRepository.GetAsync();
-
-    public Result<Dish> GetByIdAsync (Guid id)
-    {
-        var dish = _unitOfWork.DishRepository.GetById(id);
-
-        if (dish == null)
-            return Result.Failure<Dish>(
-                _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
-
-        return Result.Success(dish);
-    }
-
-    public async Task<Result<Dish>> Create (
-        string name,
-        string description,
-        byte servingSize,
-        IEnumerable<MealOfTheDayTypeDto> mealOfTheDayTypes,
-        IEnumerable<AddIngredientDto> ingredientsDtos)
+    public async Task<Result<DishDto>> CreateAsync(DishCreateDto createDto)
     {
         return await ValidateInputs(
-            name, 
-            description, 
-            servingSize, 
-            mealOfTheDayTypes, 
-            ingredientsDtos, 
+            createDto,
             Dish.Create)
-            .Tap(dish =>
+            .Map(async dish =>
             {
-                _unitOfWork.DishRepository.Insert(dish);
-                _unitOfWork.Save();
+                UnitOfWork.DishRepository.Insert(dish);
+                await UnitOfWork.SaveAsync();
+                return dish.MapToGetDto();
             });
     }
 
-    public async Task<Result<Dish>> Update (
-        Guid id,
-        string name,
-        string description,
-        byte servingSize,
-        IEnumerable<MealOfTheDayTypeDto> mealOfTheDayTypes,
-        IEnumerable<AddIngredientDto> ingredientsDtos)
+    public async Task<Result<DishDto>> UpdateAsync(DishUpdateDto updateDto)
     {
-        var dishResult = GetByIdAsync(id);
-        if (dishResult.IsFailure)
-            return dishResult;
-
-        return await ValidateInputs(
-            name, 
-            description, 
-            servingSize, 
-            mealOfTheDayTypes, 
-            ingredientsDtos, 
-            dishResult.Value.Update)
-            .Tap(dish =>
+        return await GetEntityAsync(updateDto.Id)
+            .Bind(async dish =>
             {
-                _unitOfWork.DishRepository.Update(dish);
-                _unitOfWork.Save();
+                var createDto = new DishCreateDto
+                {
+                    Name = updateDto.Name,
+                    ServingSize = updateDto.ServingSize,
+                    Description = updateDto.Description,
+                    MealOfTheDayTypes = updateDto.MealOfTheDayTypes,
+                    IngredientsDtos = updateDto.IngredientsDtos
+                };
+                var result = await ValidateInputs(createDto, dish.Update)
+                    .Tap(dish =>
+                    {
+                        Repository.Update(dish);
+                        UnitOfWork.SaveAsync();
+                    })
+                    .Map(dish => dish.MapToGetDto());
+                return result;
             });
     }
 
-    public Result DeleteAsync (Guid id)
+    public async Task<IReadOnlyCollection<DishDto>> GetAllAsync()
     {
-        return GetByIdAsync(id)
-            .Bind(dish =>
+        var dishes = await Repository.GetAsync();
+        return dishes.Select(d => d.MapToGetDto()).ToArray().AsReadOnly();
+    }
+
+    public async Task<Result<DishDto>> GetByIdAsync(Guid id)
+    {
+        return await GetEntityAsync(id).Map(dish => dish.MapToGetDto());
+    }
+
+    public async Task<Result> DeleteAsync(Guid id)
+    {
+        return await GetEntityAsync(id)
+            .Tap(async dish =>
             {
-                //TODO: Check if Dish is in use before deletion.
-
-                var isDishInUse = _unitOfWork.DishRepository.IsDishInUse(id);
-                if (isDishInUse)
-                    return Result.Failure(_resources
-                        .GenereteSentence(x => x.UserErrors.ItemIsInUse, x => x.CommonTerms.Dish));
-
-                _unitOfWork.DishRepository.Delete(dish);
-                _unitOfWork.Save();
-                return Result.Success();
+                if (dish.Menus.Any())
+                {
+                    Result.Failure(I18N.GenereteSentence(x => x.UserErrors.ItemIsInUse, x => x.CommonTerms.Dish));
+                }
+                Repository.Delete(dish);
+                await UnitOfWork.SaveAsync();
             });
     }
 
-    private async Task<Result<Dish>> ValidateInputs (
-        string name,
-        string description,
-        byte servingSize,
-        IEnumerable<MealOfTheDayTypeDto> mealOfTheDayTypes,
-        IEnumerable<AddIngredientDto> ingredientsDtos,
+    private async Task<Result<Dish>> ValidateInputs(
+        DishCreateDto createDto,
         Func<string, string, byte, IEnumerable<MealOfTheDayType>, IEnumerable<Ingredient>, IResources, Result<Dish>> callbackCreateFunc)
     {
         //TODO: Implement cacheing
-        var measureUnitIds = ingredientsDtos.Select(x => x.MeasureUnitId).Distinct();
-        var productIds = ingredientsDtos.Select(x => x.ProductId).Distinct();
-        var mealTypeIds = mealOfTheDayTypes.Select(x => x.Id).Distinct();
+        var measureUnitIds = createDto.IngredientsDtos.Select(x => x.MeasureUnitId).Distinct();
+        var productIds = createDto.IngredientsDtos.Select(x => x.ProductId).Distinct();
+        var mealTypeIds = createDto.MealOfTheDayTypes.Select(x => x.Id).Distinct();
 
         //TODO: Make these tree call paralel. Task.WhenAll()
-        var measureUnitEntities = await _unitOfWork.MeasureUnitRepository
+        var measureUnitEntities = await UnitOfWork.MeasureUnitRepository
             .GetAsync(x => measureUnitIds.Contains(x.Id));
-        var productEntities = await _unitOfWork.ProductRepository
+        var productEntities = await UnitOfWork.ProductRepository
             .GetAsync(x => productIds.Contains(x.Id));
-        var mealTypeEntities = await _unitOfWork.MealOfTheDayTypeRepository
+        var mealTypeEntities = await UnitOfWork.MealOfTheDayTypeRepository
             .GetAsync(x => mealTypeIds.Contains(x.Id));
 
         var errors = new List<string>();
-        
-        if (measureUnitEntities.Count() < measureUnitIds.Count()) 
+
+        if(measureUnitEntities.Count() < measureUnitIds.Count())
         {
             var invalidIds = measureUnitIds.Except(measureUnitEntities.Select(x => x.Id));
-            errors.Add(_resources.GenereteSentence(
+            errors.Add(I18N.GenereteSentence(
                     x => x.UserErrors.IdNotFound,
                     x => string.Join("; ", invalidIds)));
         }
 
-        if (productEntities.Count() < productIds.Count())
+        if(productEntities.Count() < productIds.Count())
         {
             var invalidIds = productIds.Except(productEntities.Select(x => x.Id));
-            errors.Add(_resources.GenereteSentence(
+            errors.Add(I18N.GenereteSentence(
                     x => x.UserErrors.IdNotFound,
                     x => string.Join("; ", invalidIds)));
         }
 
-        if (mealTypeEntities.Count() < mealTypeIds.Count())
+        if(mealTypeEntities.Count() < mealTypeIds.Count())
         {
             var invalidIds = mealTypeIds.Except(mealTypeEntities.Select(x => x.Id));
-            errors.Add(_resources.GenereteSentence(
+            errors.Add(I18N.GenereteSentence(
                     x => x.UserErrors.IdNotFound,
                     x => string.Join("; ", invalidIds)));
         }
 
-        if (errors.Any())
+        if(errors.Any())
             return Result.Failure<Dish>(string.Join("; ", errors));
 
         var ingredients = new List<Ingredient>(20);
 
         var mappedMealOfTheDayTypes = mealTypeEntities
-            .IntersectBy(mealOfTheDayTypes.Select(x => x.Id), x => x.Id);
+            .IntersectBy(createDto.MealOfTheDayTypes.Select(x => x.Id), x => x.Id);
 
-        foreach (var ingredientDto in ingredientsDtos)
+        foreach(var ingredientDto in createDto.IngredientsDtos)
         {
             var measureUnit = measureUnitEntities.First(mu => mu.Id == ingredientDto.MeasureUnitId);
             var product = productEntities.First(product => product.Id == ingredientDto.ProductId);
 
-            var ingredientResult = Ingredient.Create(ingredientDto.Quantity, measureUnit!, product!, _resources);
-            if (ingredientResult.IsFailure)
+            var ingredientResult = Ingredient.Create(ingredientDto.Quantity, measureUnit!, product!, I18N);
+            if(ingredientResult.IsFailure)
             {
                 errors.Add(ingredientResult.Error);
                 continue;
@@ -172,11 +154,11 @@ public class DishService : IDishService
         }
 
         return callbackCreateFunc(
-            name, 
-            description, 
-            servingSize, 
-            mappedMealOfTheDayTypes, 
-            ingredients, 
-            _resources);
+            createDto.Name,
+            createDto.Description,
+            createDto.ServingSize,
+            mappedMealOfTheDayTypes,
+            ingredients,
+            I18N);
     }
 }

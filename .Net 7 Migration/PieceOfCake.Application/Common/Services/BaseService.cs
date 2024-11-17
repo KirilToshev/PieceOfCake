@@ -4,27 +4,40 @@ using PieceOfCake.Core.Common.Resources;
 
 namespace PieceOfCake.Application.Common.Services;
 
-public abstract class BaseService<IRepository, TEntity>
+public abstract class BaseService<IRepository, TEntity> : IDisposable
     where IRepository : IGenericRepository<TEntity>
     where TEntity : class
 {
-    private readonly IResources _resources;
-
-    public BaseService (IResources resources)
+    public BaseService (IResources i18n, IUnitOfWork unitOfWork)
     {
-        _resources = resources;
+        I18N = i18n ?? throw new ArgumentNullException(nameof(i18n));
+        UnitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     }
+
+    protected IResources I18N { get; }
+
+    protected IUnitOfWork UnitOfWork { get; }
 
     protected abstract IRepository Repository { get; }
 
-    protected Result<TEntity> GetEntity (Guid id)
+    protected async Task<Result<TEntity>> GetEntityAsync (Guid id)
     {
-        var measureUnit = Repository.GetById(id);
+        var entity = await Repository.GetByIdAsync(id);
 
-        if (measureUnit == null)
+        if (entity == null)
             return Result.Failure<TEntity>(
-                _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
+                I18N.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
 
-        return Result.Success(measureUnit);
+        return Result.Success(entity);
+    }
+
+    public Task<int> SaveAsync()
+    {
+        return UnitOfWork.SaveAsync();
+    }
+
+    public void Dispose ()
+    {
+        UnitOfWork.Dispose();
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace PieceOfCake.Core.Common.Persistence;
 
-public interface IUnitOfWork
+public interface IUnitOfWork : IDisposable
 {
     IMeasureUnitRepository MeasureUnitRepository { get; }
     IProductRepository ProductRepository { get; }
@@ -8,7 +8,6 @@ public interface IUnitOfWork
     IMenuRepository MenuRepository { get; }
     IMealOfTheDayTypeRepository MealOfTheDayTypeRepository { get; }
 
-    void Save ();
     Task<int> SaveAsync ();
 
     //IGenericRepository<TEntity> GetRepositoryByType<TEntity>() where TEntity : Entity;

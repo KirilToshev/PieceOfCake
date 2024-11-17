@@ -17,19 +17,11 @@ public interface IGenericRepository<TEntity> where TEntity : class
         params Expression<Func<TEntity, object>>[] includes);
 
     /// <summary>
-    /// Get query for entity
-    /// </summary>
-    /// <param name="filter"></param>
-    /// <param name="orderBy"></param>
-    /// <returns></returns>
-    //IQueryable<TEntity> Query(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null);
-
-    /// <summary>
     /// Get single entity by primary key
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    TEntity? GetById (object id);
+    Task<TEntity?> GetByIdAsync (object id);
 
     /// <summary>
     /// Get first or default entity by filter
@@ -37,7 +29,7 @@ public interface IGenericRepository<TEntity> where TEntity : class
     /// <param name="filter"></param>
     /// <param name="includes"></param>
     /// <returns></returns>
-    TEntity? GetFirstOrDefault (
+    Task<TEntity?> FirstOrDefaultAsync (
         Expression<Func<TEntity, bool>>? filter = null,
         params Expression<Func<TEntity, object>>[] includes);
 

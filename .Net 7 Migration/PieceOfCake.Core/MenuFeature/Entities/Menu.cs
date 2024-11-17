@@ -40,8 +40,7 @@ public class Menu : GuidEntity
 
     //TODO: MenuSummary Feature
     //public MenuSummary GetSummary(){}
-    //Move TotalServingsCount and TotalDishesCounter into MenuSummary object  
-    //together with 
+    //Move TotalServingsCount and TotalDishesCounter into MenuSummary object 
     public int TotalServingsCount => Duration.DaysDifference * MealOfTheDayTypes.Count() * NumberOfPeople;
     public IDictionary<Guid, int>? TotalDishesCounter =>
         Calendar?.Select(c => c.MealOfTheDayTypes.ToList())
@@ -114,6 +113,6 @@ public class Menu : GuidEntity
 
     public void ClearCalendar()
     {
-        Calendar = new List<CalendarItem>();
+        Calendar = Enumerable.Empty<CalendarItem>();
     }
 }

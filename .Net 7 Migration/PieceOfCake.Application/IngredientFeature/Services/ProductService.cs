@@ -1,76 +1,72 @@
 ﻿using CSharpFunctionalExtensions;
+using PieceOfCake.Application.Common.Services;
+using PieceOfCake.Application.IngredientFeature.Dtos;
+using PieceOfCake.Application.IngredientFeature.Dtos.Mapping;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.IngredientFeature.Entities;
 
 namespace PieceOfCake.Application.IngredientFeature.Services;
 
-public class ProductService : IProductService
+public class ProductService : BaseService<IProductRepository, Product>, IProductService
 {
-    private readonly IResources _resources;
-    private readonly IUnitOfWork _unitOfWork;
-    
+    protected override IProductRepository Repository => UnitOfWork.ProductRepository;
+
     public ProductService (
         IResources resources,
         IUnitOfWork unitOfWork)
+        : base (resources, unitOfWork)
     {
-        _resources = resources ?? throw new ArgumentNullException(nameof(resources));
-        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     }
 
-    public IReadOnlyCollection<Product> Get () => _unitOfWork.ProductRepository.GetAsync();
-
-    public Result<Product> Get (Guid id)
+    public async Task<IReadOnlyCollection<ProductGetDto>> GetAllAsync ()
     {
-        var product = _unitOfWork.ProductRepository.GetById(id);
-
-        if (product == null)
-            return Result.Failure<Product>(
-                _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
-
-        return Result.Success(product);
+        var products = await Repository.GetAsync();
+        return products.Select(p => p.MapToGetDto()).ToArray().AsReadOnly();
     }
 
-    public Result<Product> Update (Guid id, string? name)
+    public Task<Result<ProductGetDto>> GetByIdAsync (Guid id)
     {
-        var product = _unitOfWork.ProductRepository.GetById(id);
+        return GetEntityAsync(id).Map(x => x.MapToGetDto());
+    }
 
-        if (product == null)
-            return Result.Failure<Product>(
-                _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
-
-        return product.Update(name, _resources, _unitOfWork)
-            .Tap(x =>
+    public async Task<Result<ProductGetDto>> UpdateAsync (ProductUpdateDto updateDto)
+    {
+        return await GetEntityAsync(updateDto.Id)
+            .Bind(product => product.Update(product.Name, I18N, UnitOfWork)
+            .Map(async product =>
             {
-                _unitOfWork.ProductRepository.Update(x);
-                _unitOfWork.Save();
+                Repository.Update(product);
+                await SaveAsync();
+                return product.MapToGetDto();
+            }));
+    }
+
+    public Task<Result<ProductGetDto>> CreateAsync (ProductCreateDto createDto)
+    {
+        return Product.Create(createDto.Name, I18N, UnitOfWork)
+            .Map(async product =>
+            {
+                Repository.Insert(product);
+                await SaveAsync();
+                return product.MapToGetDto();
             });
     }
 
-    public Result<Product> Create (string name)
+    public async Task<Result> DeleteAsync (Guid id)
     {
-        return Product.Create(name, _resources, _unitOfWork)
-            .Tap(x =>
+        return await GetEntityAsync(id)
+            .Bind(async product =>
             {
-                _unitOfWork.ProductRepository.Insert(x);
-                _unitOfWork.Save();
-            });
-    }
+                var products = await UnitOfWork.DishRepository.GetAsync(dish => dish.Ingredients.Any(i => i.Product.Id == product.Id));
+                var isProductInUse = products.Any();
 
-    public Result Delete (Guid id)
-    {
-        return Get(id)
-            .Bind(product =>
-            {
-                var isProductInUse = _unitOfWork.DishRepository
-                                        .GetAsync(dish => dish.Ingredients.Any(i => i.Product.Id == product.Id))
-                                        .Any();
                 if (isProductInUse)
-                    return Result.Failure(_resources
+                    return Result.Failure(I18N
                         .GenereteSentence(x => x.UserErrors.ItemIsInUse, x => x.CommonTerms.Product));
 
-                _unitOfWork.ProductRepository.Delete(product);
-                _unitOfWork.Save();
+                Repository.Delete(product);
+                await SaveAsync();
                 return Result.Success();
             });
     }

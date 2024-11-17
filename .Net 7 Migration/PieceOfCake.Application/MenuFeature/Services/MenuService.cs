@@ -1,5 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Application.Common.Services;
+using PieceOfCake.Application.MenuFeature.Dtos;
+using PieceOfCake.Application.MenuFeature.Dtos.Mapping;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.DishFeature.Entities;
@@ -7,37 +9,35 @@ using PieceOfCake.Core.MenuFeature.Entities;
 
 namespace PieceOfCake.Application.MenuFeature.Services;
 
-public class MenuService : IMenuService
+public class MenuService : BaseService<IMenuRepository, Menu>, IMenuService
 {
-    private readonly IResources _resources;
-    private readonly IUnitOfWork _unitOfWork;
+    protected override IMenuRepository Repository => UnitOfWork.MenuRepository;
 
     public MenuService (
         IResources resources,
         IUnitOfWork unitOfWork)
+        : base(resources, unitOfWork)
     {
-        _resources = resources ?? throw new ArgumentNullException(nameof(resources));
-        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     }
 
-    public async Task<IReadOnlyCollection<Menu>> GetAllAsync () => await _unitOfWork.MenuRepository.GetAsync();
-    
-    public Result<Menu> GetByIdAsync (Guid id)
+    public async Task<IReadOnlyCollection<MenuGetDto>> GetAllAsync()
     {
-        var menu = _unitOfWork.MenuRepository.GetById(id);
-
-        if (menu == null)
-            return Result.Failure<Menu>(
-                _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
-
-        return Result.Success(menu);
+        var menus = await Repository.GetAsync();
+        var data = await GetMenuAdditionalData(menus.ToArray());
+        return menus.Select(x => x.MapToGetDto(data.mealTypes, data.dishes))
+            .ToArray()
+            .AsReadOnly();
+    }
+    public async Task<Result<MenuGetDto>> GetByIdAsync(Guid id)
+    {
+        var menuResult = await GetEntityAsync(id);
+        if(menuResult.IsFailure)
+            return menuResult.ConvertFailure<MenuGetDto>();
+        var data = await GetMenuAdditionalData(menuResult.Value);
+        return menuResult.Value.MapToGetDto(data.mealTypes, data.dishes);
     }
 
-    public Result<Menu> Create (
-        DateTime startDate,
-        DateTime endDate,
-        ushort numberOfPeople,
-        IEnumerable<MealOfTheDayType> mealOfTheDayTypes)
+    public Task<Result<MenuGetDto>> CreateAsync(MenuCreateDto createDto)
     {
         return Menu.Create(startDate, endDate, numberOfPeople, mealOfTheDayTypes, _resources)
             .Tap(menu =>
@@ -47,12 +47,7 @@ public class MenuService : IMenuService
             });
     }
 
-    public Result<Menu> Update (
-        Guid id,
-        DateTime startDate,
-        DateTime endDate,
-        ushort numberOfPeople,
-        IEnumerable<MealOfTheDayType> mealOfTheDayTypes)
+    public Task<Result<MenuGetDto>> UpdateAsync (MenuUpdateDto updateDto)
     {
         var menuResult = GetByIdAsync(id);
         if (menuResult.IsFailure)
@@ -69,30 +64,47 @@ public class MenuService : IMenuService
         return Result.Success(menu);
     }
 
-    public Result DeleteAsync (Guid id)
+    public async Task<Result> DeleteAsync (Guid id)
     {
-        return GetByIdAsync(id)
-            .Tap(menu =>
+        return await GetEntityAsync(id)
+            .Tap(async menu =>
             {
-                _unitOfWork.MenuRepository.Delete(menu);
-                _unitOfWork.Save();
+                Repository.Delete(menu);
+                await UnitOfWork.SaveAsync();
             });
     }
 
     public async Task<Result<Menu>> GenerateDishesList (Guid id)
     {
-        var menuResult = this.GetByIdAsync(id);
+        var menuResult = await GetEntityAsync(id);
         if (menuResult.IsFailure)
             return menuResult;
         var menu = menuResult.Value;
 
-        var result = await menu.GenerateCalendar(_unitOfWork.DishRepository, _resources);
+        var result = await menu.GenerateCalendar(UnitOfWork.DishRepository, I18N);
         if (result.IsFailure)
             return result.ConvertFailure<Menu>();
 
-        _unitOfWork.MenuRepository.Update(menuResult.Value);
-        _unitOfWork.Save();
+        Repository.Update(menuResult.Value);
+        await UnitOfWork.SaveAsync();
 
-        return Result.Success(menuResult.Value);
+        return menuResult.Value;
+    }
+
+    private async Task<(
+        IReadOnlyCollection<MealOfTheDayType> mealTypes
+        , IReadOnlyCollection<Dish> dishes)> GetMenuAdditionalData(params Menu[] menus)
+    {
+        // Why this can NOT be in parallel: https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/#avoiding-dbcontext-threading-issues
+
+        var allMealTypes = menus
+            .SelectMany(m => m.Calendar.SelectMany(c => c.MealOfTheDayTypes));
+        var distinctDisheIds = allMealTypes
+            .SelectMany(mt => mt.Dishes.Select(dish => dish.Id)).Distinct();
+        var mealTypes = await UnitOfWork.MealOfTheDayTypeRepository
+            .GetAsync(mt => allMealTypes.Select(m => m.Id).Contains(mt.Id));
+        var dishes = await UnitOfWork.DishRepository
+            .GetAsync(dish => distinctDisheIds.Contains(dish.Id));
+        return (mealTypes, dishes);
     }
 }

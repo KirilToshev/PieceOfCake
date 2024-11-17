@@ -2,5 +2,5 @@
 
 public record MealOfTheDayTypeCalendarDto : MealOfTheDayTypeDto
 {
-    public required IEnumerable<DishDto> Dishes { get; init; }
+    public required IEnumerable<DishInCalenderDto> Dishes { get; init; }
 }
