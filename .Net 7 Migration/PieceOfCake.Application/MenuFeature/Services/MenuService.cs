@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Application.Common.Services;
+using PieceOfCake.Application.DishFeature.Dtos;
 using PieceOfCake.Application.MenuFeature.Dtos;
 using PieceOfCake.Application.MenuFeature.Dtos.Mapping;
 using PieceOfCake.Core.Common.Persistence;
@@ -28,6 +29,7 @@ public class MenuService : BaseService<IMenuRepository, Menu>, IMenuService
             .ToArray()
             .AsReadOnly();
     }
+
     public async Task<Result<MenuGetDto>> GetByIdAsync(Guid id)
     {
         var menuResult = await GetEntityAsync(id);
@@ -37,31 +39,49 @@ public class MenuService : BaseService<IMenuRepository, Menu>, IMenuService
         return menuResult.Value.MapToGetDto(data.mealTypes, data.dishes);
     }
 
-    public Task<Result<MenuGetDto>> CreateAsync(MenuCreateDto createDto)
+    public async Task<Result<MenuGetDto>> CreateAsync(MenuCreateDto createDto)
     {
-        return Menu.Create(startDate, endDate, numberOfPeople, mealOfTheDayTypes, _resources)
-            .Tap(menu =>
+        //TODO: Implement Specification pattern and reuse it in update method.
+        var mealTypes = await GetRelatedMealOfTheDayTypes(createDto.MealOfTheDayTypes);
+        return await Menu.Create(
+            startDate: createDto.StartDate,
+            endDate: createDto.EndDate,
+            numberOfPeople: createDto.NumberOfPeople, 
+            mealOfTheDayTypes: mealTypes,
+            I18N)
+            .Map(async menu =>
             {
-                _unitOfWork.MenuRepository.Insert(menu);
-                _unitOfWork.Save();
+                Repository.Insert(menu);
+                await UnitOfWork.SaveAsync();
+                return menu.MapToGetDto(
+                    Enumerable.Empty<MealOfTheDayType>(),
+                    Enumerable.Empty<Dish>());
             });
     }
 
-    public Task<Result<MenuGetDto>> UpdateAsync (MenuUpdateDto updateDto)
+    public async Task<Result<MenuGetDto>> UpdateAsync (MenuUpdateDto updateDto)
     {
-        var menuResult = GetByIdAsync(id);
+        var menuResult = await GetEntityAsync(updateDto.Id);
         if (menuResult.IsFailure)
-            return menuResult;
+            return menuResult.ConvertFailure<MenuGetDto>();
         var menu = menuResult.Value;
+        //TODO: Implement Specification pattern
+        var mealTypes = await GetRelatedMealOfTheDayTypes(updateDto.MealOfTheDayTypes);
 
-        var updateResult = menu.Update(startDate, endDate, numberOfPeople, mealOfTheDayTypes, _resources);
-        if (updateResult.IsFailure)
-            return updateResult;
-
-        _unitOfWork.MenuRepository.Update(menu);
-        _unitOfWork.Save();
-
-        return Result.Success(menu);
+        return await menu.Update(
+            startDate: updateDto.StartDate, 
+            endDate: updateDto.EndDate, 
+            numberOfPeople: updateDto.NumberOfPeople, 
+            mealOfTheDayTypes: mealTypes, 
+            I18N)
+            .Map(async updatedMenu =>
+            {
+                Repository.Update(updatedMenu);
+                await UnitOfWork.SaveAsync();
+                return updatedMenu.MapToGetDto(
+                    Enumerable.Empty<MealOfTheDayType>(),
+                    Enumerable.Empty<Dish>());
+            });
     }
 
     public async Task<Result> DeleteAsync (Guid id)
@@ -89,6 +109,13 @@ public class MenuService : BaseService<IMenuRepository, Menu>, IMenuService
         await UnitOfWork.SaveAsync();
 
         return menuResult.Value;
+    }
+
+    private Task<IReadOnlyCollection<MealOfTheDayType>> GetRelatedMealOfTheDayTypes(IEnumerable<MealOfTheDayTypeDto> mealOfTheDayTypeDtos)
+    {
+        return UnitOfWork.MealOfTheDayTypeRepository
+            .GetAsync(mt => mealOfTheDayTypeDtos.Select(m => m.Id)
+            .Contains(mt.Id));
     }
 
     private async Task<(

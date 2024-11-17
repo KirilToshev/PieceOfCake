@@ -31,9 +31,9 @@ public class MeasureUnitService : BaseService<IMeasureUnitRepository, MeasureUni
         return GetEntityAsync(id).Map(x => x.MapToGetDto());
     }
 
-    public async Task<Result<MeasureUnitGetDto>> UpdateAsync (MeasureUnitUpdateDto updateDto)
+    public Task<Result<MeasureUnitGetDto>> UpdateAsync (MeasureUnitUpdateDto updateDto)
     {
-        return await GetEntityAsync(updateDto.Id)
+        return GetEntityAsync(updateDto.Id)
             .Bind(measureUnit =>  measureUnit.Update(updateDto.Name, I18N, UnitOfWork)
             .Map(async measureUnit =>
             {
@@ -54,15 +54,16 @@ public class MeasureUnitService : BaseService<IMeasureUnitRepository, MeasureUni
             });
     }
 
-    public async Task<Result> DeleteAsync (Guid id)
+    public Task<Result> DeleteAsync (Guid id)
     {
-        return await GetEntityAsync(id)
+        return GetEntityAsync(id)
             .Bind(async mu =>
             {
                 //TODO: Implement specification pattern
-                var isMeasureUnitInUse = await UnitOfWork.DishRepository
-                                        .GetAsync(dish => dish.Ingredients.Any(i => i.MeasureUnit.Id == mu.Id));
-                if (isMeasureUnitInUse.Any())
+                var usedInDishesList = await UnitOfWork.DishRepository
+                                        .GetAsync(dish => dish.Ingredients
+                                        .Any(i => i.MeasureUnit.Id == mu.Id));
+                if (usedInDishesList.Any())
                     return Result.Failure(I18N.GenereteSentence(x => x.UserErrors.ItemIsInUse, x => x.CommonTerms.MeasureUnit));
 
                 Repository.Delete(mu);

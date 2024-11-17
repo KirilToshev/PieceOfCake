@@ -1,81 +1,77 @@
 ﻿using CSharpFunctionalExtensions;
+using PieceOfCake.Application.Common.Services;
+using PieceOfCake.Application.DishFeature.Dtos;
+using PieceOfCake.Application.DishFeature.Dtos.Mapping;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.DishFeature.Entities;
 
 namespace PieceOfCake.Application.DishFeature.Services;
 
-public class MealOfTheDayTypeService : IMealOfTheDayTypeService
+public class MealOfTheDayTypeService : 
+    BaseService<IMealOfTheDayTypeRepository, MealOfTheDayType>, 
+    IMealOfTheDayTypeService
 {
-    private readonly IResources _resources;
-    private readonly IUnitOfWork _unitOfWork;
+    protected override IMealOfTheDayTypeRepository Repository => 
+        UnitOfWork.MealOfTheDayTypeRepository;
 
     public MealOfTheDayTypeService (
-        IResources resources,
+        IResources i18n,
         IUnitOfWork unitOfWork)
+        : base (i18n, unitOfWork)
     {
-        _resources = resources ?? throw new ArgumentNullException(nameof(resources));
-        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     }
 
-    public IReadOnlyCollection<MealOfTheDayType> Get ()
-        => _unitOfWork.MealOfTheDayTypeRepository.GetAsync();
-
-    public Result<MealOfTheDayType> Get (Guid id)
+    public async Task<IReadOnlyCollection<MealOfTheDayTypeDto>> GetAllAsync ()
     {
-        var mealType = _unitOfWork.MealOfTheDayTypeRepository.GetById(id);
-
-        if (mealType == null)
-            return Result.Failure<MealOfTheDayType>(
-                _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
-
-        return Result.Success(mealType);
+        var mealTypes = await Repository.GetAsync();
+        return mealTypes.Select(x => x.MapToGetDto()).ToArray().AsReadOnly();
     }
 
-    public Result<MealOfTheDayType> Update (Guid id, string name)
+    public Task<Result<MealOfTheDayTypeDto>> GetByIdAsync (Guid id)
     {
-        var mealType = _unitOfWork.MealOfTheDayTypeRepository.GetById(id);
+        return GetEntityAsync(id).Map(x => x.MapToGetDto());
+    }
 
-        if (mealType == null)
-            return Result.Failure<MealOfTheDayType>(
-                _resources.GenereteSentence(x => x.UserErrors.IdNotFound, x => id.ToString()));
-
-        return mealType.Update(name, _resources, _unitOfWork)
-            .Tap(x =>
+    public Task<Result<MealOfTheDayTypeDto>> UpdateAsync (MealOfTheDayTypeUpdateDto mealOfTheDayTypeUpdateDto)
+    {
+        return GetEntityAsync(mealOfTheDayTypeUpdateDto.Id)
+            .Bind(mt => mt.Update(mealOfTheDayTypeUpdateDto.Name, I18N, UnitOfWork)
+            .Map(async mealOfTheDayType =>
             {
-                _unitOfWork.MealOfTheDayTypeRepository.Update(x);
-                _unitOfWork.Save();
-            });
+                Repository.Update(mealOfTheDayType);
+                await SaveAsync();
+                return mealOfTheDayType.MapToGetDto();
+            }));
     }
-    public Result<MealOfTheDayType> Create (string name)
+    public Task<Result<MealOfTheDayTypeDto>> CreateAsync (MealOfTheDayTypeCreateDto mealOfTheDayTypeCreateDto)
     {
-        return MealOfTheDayType.Create(name, _resources, _unitOfWork)
-            .Tap(x =>
+        return MealOfTheDayType.Create(mealOfTheDayTypeCreateDto.Name, I18N, UnitOfWork)
+            .Map(async x =>
             {
-                _unitOfWork.MealOfTheDayTypeRepository.Insert(x);
-                _unitOfWork.Save();
+                Repository.Insert(x);
+                await SaveAsync();
+                return x.MapToGetDto();
             });
     }
 
-    public Result Delete (Guid id)
+    public Task<Result> DeleteAsync (Guid id)
     {
-        return Get(id)
-            .Bind(mu =>
+        return GetEntityAsync(id)
+            .Bind(async mu =>
             {
-                var isMealTypeInUse = _unitOfWork.DishRepository
-                                        .GetAsync(dish => dish.MealOfTheDayTypes.Select(x => x.Id).Contains(id))
-                                        .Any();
+                //TODO: Implement specification pattern
+                var usedInDishesList = await UnitOfWork.DishRepository
+                                        .GetAsync(dish => dish.MealOfTheDayTypes.Select(x => x.Id).Contains(id));
+                var usedInMenusList = await UnitOfWork.MenuRepository
+                                        .GetAsync(menu => menu.MealOfTheDayTypes.Select(x => x.Id).Contains(id));
 
-                if (!isMealTypeInUse)
-                    isMealTypeInUse = _unitOfWork.MenuRepository
-                        .GetAsync(menu => menu.MealOfTheDayTypes.Contains(mu)).Any();
-
-                if (isMealTypeInUse)
-                    return Result.Failure(_resources
+                if (usedInDishesList.Any() || usedInMenusList.Any())
+                    return Result.Failure(I18N
                         .GenereteSentence(x => x.UserErrors.ItemIsInUse, x => x.CommonTerms.MealOfTheDayType));
 
-                _unitOfWork.MealOfTheDayTypeRepository.Delete(mu);
-                _unitOfWork.Save();
+                Repository.Delete(mu);
+                await UnitOfWork.SaveAsync();
                 return Result.Success();
             });
     }

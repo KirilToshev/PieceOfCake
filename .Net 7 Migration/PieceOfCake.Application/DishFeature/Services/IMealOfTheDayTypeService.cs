@@ -1,8 +1,12 @@
 ﻿using PieceOfCake.Application.Common.Services;
-using PieceOfCake.Core.DishFeature.Entities;
+using PieceOfCake.Application.DishFeature.Dtos;
 
 namespace PieceOfCake.Application.DishFeature.Services;
 
-public interface IMealOfTheDayTypeService //: ICreateAndUpdateService<MealOfTheDayType, Guid>
+public interface IMealOfTheDayTypeService : 
+    ICreateAndUpdateService<
+        MealOfTheDayTypeDto,
+        MealOfTheDayTypeCreateDto,
+        MealOfTheDayTypeUpdateDto>
 {
 }
