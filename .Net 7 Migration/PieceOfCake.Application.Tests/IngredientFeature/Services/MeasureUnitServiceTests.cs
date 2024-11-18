@@ -33,7 +33,7 @@ public class MeasureUnitServiceTests : TestsBase
     }
 
     [Fact]
-    public void Get_Should_Return_User_Error_If_Id_Is_Not_Found ()
+    public async Task Get_Should_Return_User_Error_If_Id_Is_Not_Found ()
     {
         var notExistingId = Fixture.Create<Guid>();
         _measureUnitRepoMock.GetById(Arg.Is(notExistingId))
@@ -48,7 +48,7 @@ public class MeasureUnitServiceTests : TestsBase
     }
 
     [Fact]
-    public void Get_Should_Return_MeasureUnit_If_Id_Is_Found ()
+    public async Task Get_Should_Return_MeasureUnit_If_Id_Is_Found ()
     {
         var id = Fixture.Create<Guid>();
         var test = _measureUnitFakes.Litter;
@@ -63,7 +63,7 @@ public class MeasureUnitServiceTests : TestsBase
     }
 
     [Fact]
-    public void Update_Should_Return_User_Error_If_Id_Is_Not_Found ()
+    public async Task Update_Should_Return_User_Error_If_Id_Is_Not_Found ()
     {
         var notExistingId = Fixture.Create<Guid>();
         _measureUnitRepoMock.GetById(notExistingId).Returns((MeasureUnit)null);
@@ -77,7 +77,7 @@ public class MeasureUnitServiceTests : TestsBase
     }
 
     [Fact]
-    public void Update_Should_Succseed_If_Id_Is_Found ()
+    public async Task Update_Should_Succseed_If_Id_Is_Found ()
     {
         //Arrange
         var id = Fixture.Create<Guid>();
@@ -99,7 +99,7 @@ public class MeasureUnitServiceTests : TestsBase
     }
 
     [Fact]
-    public void Delete_Should_Return_User_Error_If_Id_Is_Not_Found ()
+    public async Task Delete_Should_Return_User_Error_If_Id_Is_Not_Found ()
     {
         var notExistingId = Fixture.Create<Guid>();
         var sut = new MeasureUnitService(Resources, _uowMock);
@@ -111,7 +111,7 @@ public class MeasureUnitServiceTests : TestsBase
     }
 
     [Fact]
-    public void Delete_Should_Succseed_If_Id_Is_Found ()
+    public async Task Delete_Should_Succseed_If_Id_Is_Found ()
     {
         var id = Fixture.Create<Guid>();
         _measureUnitRepoMock.GetById(id)
@@ -127,7 +127,7 @@ public class MeasureUnitServiceTests : TestsBase
     }
 
     [Fact]
-    public void Delete_Should_Fail_If_MeasureUnit_Is_In_Use ()
+    public async Task Delete_Should_Fail_If_MeasureUnit_Is_In_Use ()
     {
         var id = Fixture.Create<Guid>();
         _measureUnitRepoMock.GetById(id)

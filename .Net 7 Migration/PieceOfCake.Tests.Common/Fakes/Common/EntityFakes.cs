@@ -6,8 +6,9 @@ using System.Linq.Expressions;
 namespace PieceOfCake.Tests.Common.Fakes.Common;
 public abstract class EntityFakes<TKey, TValue> : BaseFakes
     where TValue : GuidEntity
+    where TKey : notnull
 {
-    private Dictionary<TKey, TValue> _cache = new Dictionary<TKey, TValue>();
+    private readonly Dictionary<TKey, TValue> _cache = new Dictionary<TKey, TValue>();
 
     protected EntityFakes (IResources resources, IUnitOfWork uowMock) 
         : base(resources, uowMock)

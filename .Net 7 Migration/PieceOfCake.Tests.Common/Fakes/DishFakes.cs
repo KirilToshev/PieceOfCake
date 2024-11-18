@@ -68,12 +68,12 @@ public class DishFakes : EntityFakes<string, Dish>, IDishFakes
         if (description is null)
             description = _fixture.Create<string>();
         if (mealOfTheDayTypes is null)
-            mealOfTheDayTypes = _fixture.RandomListOf(
+            mealOfTheDayTypes = _fixture.RandomOfList(
                 _mealOfTheDayTypeFakes.Breakfast,
                 _mealOfTheDayTypeFakes.Lunch,
                 _mealOfTheDayTypeFakes.Dinner);
         if (ingredients is null)
-            ingredients = _fixture.RandomListOf(
+            ingredients = _fixture.RandomOfList(
                 _ingredientFakes.One_Number_Of_Carrots,
                 _ingredientFakes.Two_Kilogram_Of_Peppers,
                 _ingredientFakes.Three_Litters_Of_Water);

@@ -32,7 +32,7 @@ public class ProductServiceTests : TestsBase
     }
 
     [Fact]
-    public void Get_Should_Return_User_Error_If_Id_Is_Not_Found ()
+    public async Task Get_Should_Return_User_Error_If_Id_Is_Not_Found ()
     {
         var notExistingId = Fixture.Create<Guid>();
         _productRepoMock.GetById(notExistingId)
@@ -47,7 +47,7 @@ public class ProductServiceTests : TestsBase
     }
 
     [Fact]
-    public void Get_Should_Return_MeasureUnit_If_Id_Is_Found ()
+    public async Task Get_Should_Return_MeasureUnit_If_Id_Is_Found ()
     {
         var id = Fixture.Create<Guid>();
         _productRepoMock.GetById(id)
@@ -62,7 +62,7 @@ public class ProductServiceTests : TestsBase
     }
 
     [Fact]
-    public void Update_Should_Return_User_Error_If_Id_Is_Not_Found ()
+    public async Task Update_Should_Return_User_Error_If_Id_Is_Not_Found ()
     {
         var notExistingId = Fixture.Create<Guid>();
         _productRepoMock.GetById(notExistingId)
@@ -77,7 +77,7 @@ public class ProductServiceTests : TestsBase
     }
 
     [Fact]
-    public void Update_Should_Succseed_If_Id_Is_Found ()
+    public async Task Update_Should_Succseed_If_Id_Is_Found ()
     {
         //Arrange
         var id = Fixture.Create<Guid>();
@@ -97,7 +97,7 @@ public class ProductServiceTests : TestsBase
     }
 
     [Fact]
-    public void Delete_Should_Return_User_Error_If_Id_Is_Not_Found ()
+    public async Task Delete_Should_Return_User_Error_If_Id_Is_Not_Found ()
     {
         var notExistingId = Fixture.Create<Guid>();
         _productRepoMock.GetById(Arg.Is(notExistingId)).Returns(x => null);
@@ -110,7 +110,7 @@ public class ProductServiceTests : TestsBase
     }
 
     [Fact]
-    public void Delete_Should_Succseed_If_Id_Is_Found ()
+    public async Task Delete_Should_Succseed_If_Id_Is_Found ()
     {
         var id = Fixture.Create<Guid>();
         _productRepoMock.GetById(Arg.Is(id))
@@ -126,7 +126,7 @@ public class ProductServiceTests : TestsBase
     }
 
     [Fact]
-    public void Delete_Should_Fail_If_Product_Is_In_Use ()
+    public async Task Delete_Should_Fail_If_Product_Is_In_Use ()
     {
         var id = Fixture.Create<Guid>();
         _productRepoMock.GetById(id)

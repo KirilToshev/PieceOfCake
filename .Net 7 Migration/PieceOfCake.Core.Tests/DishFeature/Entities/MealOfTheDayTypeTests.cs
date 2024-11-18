@@ -8,139 +8,144 @@ using PieceOfCake.Tests.Common;
 using System.Linq.Expressions;
 
 namespace PieceOfCake.Core.Tests.DishFeature.Entities;
+
 public class MealOfTheDayTypeTests : TestsBase
 {
-    private Mock<IUnitOfWork> _uowMock;
-    private Mock<IMealOfTheDayTypeRepository> _mealTypeRepoMock;
+    private readonly Mock<IUnitOfWork> _uowMock;
+    private readonly Mock<IMealOfTheDayTypeRepository> _mealTypeRepoMock;
 
-    [SetUp]
-    public void BeforeEachTest ()
+    public MealOfTheDayTypeTests()
     {
         _uowMock = new Mock<IUnitOfWork>();
         _mealTypeRepoMock = new Mock<IMealOfTheDayTypeRepository>();
+    }
+
+    [SetUp]
+    public async Task BeforeEachTest ()
+    {
         _uowMock.Setup(x => x.MealOfTheDayTypeRepository)
             .Returns(_mealTypeRepoMock.Object);
         _mealTypeRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MealOfTheDayType, bool>>>()))
-            .Returns((MealOfTheDayType)null);
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<MealOfTheDayType, bool>>>()))
+            .ReturnsAsync(null as MealOfTheDayType);
     }
 
     [TestCase("")]
     [TestCase("  ")]
     [TestCase(null)]
-    public void Create_Should_Return_User_Error_If_Created_Without_Name (string name)
+    public async Task Create_Should_Return_User_Error_If_Created_Without_Name (string? name)
     {
-        var mealType = MealOfTheDayType.Create(name, Resources, _uowMock.Object);
-        Assert.IsTrue(mealType.IsFailure);
+        var mealType = await MealOfTheDayType.Create(name, Resources, _uowMock.Object);
+        Assert.That(mealType.IsFailure);
         Assert.That(mealType.Error, Is.EqualTo($"{Resources.CommonTerms.MealOfTheDayType} must have name."));
     }
 
     [Test]
-    public void Create_Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit ()
+    public async Task Create_Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit ()
     {
-        var mealType = MealOfTheDayType.Create(Fixture.CreateStringOfLength(Constants.FIFTY + 1), Resources, _uowMock.Object);
-        Assert.IsTrue(mealType.IsFailure);
+        var mealType = await MealOfTheDayType.Create(Fixture.CreateStringOfLength(Constants.FIFTY + 1), Resources, _uowMock.Object);
+        Assert.That(mealType.IsFailure);
         Assert.That(mealType.Error, Is.EqualTo($"{Resources.CommonTerms.MealOfTheDayType} name should not exceed {Constants.FIFTY} symbols."));
     }
 
     [Test]
-    public void Create_Should_Return_User_Error_If_Name_Already_Exists ()
+    public async Task Create_Should_Return_User_Error_If_Name_Already_Exists ()
     {
         //Arrange
         var alreadyExistingName = Fixture.Create<string>();
-        var mealType = MealOfTheDayType.Create(alreadyExistingName, Resources, _uowMock.Object).Value;
+        var mealType = await MealOfTheDayType.Create(alreadyExistingName, Resources, _uowMock.Object);
         _mealTypeRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MealOfTheDayType, bool>>>()))
-            .Returns(mealType);
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<MealOfTheDayType, bool>>>()))
+            .ReturnsAsync(mealType.Value);
 
         //Act
-        var result = MealOfTheDayType.Create(alreadyExistingName, Resources, _uowMock.Object);
+        var result = await MealOfTheDayType.Create(alreadyExistingName, Resources, _uowMock.Object);
 
         //Assert
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"An entity with name {alreadyExistingName} already exist."));
     }
 
     [Test]
-    public void Create_Should_Succseed_If_Name_Meets_Requirenements ()
+    public async Task Create_Should_Succseed_If_Name_Meets_Requirenements ()
     {
         //Arrange
         var validName = Fixture.CreateStringOfLength(Constants.FIFTY);
 
         //Act
-        var result = MealOfTheDayType.Create(validName, Resources, _uowMock.Object);
+        var result = await MealOfTheDayType.Create(validName, Resources, _uowMock.Object);
 
         //Assert
-        Assert.IsTrue(result.IsSuccess);
+        Assert.That(result.IsSuccess);
         Assert.That(result.Value.Name.Value, Is.EqualTo(validName));
     }
 
     [TestCase("")]
     [TestCase("  ")]
     [TestCase(null)]
-    public void Update_Should_Return_User_Error_If_Updated_Without_Name (string updatedName)
+    public async Task Update_Should_Return_User_Error_If_Updated_Without_Name (string? updatedName)
     {
         var name = Fixture.Create<string>();
-        var mealType = MealOfTheDayType.Create(name, Resources, _uowMock.Object).Value;
+        var mealType = await MealOfTheDayType.Create(name, Resources, _uowMock.Object);
         _mealTypeRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MealOfTheDayType, bool>>>()))
-            .Returns(mealType);
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<MealOfTheDayType, bool>>>()))
+            .ReturnsAsync(mealType.Value);
 
         //Act
-        var result = mealType.Update(updatedName, Resources, _uowMock.Object);
+        var result = await mealType.Value.Update(updatedName, Resources, _uowMock.Object);
 
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"{Resources.CommonTerms.MealOfTheDayType} must have name."));
     }
 
     [Test]
-    public void Update_Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit ()
+    public async Task Update_Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit ()
     {
         //Arrange
         var name = Fixture.Create<string>();
-        var mealType = MealOfTheDayType.Create(name, Resources, _uowMock.Object).Value;
+        var mealType = await MealOfTheDayType.Create(name, Resources, _uowMock.Object);
         _mealTypeRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MealOfTheDayType, bool>>>()))
-            .Returns(mealType);
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<MealOfTheDayType, bool>>>()))
+            .ReturnsAsync(mealType.Value);
 
         //Act
-        var result = mealType.Update(Fixture.CreateStringOfLength(Constants.FIFTY + 1), Resources, _uowMock.Object);
+        var result = await mealType.Value.Update(Fixture.CreateStringOfLength(Constants.FIFTY + 1), Resources, _uowMock.Object);
 
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"{Resources.CommonTerms.MealOfTheDayType} name should not exceed {Constants.FIFTY} symbols."));
     }
 
     [Test]
-    public void Update_Should_Return_User_Error_If_Name_Already_Exists ()
+    public async Task Update_Should_Return_User_Error_If_Name_Already_Exists ()
     {
         //Arrange
         var name = Fixture.Create<string>();
-        var mealType = MealOfTheDayType.Create(name, Resources, _uowMock.Object).Value;
+        var mealType = await MealOfTheDayType.Create(name, Resources, _uowMock.Object);
         _mealTypeRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MealOfTheDayType, bool>>>()))
-            .Returns(mealType);
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<MealOfTheDayType, bool>>>()))
+            .ReturnsAsync(mealType.Value);
 
         //Act
-        var result = mealType.Update(name, Resources, _uowMock.Object);
+        var result = await mealType.Value.Update(name, Resources, _uowMock.Object);
 
         //Assert
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"An entity with name {name} already exist."));
     }
 
     [Test]
-    public void Update_Should_Succseed_If_Name_Meets_Requirenements ()
+    public async Task Update_Should_Succseed_If_Name_Meets_Requirenements ()
     {
         //Arrange
         var name = Fixture.CreateStringOfLength(Constants.FIFTY);
-        var measureUnit = MealOfTheDayType.Create(name, Resources, _uowMock.Object).Value;
+        var measureUnit = await MealOfTheDayType.Create(name, Resources, _uowMock.Object);
         var updatedName = Fixture.CreateStringOfLength(Constants.TWO);
 
         //Act
-        var result = measureUnit.Update(updatedName, Resources, _uowMock.Object);
+        var result = await measureUnit.Value.Update(updatedName, Resources, _uowMock.Object);
 
         //Assert
-        Assert.IsTrue(result.IsSuccess);
+        Assert.That(result.IsSuccess);
         Assert.That(result.Value.Name.Value, Is.EqualTo(updatedName));
     }
 }

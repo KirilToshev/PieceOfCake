@@ -36,7 +36,7 @@ public class MenuTests : TestsBase
 
         var result = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
 
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"Start Date {startDate.ToShortDateString()} " +
             $"of a time period must be less than its End Date {endDate.ToShortDateString()}"));
     }
@@ -51,7 +51,7 @@ public class MenuTests : TestsBase
 
         var result = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
 
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"It is impossible to have a menu without at " +
             $"least one serving per day."));
     }
@@ -70,7 +70,7 @@ public class MenuTests : TestsBase
 
         var result = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
 
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"Meals of the day must be unique."));
     }
 
@@ -87,7 +87,7 @@ public class MenuTests : TestsBase
 
         var result = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
 
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"Menu should have one or more people."));
     }
 
@@ -107,7 +107,7 @@ public class MenuTests : TestsBase
 
         var result = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
 
-        Assert.IsTrue(result.IsSuccess);
+        Assert.That(result.IsSuccess);
         var menu = result.Value;
         Assert.That(menu.NumberOfPeople, Is.EqualTo(numberOfPeople));
         Assert.That(menu.Duration.StartDate, Is.EqualTo(DateOnly.FromDateTime(startDate)));
@@ -115,7 +115,7 @@ public class MenuTests : TestsBase
         Assert.That(menu.Duration.DaysDifference, Is.EqualTo(expectedDaysDifference));
         Assert.That(menu.Type, Is.EqualTo(MenuType.None));
         Assert.That(menu.MealOfTheDayTypes, Is.EquivalentTo(mealTypes));
-        Assert.IsFalse(menu.Calendar.Any());
+        Assert.That(menu.Calendar.Any() == false);
     }
 
     [Test]
@@ -132,7 +132,7 @@ public class MenuTests : TestsBase
         var menu = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
         var result = menu.Value.Update(startDate, endDate.AddDays(-2), numberOfPeople, mealTypes, Resources);
 
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"Start Date {startDate.ToShortDateString()} " +
             $"of a time period must be less than its End Date {endDate.AddDays(-2).ToShortDateString()}"));
     }
@@ -151,7 +151,7 @@ public class MenuTests : TestsBase
         var menu = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
         var result = menu.Value.Update(startDate, endDate, numberOfPeople, new MealOfTheDayType[] { }, Resources);
 
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"It is impossible to have a menu without at " +
             $"least one serving per day."));
     }
@@ -180,7 +180,7 @@ public class MenuTests : TestsBase
             Resources);
 
 
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"Meals of the day must be unique."));
     }
 
@@ -199,7 +199,7 @@ public class MenuTests : TestsBase
         var result = menu.Value.Update(startDate, endDate, 0, mealTypes, Resources);
 
 
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"Menu should have one or more people."));
     }
 
@@ -232,17 +232,17 @@ public class MenuTests : TestsBase
             expectedMealTypes,
             Resources);
 
-        Assert.IsTrue(result.IsSuccess);
+        Assert.That(result.IsSuccess);
         var updatedMenu = result.Value;
         Assert.That(updatedMenu.NumberOfPeople, Is.EqualTo(expectedNumberOfPeople));
         Assert.That(updatedMenu.Duration.DaysDifference, Is.EqualTo(expectedDaysDifference));
         Assert.That(updatedMenu.Type, Is.EqualTo(MenuType.None));
         Assert.That(updatedMenu.MealOfTheDayTypes, Is.EquivalentTo(expectedMealTypes));
-        Assert.IsEmpty(updatedMenu.Calendar);
+        Assert.That(updatedMenu.Calendar.Any() == false);
     }
 
     [Test]
-    public void Update_Should_Clear_Calendar_Data ()
+    public async Task Update_Should_Clear_Calendar_Data ()
     {
         var startDate = DateTime.Now;
         var endDate = DateTime.Now.AddDays(1);
@@ -257,9 +257,9 @@ public class MenuTests : TestsBase
             .Setup(x => x.GetAsync(It.IsAny<Expression<Func<Dish, bool>>>(), null))
             .ReturnsAsync(new Dish[] { _dishFakes.Breakfast() }.AsReadOnly());
 
-        menu.GenerateCalendar(_dishRepoMock.Object, Resources);
-        Assert.IsNotNull(menu.Calendar);
-        Assert.IsTrue(menu.Calendar.Any());
+        await menu.GenerateCalendar(_dishRepoMock.Object, Resources);
+        Assert.That(menu.Calendar is not null);
+        Assert.That(menu.Calendar!.Any());
 
         var result = menu.Update(
             startDate,
@@ -268,8 +268,8 @@ public class MenuTests : TestsBase
             mealTypes,
             Resources);
 
-        Assert.IsTrue(result.IsSuccess);
-        Assert.IsEmpty(menu.Calendar);
+        Assert.That(result.IsSuccess);
+        Assert.That(menu.Calendar.Any() == false);
     }
 
     [Test]
@@ -295,7 +295,7 @@ public class MenuTests : TestsBase
         var menu = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources).Value;
         var result = await menu.GenerateCalendar(_dishRepoMock.Object, Resources);
 
-        Assert.IsTrue(result.IsSuccess);
+        Assert.That(result.IsSuccess);
 
         var dayOne = menu.Calendar.ToArray()[0];
         Assert.That(dayOne.Date, Is.EqualTo(DateOnly.FromDateTime(startDate)));

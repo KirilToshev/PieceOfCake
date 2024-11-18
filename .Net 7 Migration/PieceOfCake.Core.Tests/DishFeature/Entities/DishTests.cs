@@ -1,7 +1,11 @@
-﻿using NUnit.Framework;
+﻿using System.Linq.Expressions;
+using Moq;
+using NUnit.Framework;
 using PieceOfCake.Core.Common;
+using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.DishFeature.Entities;
 using PieceOfCake.Core.DishFeature.Enumerations;
+using PieceOfCake.Core.IngredientFeature.Entities;
 using PieceOfCake.Core.IngredientFeature.ValueObjects;
 using PieceOfCake.Tests.Common;
 using PieceOfCake.Tests.Common.Fakes.Interfaces;
@@ -12,18 +16,48 @@ public class DishTests : TestsBase
     private IDishFakes _dishFakes;
     private IMealOfTheDayTypeFakes _mealOfTheDayTypeFakes;
     private IIngredientFakes _ingredientFakes;
+    private readonly Mock<IUnitOfWork> _uowMock;
+    private readonly Mock<IMealOfTheDayTypeRepository> _mealTypeRepoMock;
+    private readonly Mock<IMeasureUnitRepository> _measureUnitRepoMock;
+    private readonly Mock<IProductRepository> _productRepoMock;
 
     public DishTests ()
     {
+        _uowMock = new Mock<IUnitOfWork>();
+        _mealTypeRepoMock = new Mock<IMealOfTheDayTypeRepository>();
+        _measureUnitRepoMock = new Mock<IMeasureUnitRepository>();
+        _productRepoMock = new Mock<IProductRepository>();
+
         _dishFakes = GetRequiredService<IDishFakes>();
         _mealOfTheDayTypeFakes = GetRequiredService<IMealOfTheDayTypeFakes>();
         _ingredientFakes = GetRequiredService<IIngredientFakes>();
     }
 
+    [SetUp]
+    public async Task BeforeEachTest()
+    {
+        
+        _mealTypeRepoMock
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<MealOfTheDayType, bool>>>()))
+            .ReturnsAsync(null as MealOfTheDayType);
+        _measureUnitRepoMock
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
+            .ReturnsAsync(null as MeasureUnit);
+        _productRepoMock
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<Product, bool>>>()))
+            .ReturnsAsync(null as Product);
+        _uowMock.Setup(x => x.MealOfTheDayTypeRepository)
+            .Returns(_mealTypeRepoMock.Object);
+        _uowMock.Setup(x => x.MeasureUnitRepository)
+            .Returns(_measureUnitRepoMock.Object);
+        _uowMock.Setup(x => x.ProductRepository)
+            .Returns(_productRepoMock.Object);
+    }
+
     [TestCase("")]
     [TestCase("  ")]
     [TestCase(null)]
-    public void Create_Should_Return_User_Error_If_Created_Without_Name (string name)
+    public void Create_Should_Return_User_Error_If_Created_Without_Name (string? name)
     {
         var validDish = _dishFakes.Create();
 
@@ -35,14 +69,14 @@ public class DishTests : TestsBase
             ingredients: validDish.Ingredients,
             Resources);
 
-        Assert.IsTrue(dishResult.IsFailure);
+        Assert.That(dishResult.IsFailure);
         Assert.That(dishResult.Error, Is.EqualTo($"{Resources.CommonTerms.Dish} must have name."));
     }
 
     [TestCase("")]
     [TestCase("  ")]
     [TestCase(null)]
-    public void Create_Should_Return_User_Error_If_Description_Is_Invalid (string description)
+    public void Create_Should_Return_User_Error_If_Description_Is_Invalid (string? description)
     {
         var validDish = _dishFakes.Create();
 
@@ -54,7 +88,7 @@ public class DishTests : TestsBase
             ingredients: validDish.Ingredients,
             Resources);
 
-        Assert.IsTrue(dishResult.IsFailure);
+        Assert.That(dishResult.IsFailure);
         Assert.That(dishResult.Error, Is.EqualTo($"{Resources.CommonTerms.Dish} must have description."));
     }
 
@@ -71,7 +105,7 @@ public class DishTests : TestsBase
             ingredients: validDish.Ingredients,
             Resources);
 
-        Assert.IsTrue(dishResult.IsFailure);
+        Assert.That(dishResult.IsFailure);
         Assert.That(dishResult.Error, Is.EqualTo($"{Resources.CommonTerms.Dish} description should not exceed {Constants.TEN_THOUSAND} symbols."));
     }
 
@@ -88,7 +122,7 @@ public class DishTests : TestsBase
             ingredients: validDish.Ingredients,
             Resources);
 
-        Assert.IsTrue(dishResult.IsFailure);
+        Assert.That(dishResult.IsFailure);
         Assert.That(dishResult.Error, Is.EqualTo($"There should be at least one or more servings in a dish."));
     }
 
@@ -105,7 +139,7 @@ public class DishTests : TestsBase
             ingredients: validDish.Ingredients,
             Resources);
 
-        Assert.IsTrue(dishResult.IsFailure);
+        Assert.That(dishResult.IsFailure);
         Assert.That(dishResult.Error, Is.EqualTo($"A dish must have assigned at least " +
             $"one menu of the day type. (Breakfast, Lunch, Dinner, etc...)"));
     }
@@ -119,15 +153,15 @@ public class DishTests : TestsBase
             name: validDish.Name,
             description: validDish.Description,
             servingSize: validDish.ServingSize,
-            mealOfTheDayTypes: new MealOfTheDayType[] 
-            {
+            mealOfTheDayTypes:
+            [
                 _mealOfTheDayTypeFakes.Breakfast,
                 _mealOfTheDayTypeFakes.Breakfast
-            },
+            ],
             ingredients: validDish.Ingredients,
             Resources);
 
-        Assert.IsTrue(dishResult.IsFailure);
+        Assert.That(dishResult.IsFailure);
         Assert.That(dishResult.Error, Is.EqualTo($"Meals of the day must be unique."));
     }
 
@@ -141,10 +175,10 @@ public class DishTests : TestsBase
             description: validDish.Description,
             servingSize: validDish.ServingSize,
             mealOfTheDayTypes: validDish.MealOfTheDayTypes,
-            ingredients: new Ingredient[] { },
+            ingredients: [],
             Resources);
 
-        Assert.IsTrue(dishResult.IsFailure);
+        Assert.That(dishResult.IsFailure);
         Assert.That(dishResult.Error, Is.EqualTo($"A Dish must have at least one or more ingredients."));
     }
 
@@ -165,7 +199,7 @@ public class DishTests : TestsBase
             },
             Resources);
 
-        Assert.IsTrue(dishResult.IsFailure);
+        Assert.That(dishResult.IsFailure);
         Assert.That(dishResult.Error, Is.EqualTo($"There should be no product duplicates in the current dish." +
             $" Check your products in the ingredients list."));
     }
@@ -184,7 +218,7 @@ public class DishTests : TestsBase
             Resources);
         var dish = dishResult.Value;
 
-        Assert.IsTrue(dishResult.IsSuccess);
+        Assert.That(dishResult.IsSuccess);
         Assert.That(dish.Name, Is.EqualTo(validDish.Name));
         Assert.That(dish.Description, Is.EqualTo(validDish.Description));
         Assert.That(dish.ServingSize, Is.EqualTo(validDish.ServingSize));
@@ -196,7 +230,7 @@ public class DishTests : TestsBase
     [TestCase("")]
     [TestCase("  ")]
     [TestCase(null)]
-    public void Update_Should_Return_User_Error_If_Created_Without_Name (string name)
+    public void Update_Should_Return_User_Error_If_Created_Without_Name (string? name)
     {
         var validDish = _dishFakes.Create();
 
@@ -208,14 +242,14 @@ public class DishTests : TestsBase
             ingredients: validDish.Ingredients,
             Resources);
 
-        Assert.IsTrue(dishResult.IsFailure);
+        Assert.That(dishResult.IsFailure);
         Assert.That(dishResult.Error, Is.EqualTo($"{Resources.CommonTerms.Dish} must have name."));
     }
 
     [TestCase("")]
     [TestCase("  ")]
     [TestCase(null)]
-    public void Update_Should_Return_User_Error_If_Description_Is_Invalid (string description)
+    public void Update_Should_Return_User_Error_If_Description_Is_Invalid (string? description)
     {
         var validDish = _dishFakes.Create();
 
@@ -227,7 +261,7 @@ public class DishTests : TestsBase
             ingredients: validDish.Ingredients,
             Resources);
 
-        Assert.IsTrue(dishResult.IsFailure);
+        Assert.That(dishResult.IsFailure);
         Assert.That(dishResult.Error, Is.EqualTo($"{Resources.CommonTerms.Dish} must have description."));
     }
 
@@ -244,7 +278,7 @@ public class DishTests : TestsBase
             ingredients: validDish.Ingredients,
             Resources);
 
-        Assert.IsTrue(dishResult.IsFailure);
+        Assert.That(dishResult.IsFailure);
         Assert.That(dishResult.Error, Is.EqualTo($"{Resources.CommonTerms.Dish} description should not exceed {Constants.TEN_THOUSAND} symbols."));
     }
 
@@ -261,7 +295,7 @@ public class DishTests : TestsBase
             ingredients: validDish.Ingredients,
             Resources);
 
-        Assert.IsTrue(dishResult.IsFailure);
+        Assert.That(dishResult.IsFailure);
         Assert.That(dishResult.Error, Is.EqualTo($"There should be at least one or more servings in a dish."));
     }
 
@@ -278,7 +312,7 @@ public class DishTests : TestsBase
             ingredients: validDish.Ingredients,
             Resources);
 
-        Assert.IsTrue(dishResult.IsFailure);
+        Assert.That(dishResult.IsFailure);
         Assert.That(dishResult.Error, Is.EqualTo($"A dish must have assigned at least " +
             $"one menu of the day type. (Breakfast, Lunch, Dinner, etc...)"));
     }
@@ -300,7 +334,7 @@ public class DishTests : TestsBase
             ingredients: validDish.Ingredients,
             Resources);
 
-        Assert.IsTrue(dishResult.IsFailure);
+        Assert.That(dishResult.IsFailure);
         Assert.That(dishResult.Error, Is.EqualTo($"Meals of the day must be unique."));
     }
 
@@ -317,7 +351,7 @@ public class DishTests : TestsBase
             ingredients: new Ingredient[] { },
             Resources);
 
-        Assert.IsTrue(dishResult.IsFailure);
+        Assert.That(dishResult.IsFailure);
         Assert.That(dishResult.Error, Is.EqualTo($"A Dish must have at least one or more ingredients."));
     }
 
@@ -338,7 +372,7 @@ public class DishTests : TestsBase
             },
             Resources);
 
-        Assert.IsTrue(dishResult.IsFailure);
+        Assert.That(dishResult.IsFailure);
         Assert.That(dishResult.Error, Is.EqualTo($"There should be no product duplicates in the current dish." +
             $" Check your products in the ingredients list."));
     }
@@ -358,7 +392,7 @@ public class DishTests : TestsBase
             Resources);
         var dish = dishResult.Value;
 
-        Assert.IsTrue(dishResult.IsSuccess);
+        Assert.That(dishResult.IsSuccess);
         Assert.That(dish.Name, Is.EqualTo(expectedDish.Name));
         Assert.That(dish.Description, Is.EqualTo(expectedDish.Description));
         Assert.That(dish.ServingSize, Is.EqualTo(expectedDish.ServingSize));
@@ -375,7 +409,7 @@ public class DishTests : TestsBase
 
         var dishResult = dish.SubmitForApproval();
 
-        Assert.IsTrue(dishResult.IsSuccess);
+        Assert.That(dishResult.IsSuccess);
         Assert.That(dish.DishState.State, Is.EqualTo(DishState.AwaitingApproval));
     }
 
@@ -387,7 +421,7 @@ public class DishTests : TestsBase
 
         var dishResult = dish.Appove();
 
-        Assert.IsTrue(dishResult.IsSuccess);
+        Assert.That(dishResult.IsSuccess);
         Assert.That(dish.DishState.State, Is.EqualTo(DishState.Active));
     }
 
@@ -399,7 +433,7 @@ public class DishTests : TestsBase
 
         var dishResult = dish.Reject();
 
-        Assert.IsTrue(dishResult.IsSuccess);
+        Assert.That(dishResult.IsSuccess);
         Assert.That(dish.DishState.State, Is.EqualTo(DishState.Rejected));
     }
 }

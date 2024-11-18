@@ -32,7 +32,7 @@ public class ActiveStateTests : TestsBase
 
         var result = _activeState.Active(() => callbackMock.Object());
         callbackMock.Verify(func => func.Invoke(), Times.Once);
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo("Error"));
     }
 
@@ -44,7 +44,7 @@ public class ActiveStateTests : TestsBase
 
         var result = _activeState.AwaitingApproval(() => callbackMock.Object());
         callbackMock.Verify(func => func.Invoke(), Times.Never);
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
     }
 
     [Test]

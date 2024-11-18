@@ -4,6 +4,7 @@
 
 # IDE0005: Remove unnecessary imports
 dotnet_diagnostic.IDE0005.severity = error
+dotnet_diagnostic.IDE1998.severity = error
 
 # Naming rules
 

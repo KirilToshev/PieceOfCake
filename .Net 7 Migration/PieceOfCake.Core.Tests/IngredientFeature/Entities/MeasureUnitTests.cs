@@ -11,137 +11,142 @@ namespace PieceOfCake.Core.Tests.IngredientFeature.Entities;
 
 public class MeasureUnitTests : TestsBase
 {
-    private Mock<IUnitOfWork> _uowMock;
-    private Mock<IMeasureUnitRepository> _measureUnitRepoMock;
+    private readonly Mock<IUnitOfWork> _uowMock;
+    private readonly Mock<IMeasureUnitRepository> _measureUnitRepoMock;
 
-    [SetUp]
-    public void BeforeEachTest ()
+    public MeasureUnitTests()
     {
         _uowMock = new Mock<IUnitOfWork>();
         _measureUnitRepoMock = new Mock<IMeasureUnitRepository>();
+    }
+
+    [SetUp]
+    public async Task BeforeEachTest ()
+    {
         _uowMock.Setup(x => x.MeasureUnitRepository)
             .Returns(_measureUnitRepoMock.Object);
         _measureUnitRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
-            .Returns((MeasureUnit)null);
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
+            .ReturnsAsync(null as MeasureUnit);
     }
 
     [TestCase("")]
     [TestCase("  ")]
     [TestCase(null)]
-    public void Create_Should_Return_User_Error_If_Created_Without_Name (string measureUnitName)
+    public async Task Create_Should_Return_User_Error_If_Created_Without_Name (string? measureUnitName)
     {
-        var measureUnit = MeasureUnit.Create(measureUnitName, Resources, _uowMock.Object);
-        Assert.IsTrue(measureUnit.IsFailure);
+        var measureUnit = await MeasureUnit.Create(measureUnitName, Resources, _uowMock.Object);
+        Assert.That(measureUnit.IsFailure);
         Assert.That(measureUnit.Error, Is.EqualTo("Measure Unit must have name."));
     }
 
     [Test]
-    public void Create_Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit ()
+    public async Task Create_Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit ()
     {
-        var measureUnit = MeasureUnit.Create(Fixture.CreateStringOfLength(Constants.FIFTY + 1), Resources, _uowMock.Object);
-        Assert.IsTrue(measureUnit.IsFailure);
+        var measureUnit = await MeasureUnit.Create(Fixture.CreateStringOfLength(Constants.FIFTY + 1), Resources, _uowMock.Object);
+        Assert.That(measureUnit.IsFailure);
         Assert.That(measureUnit.Error, Is.EqualTo($"{Resources.CommonTerms.MeasureUnit} name should not exceed {Constants.FIFTY} symbols."));
     }
 
     [Test]
-    public void Create_Should_Return_User_Error_If_Name_Already_Exists ()
+    public async Task Create_Should_Return_User_Error_If_Name_Already_Exists ()
     {
         //Arrange
         var alreadyExistingName = Fixture.Create<string>();
-        var measureUnit = MeasureUnit.Create(alreadyExistingName, Resources, _uowMock.Object).Value;
+        var measureUnitResult = await MeasureUnit.Create(alreadyExistingName, Resources, _uowMock.Object);
         _measureUnitRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
-            .Returns(measureUnit);
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
+            .ReturnsAsync(measureUnitResult.Value);
 
         //Act
-        var result = MeasureUnit.Create(alreadyExistingName, Resources, _uowMock.Object);
+        var result = await MeasureUnit.Create(alreadyExistingName, Resources, _uowMock.Object);
 
         //Assert
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"An entity with name {alreadyExistingName} already exist."));
     }
 
     [Test]
-    public void Create_Should_Succseed_If_Name_Meets_Requirenements ()
+    public async Task Create_Should_Succseed_If_Name_Meets_Requirenements ()
     {
         //Arrange
         var validName = Fixture.CreateStringOfLength(Constants.FIFTY);
         
         //Act
-        var result = MeasureUnit.Create(validName, Resources, _uowMock.Object);
+        var result = await MeasureUnit.Create(validName, Resources, _uowMock.Object);
 
         //Assert
-        Assert.IsTrue(result.IsSuccess);
+        Assert.That(result.IsSuccess);
         Assert.That(result.Value.Name.Value, Is.EqualTo(validName));
     }
 
     [TestCase("")]
     [TestCase("  ")]
     [TestCase(null)]
-    public void Update_Should_Return_User_Error_If_Updated_Without_Name (string measureUnitName)
+    public async Task Update_Should_Return_User_Error_If_Updated_Without_Name (string? measureUnitName)
     {
         var name = Fixture.Create<string>();
-        var measureUnit = MeasureUnit.Create(name, Resources, _uowMock.Object).Value;
+        var measureUnitResult = await MeasureUnit.Create(name, Resources, _uowMock.Object);
+        var measureUnit = measureUnitResult.Value;
         _measureUnitRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
-            .Returns(measureUnit);
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
+            .ReturnsAsync(measureUnit);
 
         //Act
-        var result = measureUnit.Update(measureUnitName, Resources, _uowMock.Object);
+        var result = await measureUnit.Update(measureUnitName, Resources, _uowMock.Object);
 
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo("Measure Unit must have name."));
     }
 
     [Test]
-    public void Update_Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit ()
+    public async Task Update_Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit ()
     {
         //Arrange
         var name = Fixture.Create<string>();
-        var measureUnit = MeasureUnit.Create(name, Resources, _uowMock.Object).Value;
+        var measureUnit = await MeasureUnit.Create(name, Resources, _uowMock.Object);
         _measureUnitRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
-            .Returns(measureUnit);
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
+            .ReturnsAsync(measureUnit.Value);
 
         //Act
-        var result = measureUnit.Update(Fixture.CreateStringOfLength(Constants.FIFTY + 1), Resources, _uowMock.Object);
+        var result = await measureUnit.Value.Update(Fixture.CreateStringOfLength(Constants.FIFTY + 1), Resources, _uowMock.Object);
 
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"{Resources.CommonTerms.MeasureUnit} name should not exceed {Constants.FIFTY} symbols."));
     }
 
     [Test]
-    public void Update_Should_Return_User_Error_If_Name_Already_Exists ()
+    public async Task Update_Should_Return_User_Error_If_Name_Already_Exists ()
     {
         //Arrange
         var name = Fixture.Create<string>();
-        var measureUnit = MeasureUnit.Create(name, Resources, _uowMock.Object).Value;
+        var measureUnit = await MeasureUnit.Create(name, Resources, _uowMock.Object);
         _measureUnitRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
-            .Returns(measureUnit);
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
+            .ReturnsAsync(measureUnit.Value);
 
         //Act
-        var result = measureUnit.Update(name, Resources, _uowMock.Object);
+        var result = await measureUnit.Value.Update(name, Resources, _uowMock.Object);
 
         //Assert
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"An entity with name {name} already exist."));
     }
 
     [Test]
-    public void Update_Should_Succseed_If_Name_Meets_Requirenements ()
+    public async Task Update_Should_Succseed_If_Name_Meets_Requirenements ()
     {
         //Arrange
         var name = Fixture.CreateStringOfLength(Constants.FIFTY);
-        var measureUnit = MeasureUnit.Create(name, Resources, _uowMock.Object).Value;
+        var measureUnit = await MeasureUnit.Create(name, Resources, _uowMock.Object);
         var updatedName = Fixture.CreateStringOfLength(Constants.TWO);
 
         //Act
-        var result = measureUnit.Update(updatedName, Resources, _uowMock.Object);
+        var result = await measureUnit.Value.Update(updatedName, Resources, _uowMock.Object);
 
         //Assert
-        Assert.IsTrue(result.IsSuccess);
+        Assert.That(result.IsSuccess);
         Assert.That(result.Value.Name.Value, Is.EqualTo(updatedName));
     }
 }

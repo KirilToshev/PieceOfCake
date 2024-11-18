@@ -122,7 +122,7 @@ public class MenuService : BaseService<IMenuRepository, Menu>, IMenuService
         IReadOnlyCollection<MealOfTheDayType> mealTypes
         , IReadOnlyCollection<Dish> dishes)> GetMenuAdditionalData(params Menu[] menus)
     {
-        // Why this can NOT be in parallel: https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/#avoiding-dbcontext-threading-issues
+        // Why this can NOT be in parallel: https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/#aasync Tasking-dbcontext-threading-issues
 
         var allMealTypes = menus
             .SelectMany(m => m.Calendar.SelectMany(c => c.MealOfTheDayTypes));

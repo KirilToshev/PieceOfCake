@@ -4,7 +4,7 @@ namespace PieceOfCake.Tests.Common;
 
 public static class Extensions
 {
-    public static IEnumerable<T> RandomListOf<T>(this Fixture fixture, params T[]  objects)
+    public static IEnumerable<T> RandomOfList<T>(this Fixture fixture, params T[]  objects)
     {
         var random = new Random();
         var distinct = objects.Distinct().ToArray();

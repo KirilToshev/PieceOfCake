@@ -45,7 +45,7 @@ public class DefaultMenuCalculationStrategyTests : TestsBase
         var sut = new DefaultMenuCalculationStrategy(Resources);
         var result = sut.Calculate(menuCalendar, dishes);
 
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"There are not enough dishes of menu type {_mealOfTheDayTypeFakes.Lunch.Name},{_mealOfTheDayTypeFakes.Dinner.Name} to complete your menu."));
     }
 
@@ -139,7 +139,7 @@ public class DefaultMenuCalculationStrategyTests : TestsBase
             Assert.That(calendarItem.MealOfTheDayTypes.Count() == 3);
             foreach (var calendarMealOfTheDayType in calendarItem.MealOfTheDayTypes)
             {
-                Assert.IsTrue(menuCalendar.MealOfTheDayTypes.Any(x => x.Id == calendarMealOfTheDayType.Id));
+                Assert.That(menuCalendar.MealOfTheDayTypes.Any(x => x.Id == calendarMealOfTheDayType.Id));
                 Assert.That(calendarMealOfTheDayType.Dishes.Count() == 2);
                 foreach (var dish in calendarMealOfTheDayType.Dishes)
                 {
@@ -213,7 +213,7 @@ public class DefaultMenuCalculationStrategyTests : TestsBase
             Assert.That(calendarItem.MealOfTheDayTypes.Count() == 2);
             foreach (var calendarMealOfTheDayType in calendarItem.MealOfTheDayTypes)
             {
-                Assert.IsTrue(menuCalendar.MealOfTheDayTypes.Any(x => x.Id == calendarMealOfTheDayType.Id));
+                Assert.That(menuCalendar.MealOfTheDayTypes.Any(x => x.Id == calendarMealOfTheDayType.Id));
                 Assert.That(calendarMealOfTheDayType.Dishes.Count() == 2);
                 foreach (var dish in calendarMealOfTheDayType.Dishes)
                 {
@@ -265,11 +265,11 @@ public class DefaultMenuCalculationStrategyTests : TestsBase
         Assert.That(result.Value.Count(), Is.EqualTo(1));
         foreach (var calendarItem in result.Value)
         {
-            Assert.IsTrue(_timePeriodFakes.ThreeDays.IsInPeriod(calendarItem.Date));
+            Assert.That(_timePeriodFakes.ThreeDays.IsInPeriod(calendarItem.Date));
             Assert.That(calendarItem.MealOfTheDayTypes.Count(), Is.EqualTo(2));
             foreach (var calendarMealOfTheDayType in calendarItem.MealOfTheDayTypes)
             {
-                Assert.IsTrue(menuCalendar.MealOfTheDayTypes.Any(x => x.Id == calendarMealOfTheDayType.Id));
+                Assert.That(menuCalendar.MealOfTheDayTypes.Any(x => x.Id == calendarMealOfTheDayType.Id));
                 Assert.That(calendarMealOfTheDayType.Dishes.Count(), Is.EqualTo(2));
                 foreach (var dish in calendarMealOfTheDayType.Dishes)
                 {

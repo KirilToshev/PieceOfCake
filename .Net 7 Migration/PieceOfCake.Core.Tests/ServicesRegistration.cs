@@ -20,17 +20,17 @@ public class ServicesRegistration
     {
         _measureUnitRepoMock = new Mock<IMeasureUnitRepository>();
         _measureUnitRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
             .Returns<MeasureUnit>(null);
 
         _productRepoMock = new Mock<IProductRepository>();
         _productRepoMock
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns<Product>(null);
 
         _mealOfTheDayTypeRepository = new Mock<IMealOfTheDayTypeRepository>();
         _mealOfTheDayTypeRepository
-            .Setup(x => x.GetFirstOrDefault(It.IsAny<Expression<Func<MealOfTheDayType, bool>>>()))
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<MealOfTheDayType, bool>>>()))
             .Returns<MealOfTheDayType>(null);
 
         _uowMock = new Mock<IUnitOfWork>();

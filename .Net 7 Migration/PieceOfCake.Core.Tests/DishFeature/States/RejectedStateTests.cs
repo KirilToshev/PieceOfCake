@@ -21,7 +21,7 @@ public class RejectedStateTests : TestsBase
 
         var result = _activeState.Active(() => callbackMock.Object());
         callbackMock.Verify(funck => funck.Invoke(), Times.Never);
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
     }
 
     [Test]
@@ -32,7 +32,7 @@ public class RejectedStateTests : TestsBase
 
         var result = _activeState.AwaitingApproval(() => callbackMock.Object());
         callbackMock.Verify(funck => funck.Invoke(), Times.Never);
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
     }
 
     [Test]
@@ -54,7 +54,7 @@ public class RejectedStateTests : TestsBase
 
         var result = _activeState.Draft(() => callbackMock.Object());
         callbackMock.Verify(func => func.Invoke(), Times.Once);
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo("Error"));
     }
 

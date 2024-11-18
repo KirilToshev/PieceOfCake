@@ -32,7 +32,7 @@ public class AwaitingApprovalStateTests : TestsBase
 
         var result = _awaitingApproval.Active(() => callbackMock.Object());
         callbackMock.Verify(func => func.Invoke(), Times.Once);
-        Assert.IsTrue(result.IsFailure);
+        Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo("Error"));
     }
 
