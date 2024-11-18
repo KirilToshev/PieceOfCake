@@ -1,11 +1,13 @@
 using AutoFixture;
 using CSharpFunctionalExtensions;
 using NSubstitute;
+using PieceOfCake.Application.IngredientFeature.Dtos;
 using PieceOfCake.Application.IngredientFeature.Services;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.DishFeature.Entities;
 using PieceOfCake.Core.IngredientFeature.Entities;
+using PieceOfCake.Tests.Common.Fakes.Interfaces;
 using System.Linq.Expressions;
 
 namespace PieceOfCake.Application.Tests.IngredientFeature.Services;
@@ -16,6 +18,7 @@ public class ProductServiceTests : TestsBase
     private IProductRepository _productRepoMock;
     private IDishRepository _dishRepoMock;
     private Product _productMock;
+    private IProductFakes _productFakes;
 
     public ProductServiceTests()
     {
@@ -26,21 +29,22 @@ public class ProductServiceTests : TestsBase
             .Returns(_productRepoMock);
         _uowMock.DishRepository
             .Returns(_dishRepoMock);
-        _productRepoMock.GetFirstOrDefault(Arg.Any<Expression<Func<Product, bool>>>())
-            .Returns((Product)null);
+        _productRepoMock.FirstOrDefaultAsync(Arg.Any<Expression<Func<Product, bool>>>())
+            .Returns(Task.FromResult(null as Product));
         _productMock = Substitute.For<Product>();
+        _productFakes = GetRequiredService<IProductFakes>();
     }
 
     [Fact]
     public async Task Get_Should_Return_User_Error_If_Id_Is_Not_Found ()
     {
         var notExistingId = Fixture.Create<Guid>();
-        _productRepoMock.GetById(notExistingId)
-            .Returns((Product)null);
+        _productRepoMock.GetByIdAsync(notExistingId)
+            .Returns(Task.FromResult(null as Product));
 
         var sut = new ProductService(Resources, _uowMock);
 
-        var result = sut.Get(notExistingId);
+        var result = await sut.GetByIdAsync(notExistingId);
 
         Assert.True(result.IsFailure);
         Assert.Equal(string.Format("Element with Id={0} does not exists.", notExistingId), result.Error);
@@ -50,12 +54,12 @@ public class ProductServiceTests : TestsBase
     public async Task Get_Should_Return_MeasureUnit_If_Id_Is_Found ()
     {
         var id = Fixture.Create<Guid>();
-        _productRepoMock.GetById(id)
-            .Returns(_productMock);
+        _productRepoMock.GetByIdAsync(id)
+            .Returns(Task.FromResult(_productMock));
 
         var sut = new ProductService(Resources, _uowMock);
 
-        var result = sut.Get(id);
+        var result = await sut.GetByIdAsync(id);
 
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Value);
@@ -64,16 +68,16 @@ public class ProductServiceTests : TestsBase
     [Fact]
     public async Task Update_Should_Return_User_Error_If_Id_Is_Not_Found ()
     {
-        var notExistingId = Fixture.Create<Guid>();
-        _productRepoMock.GetById(notExistingId)
-            .Returns((Product)null);
+        var updateDto = Fixture.Create<ProductUpdateDto>();
+        _productRepoMock.GetByIdAsync(updateDto.Id)
+            .Returns(Task.FromResult(null as Product));
 
         var sut = new ProductService(Resources, _uowMock);
 
-        var result = sut.Update(notExistingId, Fixture.Create<string>());
+        var result = await sut.UpdateAsync(updateDto);
 
         Assert.True(result.IsFailure);
-        Assert.Equal(string.Format("Element with Id={0} does not exists.", notExistingId), result.Error);
+        Assert.Equal(string.Format("Element with Id={0} does not exists.", updateDto.Id), result.Error);
     }
 
     [Fact]
@@ -82,14 +86,16 @@ public class ProductServiceTests : TestsBase
         //Arrange
         var id = Fixture.Create<Guid>();
         var updatedName = Fixture.Create<string>();
-        _productMock.Update(updatedName, Arg.Any<IResources>(), Arg.Any<IUnitOfWork>())
-            .Returns(Result.Success(_productMock));
-        _productRepoMock.GetById(id)
-            .Returns(_productMock);
+        var carrot = _productFakes.Carrot;
+        var water = _productFakes.Water;
+        _productMock.UpdateAsync(Arg.Is(updatedName), Arg.Any<IResources>(), Arg.Any<IUnitOfWork>())
+            .Returns(Result.Success(water));
+        _productRepoMock.GetByIdAsync(Arg.Is(id))
+            .Returns(Task.FromResult(carrot));
         var sut = new ProductService(Resources, _uowMock);
 
         //Act
-        var result = sut.Update(id, updatedName);
+        var result = await sut.UpdateAsync(new ProductUpdateDto() { Id = id, Name = updatedName });
 
         //Assert
         Assert.True(result.IsSuccess);
@@ -100,10 +106,11 @@ public class ProductServiceTests : TestsBase
     public async Task Delete_Should_Return_User_Error_If_Id_Is_Not_Found ()
     {
         var notExistingId = Fixture.Create<Guid>();
-        _productRepoMock.GetById(Arg.Is(notExistingId)).Returns(x => null);
+        _productRepoMock.GetByIdAsync(Arg.Is(notExistingId))
+            .Returns(Task.FromResult(null as Product));
         var sut = new ProductService(Resources, _uowMock);
 
-        var result = sut.Delete(notExistingId);
+        var result = await sut.DeleteAsync(notExistingId);
 
         Assert.True(result.IsFailure);
         Assert.Equal(string.Format("Element with Id={0} does not exists.", notExistingId), result.Error);
@@ -113,14 +120,14 @@ public class ProductServiceTests : TestsBase
     public async Task Delete_Should_Succseed_If_Id_Is_Found ()
     {
         var id = Fixture.Create<Guid>();
-        _productRepoMock.GetById(Arg.Is(id))
-            .Returns(_productMock);
+        _productRepoMock.GetByIdAsync(Arg.Is(id))
+            .Returns(Task.FromResult(_productMock));
         _dishRepoMock.GetAsync(Arg.Any<Expression<Func<Dish, bool>>>(), null)
-            .Returns(new Dish[0]);
+            .Returns(Task.FromResult(new Dish[0] as IReadOnlyCollection<Dish>));
 
         var sut = new ProductService(Resources, _uowMock);
 
-        var result = sut.Delete(id);
+        var result = await sut.DeleteAsync(id);
 
         Assert.True(result.IsSuccess);
     }
@@ -129,15 +136,15 @@ public class ProductServiceTests : TestsBase
     public async Task Delete_Should_Fail_If_Product_Is_In_Use ()
     {
         var id = Fixture.Create<Guid>();
-        _productRepoMock.GetById(id)
-            .Returns(_productMock);
+        _productRepoMock.GetByIdAsync(id)
+            .Returns(Task.FromResult(_productMock));
         var dishMock = Substitute.For<Dish>();
         _dishRepoMock.GetAsync(Arg.Any<Expression<Func<Dish, bool>>>(), null)
-            .Returns(new Dish[] { dishMock });
+            .Returns(Task.FromResult(new Dish[] { dishMock } as IReadOnlyCollection<Dish>));
 
         var sut = new ProductService(Resources, _uowMock);
 
-        var result = sut.Delete(id);
+        var result = await sut.DeleteAsync(id);
 
         Assert.True(result.IsFailure);
         Assert.Equal($"{Resources.CommonTerms.Product} can't be deleted, because it is still being used.", result.Error);

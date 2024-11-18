@@ -33,7 +33,7 @@ public class ProductService : BaseService<IProductRepository, Product>, IProduct
     public async Task<Result<ProductGetDto>> UpdateAsync (ProductUpdateDto updateDto)
     {
         return await GetEntityAsync(updateDto.Id)
-            .Bind(product => product.Update(product.Name, I18N, UnitOfWork)
+            .Bind(product => product.UpdateAsync(product.Name, I18N, UnitOfWork)
             .Map(async product =>
             {
                 Repository.Update(product);
@@ -44,7 +44,7 @@ public class ProductService : BaseService<IProductRepository, Product>, IProduct
 
     public Task<Result<ProductGetDto>> CreateAsync (ProductCreateDto createDto)
     {
-        return Product.Create(createDto.Name, I18N, UnitOfWork)
+        return Product.CreateAsync(createDto.Name, I18N, UnitOfWork)
             .Map(async product =>
             {
                 Repository.Insert(product);

@@ -34,7 +34,7 @@ public class MeasureUnitService : BaseService<IMeasureUnitRepository, MeasureUni
     public Task<Result<MeasureUnitGetDto>> UpdateAsync (MeasureUnitUpdateDto updateDto)
     {
         return GetEntityAsync(updateDto.Id)
-            .Bind(measureUnit =>  measureUnit.Update(updateDto.Name, I18N, UnitOfWork)
+            .Bind(measureUnit =>  measureUnit.UpdateAsync(updateDto.Name, I18N, UnitOfWork)
             .Map(async measureUnit =>
             {
                 Repository.Update(measureUnit);
@@ -45,7 +45,7 @@ public class MeasureUnitService : BaseService<IMeasureUnitRepository, MeasureUni
 
     public Task<Result<MeasureUnitGetDto>> CreateAsync (MeasureUnitCreateDto createDto)
     {
-        return MeasureUnit.Create(createDto.Name, I18N, UnitOfWork)
+        return MeasureUnit.CreateAsync(createDto.Name, I18N, UnitOfWork)
             .Map(async x =>
             {
                 Repository.Insert(x);

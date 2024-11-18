@@ -21,7 +21,7 @@ public class MeasureUnit : GuidEntity
 
     public Name Name { get; private set; }
 
-    public static async Task<Result<MeasureUnit>> Create (string? name, IResources i18n, IUnitOfWork unitOfWork)
+    public static async Task<Result<MeasureUnit>> CreateAsync (string? name, IResources i18n, IUnitOfWork unitOfWork)
     {
         var nameResult = Name.Create(name, i18n, x => x.CommonTerms.MeasureUnit, Constants.FIFTY);
         if (nameResult.IsFailure)
@@ -35,9 +35,9 @@ public class MeasureUnit : GuidEntity
         return Result.Success(entity);
     }
 
-    public virtual async Task<Result<MeasureUnit>> Update (string? name, IResources resources, IUnitOfWork unitOfWork)
+    public virtual async Task<Result<MeasureUnit>> UpdateAsync (string? name, IResources resources, IUnitOfWork unitOfWork)
     {
-        var measureUnitResult = await Create(name, resources, unitOfWork);
+        var measureUnitResult = await CreateAsync(name, resources, unitOfWork);
         if (measureUnitResult.IsFailure)
             return measureUnitResult.ConvertFailure<MeasureUnit>();
 

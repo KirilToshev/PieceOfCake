@@ -21,7 +21,7 @@ public class Product : GuidEntity
 
     public virtual Name Name { get; private set; }
 
-    public static async Task<Result<Product>> Create (string name, IResources resources, IUnitOfWork unitOfWork)
+    public static async Task<Result<Product>> CreateAsync (string name, IResources resources, IUnitOfWork unitOfWork)
     {
         var nameResult = Name.Create(name, resources, x => x.CommonTerms.Product, Constants.FIFTY);
         if (nameResult.IsFailure)
@@ -35,9 +35,9 @@ public class Product : GuidEntity
         return Result.Success(entity);
     }
 
-    public virtual async Task<Result<Product>> Update (string name, IResources resources, IUnitOfWork unitOfWork)
+    public virtual async Task<Result<Product>> UpdateAsync (string name, IResources resources, IUnitOfWork unitOfWork)
     {
-        var productResult = await Create(name, resources, unitOfWork);
+        var productResult = await CreateAsync(name, resources, unitOfWork);
         if (productResult.IsFailure)
             return productResult.ConvertFailure<Product>();
 

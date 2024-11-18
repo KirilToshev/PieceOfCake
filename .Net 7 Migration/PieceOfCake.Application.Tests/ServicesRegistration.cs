@@ -19,16 +19,16 @@ public class ServicesRegistration
     public ServicesRegistration ()
     {
         _measureUnitRepoMock = Substitute.For<IMeasureUnitRepository>();
-        _measureUnitRepoMock.GetFirstOrDefault(Arg.Any<Expression<Func<MeasureUnit, bool>>>())
-            .Returns((MeasureUnit)null);
+        _measureUnitRepoMock.FirstOrDefaultAsync(Arg.Any<Expression<Func<MeasureUnit, bool>>>())
+            .Returns(Task.FromResult(null as MeasureUnit));
 
         _productRepoMock = Substitute.For<IProductRepository>();
-        _productRepoMock.GetFirstOrDefault(Arg.Any<Expression<Func<Product, bool>>>())
-            .Returns((Product)null);
+        _productRepoMock.FirstOrDefaultAsync(Arg.Any<Expression<Func<Product, bool>>>())
+            .Returns(Task.FromResult(null as Product));
 
         _mealOfTheDayTypeRepository = Substitute.For<IMealOfTheDayTypeRepository>();
-        _mealOfTheDayTypeRepository.GetFirstOrDefault(Arg.Any<Expression<Func<MealOfTheDayType, bool>>>())
-            .Returns((MealOfTheDayType)null);
+        _mealOfTheDayTypeRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<MealOfTheDayType, bool>>>())
+            .Returns(Task.FromResult(null as MealOfTheDayType));
 
         _uowMock = Substitute.For<IUnitOfWork>();
         _uowMock.MeasureUnitRepository.Returns(_measureUnitRepoMock);

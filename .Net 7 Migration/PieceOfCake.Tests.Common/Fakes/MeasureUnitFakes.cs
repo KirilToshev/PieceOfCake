@@ -18,7 +18,7 @@ public class MeasureUnitFakes : NameFakes<MeasureUnit>, IMeasureUnitFakes
     public MeasureUnit Kg => Create(TestsConstants.MeasureUnits.KG);
     public MeasureUnit Number => Create(TestsConstants.MeasureUnits.NUMBER);
 
-    public override Func<string, IResources, IUnitOfWork, Task<Result<MeasureUnit>>> CreateFunction => MeasureUnit.Create;
+    public override Func<string, IResources, IUnitOfWork, Task<Result<MeasureUnit>>> CreateFunction => MeasureUnit.CreateAsync;
 
     public override Expression<Func<MeasureUnit, string>> CacheKey => x => x.Name;
 }
