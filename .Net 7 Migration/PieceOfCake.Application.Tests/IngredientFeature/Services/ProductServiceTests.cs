@@ -51,7 +51,7 @@ public class ProductServiceTests : TestsBase
     }
 
     [Fact]
-    public async Task Get_Should_Return_MeasureUnit_If_Id_Is_Found ()
+    public async Task Get_Should_Return_Product_If_Id_Is_Found ()
     {
         var id = Fixture.Create<Guid>();
         _productRepoMock.GetByIdAsync(id, CancellationToken.None)
@@ -66,6 +66,50 @@ public class ProductServiceTests : TestsBase
     }
 
     [Fact]
+    public async Task GetAll_Should_Return_Two_Products()
+    {
+        var carrot = _productFakes.Carrot;
+        var pepper = _productFakes.Pepper;
+        _productRepoMock.GetAsync(Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(new Product[] { carrot, pepper } as IReadOnlyCollection<Product>));
+
+        var sut = new ProductService(Resources, _uowMock);
+
+        var result = await sut.GetAllAsync(CancellationToken.None);
+
+        Assert.True(result.Count == 2);
+        Assert.Collection(result,
+            product1 =>
+            {
+                Assert.Equal(carrot.Id, product1.Id);
+                Assert.Equal(carrot.Name.Value, product1.Name);
+            },
+            product2 =>
+            {
+                Assert.Equal(pepper.Id, product2.Id);
+                Assert.Equal(pepper.Name.Value, product2.Name);
+            });
+    }
+
+    [Fact]
+    public async Task Create_Should_Succseed_If_Data_Is_Valid()
+    {
+        //Arrange
+        var createDto = Fixture.Create<ProductCreateDto>();
+
+        var sut = new ProductService(Resources, _uowMock);
+
+        //Act
+        var result = await sut.CreateAsync(createDto, CancellationToken.None);
+
+        //Assert
+        _productRepoMock.Received(1).Insert(Arg.Any<Product>());
+        _uowMock.Received(1).SaveAsync(Arg.Any<CancellationToken>());
+        Assert.True(result.IsSuccess);
+        Assert.Equal(createDto.Name, result.Value.Name);
+    }
+
+    [Fact]
     public async Task Update_Should_Return_User_Error_If_Id_Is_Not_Found ()
     {
         var updateDto = Fixture.Create<ProductUpdateDto>();
@@ -76,6 +120,8 @@ public class ProductServiceTests : TestsBase
 
         var result = await sut.UpdateAsync(updateDto, CancellationToken.None);
 
+        _productRepoMock.DidNotReceiveWithAnyArgs().Insert(default);
+        _uowMock.DidNotReceiveWithAnyArgs().SaveAsync(default);
         Assert.True(result.IsFailure);
         Assert.Equal(string.Format("Element with Id={0} does not exists.", updateDto.Id), result.Error);
     }
@@ -98,6 +144,9 @@ public class ProductServiceTests : TestsBase
         var result = await sut.UpdateAsync(new ProductUpdateDto() { Id = id, Name = updatedName }, CancellationToken.None);
 
         //Assert
+
+        _productRepoMock.Received(1).Update(Arg.Any<Product>());
+        _uowMock.Received(1).SaveAsync(Arg.Any<CancellationToken>());
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Value);
     }
