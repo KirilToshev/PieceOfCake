@@ -12,6 +12,7 @@ public interface IGenericRepository<TEntity> where TEntity : class
     /// <param name="includes"></param>
     /// <returns></returns>
     Task<IReadOnlyCollection<TEntity>> GetAsync (
+        CancellationToken cancellationToken,
         Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         params Expression<Func<TEntity, object>>[] includes);
@@ -21,7 +22,7 @@ public interface IGenericRepository<TEntity> where TEntity : class
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task<TEntity?> GetByIdAsync (object id);
+    Task<TEntity?> GetByIdAsync (object id, CancellationToken cancellationToken);
 
     /// <summary>
     /// Get first or default entity by filter
@@ -30,6 +31,7 @@ public interface IGenericRepository<TEntity> where TEntity : class
     /// <param name="includes"></param>
     /// <returns></returns>
     Task<TEntity?> FirstOrDefaultAsync (
+        CancellationToken cancellationToken,
         Expression<Func<TEntity, bool>>? filter = null,
         params Expression<Func<TEntity, object>>[] includes);
 

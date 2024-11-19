@@ -18,7 +18,7 @@ public class MealOfTheDayTypeFakes : NameFakes<MealOfTheDayType>, IMealOfTheDayT
     public MealOfTheDayType Lunch => Create(TestsConstants.MealOfTheDayTypes.LUNCH);
     public MealOfTheDayType Dinner => Create(TestsConstants.MealOfTheDayTypes.DINNER);
 
-    public override Func<string, IResources, IUnitOfWork, Task<Result<MealOfTheDayType>>> CreateFunction =>  MealOfTheDayType.Create;
+    public override Func<string, IResources, IUnitOfWork, CancellationToken, Task<Result<MealOfTheDayType>>> CreateFunction =>  MealOfTheDayType.Create;
 
     public override Expression<Func<MealOfTheDayType, string>> CacheKey => x => x.Name;
 }

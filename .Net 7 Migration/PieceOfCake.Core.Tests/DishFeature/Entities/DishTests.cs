@@ -38,13 +38,13 @@ public class DishTests : TestsBase
     {
         
         _mealTypeRepoMock
-            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<MealOfTheDayType, bool>>>()))
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<MealOfTheDayType, bool>>>()))
             .ReturnsAsync(null as MealOfTheDayType);
         _measureUnitRepoMock
-            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<MeasureUnit, bool>>>()))
             .ReturnsAsync(null as MeasureUnit);
         _productRepoMock
-            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<Product, bool>>>()))
             .ReturnsAsync(null as Product);
         _uowMock.Setup(x => x.MealOfTheDayTypeRepository)
             .Returns(_mealTypeRepoMock.Object);

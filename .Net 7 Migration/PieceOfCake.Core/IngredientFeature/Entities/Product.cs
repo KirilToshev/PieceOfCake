@@ -21,13 +21,13 @@ public class Product : GuidEntity
 
     public virtual Name Name { get; private set; }
 
-    public static async Task<Result<Product>> CreateAsync (string name, IResources resources, IUnitOfWork unitOfWork)
+    public static async Task<Result<Product>> CreateAsync (string name, IResources resources, IUnitOfWork unitOfWork, CancellationToken cancellationToken)
     {
         var nameResult = Name.Create(name, resources, x => x.CommonTerms.Product, Constants.FIFTY);
         if (nameResult.IsFailure)
             return nameResult.ConvertFailure<Product>();
 
-        var product = await unitOfWork.ProductRepository.FirstOrDefaultAsync(x => x.Name == name);
+        var product = await unitOfWork.ProductRepository.FirstOrDefaultAsync(cancellationToken, x => x.Name == name);
         if (product != null)
             return Result.Failure<Product>(resources.GenereteSentence(x => x.UserErrors.NameAlreadyExists, x => product.Name));
 
@@ -35,9 +35,9 @@ public class Product : GuidEntity
         return Result.Success(entity);
     }
 
-    public virtual async Task<Result<Product>> UpdateAsync (string name, IResources resources, IUnitOfWork unitOfWork)
+    public virtual async Task<Result<Product>> UpdateAsync (string name, IResources resources, IUnitOfWork unitOfWork, CancellationToken cancellationToken)
     {
-        var productResult = await CreateAsync(name, resources, unitOfWork);
+        var productResult = await CreateAsync(name, resources, unitOfWork, cancellationToken);
         if (productResult.IsFailure)
             return productResult.ConvertFailure<Product>();
 

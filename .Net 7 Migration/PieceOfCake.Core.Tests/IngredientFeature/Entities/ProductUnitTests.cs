@@ -31,7 +31,7 @@ public class ProductUnitTests : TestsBase
         _uowMock.Setup(x => x.ProductRepository)
             .Returns(_productRepoMock.Object);
         _productRepoMock
-            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<Product, bool>>>()))
             .ReturnsAsync(null as Product);
     }
 
@@ -40,7 +40,7 @@ public class ProductUnitTests : TestsBase
     [TestCase(null)]
     public async Task Create_Should_Return_User_Error_If_Created_Without_Name (string? productName)
     {
-        var productResult = await Product.CreateAsync(productName, Resources, _uowMock.Object);
+        var productResult = await Product.CreateAsync(productName, Resources, _uowMock.Object, CancellationToken.None);
         Assert.That(productResult.IsFailure);
         Assert.That(productResult.Error, Is.EqualTo("Product must have name."));
     }
@@ -48,7 +48,7 @@ public class ProductUnitTests : TestsBase
     [Test]
     public async Task Create_Should_Return_User_Error_If_Name_Exceeds_Symbols_Count_Limit ()
     {
-        var productResult = await Product.CreateAsync(Fixture.CreateStringOfLength(Constants.FIFTY + 1), Resources, _uowMock.Object);
+        var productResult = await Product.CreateAsync(Fixture.CreateStringOfLength(Constants.FIFTY + 1), Resources, _uowMock.Object, CancellationToken.None);
         Assert.That(productResult.IsFailure);
         Assert.That(productResult.Error, Is.EqualTo($"{Resources.CommonTerms.Product} name should not exceed {Constants.FIFTY} symbols."));
     }
@@ -66,11 +66,11 @@ public class ProductUnitTests : TestsBase
             .Returns(_nameMock.Object);
 
         _productRepoMock
-            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<Product, bool>>>()))
             .ReturnsAsync(_productMock.Object);
 
         //Act
-        var productResult = await Product.CreateAsync(alreadyExistingName, Resources, _uowMock.Object);
+        var productResult = await Product.CreateAsync(alreadyExistingName, Resources, _uowMock.Object, CancellationToken.None);
 
         //Assert
         Assert.That(productResult.IsFailure);
@@ -83,11 +83,11 @@ public class ProductUnitTests : TestsBase
         //Arrange
         var validName = Fixture.CreateStringOfLength(Constants.FIFTY);
         _productRepoMock
-            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<Product, bool>>>()))
             .ReturnsAsync(null as Product);
 
         //Act
-        var result = await Product.CreateAsync(validName, Resources, _uowMock.Object);
+        var result = await Product.CreateAsync(validName, Resources, _uowMock.Object, CancellationToken.None);
 
         //Assert
         Assert.That(result.IsSuccess);
@@ -99,13 +99,13 @@ public class ProductUnitTests : TestsBase
     [TestCase(null)]
     public async Task Update_Should_Return_User_Error_If_Created_Without_Name (string? productName)
     {
-        var product = await Product.CreateAsync(Fixture.Create<string>(), Resources, _uowMock.Object);
+        var product = await Product.CreateAsync(Fixture.Create<string>(), Resources, _uowMock.Object, CancellationToken.None);
         _productRepoMock
-            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<Product, bool>>>()))
             .ReturnsAsync(product.Value);
 
         //Act
-        var result = await product.Value.UpdateAsync(productName, Resources, _uowMock.Object);
+        var result = await product.Value.UpdateAsync(productName, Resources, _uowMock.Object, CancellationToken.None);
 
         Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"{Resources.CommonTerms.Product} must have name."));
@@ -116,13 +116,13 @@ public class ProductUnitTests : TestsBase
     {
         //Arrange
         var name = Fixture.Create<string>();
-        var product = await Product.CreateAsync(name, Resources, _uowMock.Object);
+        var product = await Product.CreateAsync(name, Resources, _uowMock.Object, CancellationToken.None);
         _productRepoMock
-            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<Product, bool>>>()))
             .ReturnsAsync(product.Value);
 
         //Act
-        var result = await product.Value.UpdateAsync(Fixture.CreateStringOfLength(Constants.FIFTY + 1), Resources, _uowMock.Object);
+        var result = await product.Value.UpdateAsync(Fixture.CreateStringOfLength(Constants.FIFTY + 1), Resources, _uowMock.Object, CancellationToken.None);
 
         Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"{Resources.CommonTerms.Product} name should not exceed {Constants.FIFTY} symbols."));
@@ -133,7 +133,7 @@ public class ProductUnitTests : TestsBase
     {
         //Arrange
         var product = await Product
-            .CreateAsync(Fixture.Create<string>(), Resources, _uowMock.Object);
+            .CreateAsync(Fixture.Create<string>(), Resources, _uowMock.Object, CancellationToken.None);
         var alreadyExistingName = Fixture.Create<string>();
         _nameMock.SetupGet(x => x.Value)
             .Returns(alreadyExistingName);
@@ -141,11 +141,11 @@ public class ProductUnitTests : TestsBase
             .SetupGet(x => x.Name)
             .Returns(_nameMock.Object);
         _productRepoMock
-            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<Product, bool>>>()))
             .ReturnsAsync(_productMock.Object);
 
         //Act
-        var result = await product.Value.UpdateAsync(alreadyExistingName, Resources, _uowMock.Object);
+        var result = await product.Value.UpdateAsync(alreadyExistingName, Resources, _uowMock.Object, CancellationToken.None);
 
         //Assert
         Assert.That(result.IsFailure);
@@ -157,14 +157,14 @@ public class ProductUnitTests : TestsBase
     {
         //Arrange
         var name = Fixture.CreateStringOfLength(Constants.FIFTY);
-        var product = await Product.CreateAsync(name, Resources, _uowMock.Object);
+        var product = await Product.CreateAsync(name, Resources, _uowMock.Object, CancellationToken.None);
         _productRepoMock
-            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Setup(x => x.FirstOrDefaultAsync(It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<Product, bool>>>()))
             .ReturnsAsync(null as Product);
 
         //Act
         var updatedName = Fixture.CreateStringOfLength(Constants.TWO);
-        var result = await product.Value.UpdateAsync(updatedName, Resources, _uowMock.Object);
+        var result = await product.Value.UpdateAsync(updatedName, Resources, _uowMock.Object, CancellationToken.None);
 
         //Assert
         Assert.That(result.IsSuccess);

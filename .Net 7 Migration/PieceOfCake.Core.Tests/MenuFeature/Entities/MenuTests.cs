@@ -254,10 +254,10 @@ public class MenuTests : TestsBase
         var menuResult = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources);
         var menu = menuResult.Value;
         _dishRepoMock
-            .Setup(x => x.GetAsync(It.IsAny<Expression<Func<Dish, bool>>>(), null))
+            .Setup(x => x.GetAsync(It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<Dish, bool>>>(), null))
             .ReturnsAsync(new Dish[] { _dishFakes.Breakfast() }.AsReadOnly());
 
-        await menu.GenerateCalendar(_dishRepoMock.Object, Resources);
+        await menu.GenerateCalendar(_dishRepoMock.Object, Resources, CancellationToken.None);
         Assert.That(menu.Calendar is not null);
         Assert.That(menu.Calendar!.Any());
 
@@ -289,11 +289,11 @@ public class MenuTests : TestsBase
             _dishFakes.Lunch()
         };
         _dishRepoMock
-            .Setup(x => x.GetAsync(It.IsAny<Expression<Func<Dish, bool>>>(), null))
+            .Setup(x => x.GetAsync(It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<Dish, bool>>>(), null))
             .ReturnsAsync(dishes.AsReadOnly());
 
         var menu = Menu.Create(startDate, endDate, numberOfPeople, mealTypes, Resources).Value;
-        var result = await menu.GenerateCalendar(_dishRepoMock.Object, Resources);
+        var result = await menu.GenerateCalendar(_dishRepoMock.Object, Resources, CancellationToken.None);
 
         Assert.That(result.IsSuccess);
 

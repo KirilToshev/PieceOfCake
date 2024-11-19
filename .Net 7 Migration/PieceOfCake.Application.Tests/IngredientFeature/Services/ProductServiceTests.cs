@@ -29,7 +29,7 @@ public class ProductServiceTests : TestsBase
             .Returns(_productRepoMock);
         _uowMock.DishRepository
             .Returns(_dishRepoMock);
-        _productRepoMock.FirstOrDefaultAsync(Arg.Any<Expression<Func<Product, bool>>>())
+        _productRepoMock.FirstOrDefaultAsync(Arg.Any<CancellationToken>(), Arg.Any<Expression<Func<Product, bool>>>())
             .Returns(Task.FromResult(null as Product));
         _productMock = Substitute.For<Product>();
         _productFakes = GetRequiredService<IProductFakes>();
@@ -39,12 +39,12 @@ public class ProductServiceTests : TestsBase
     public async Task Get_Should_Return_User_Error_If_Id_Is_Not_Found ()
     {
         var notExistingId = Fixture.Create<Guid>();
-        _productRepoMock.GetByIdAsync(notExistingId)
+        _productRepoMock.GetByIdAsync(notExistingId, CancellationToken.None)
             .Returns(Task.FromResult(null as Product));
 
         var sut = new ProductService(Resources, _uowMock);
 
-        var result = await sut.GetByIdAsync(notExistingId);
+        var result = await sut.GetByIdAsync(notExistingId, CancellationToken.None);
 
         Assert.True(result.IsFailure);
         Assert.Equal(string.Format("Element with Id={0} does not exists.", notExistingId), result.Error);
@@ -54,12 +54,12 @@ public class ProductServiceTests : TestsBase
     public async Task Get_Should_Return_MeasureUnit_If_Id_Is_Found ()
     {
         var id = Fixture.Create<Guid>();
-        _productRepoMock.GetByIdAsync(id)
+        _productRepoMock.GetByIdAsync(id, CancellationToken.None)
             .Returns(Task.FromResult(_productMock));
 
         var sut = new ProductService(Resources, _uowMock);
 
-        var result = await sut.GetByIdAsync(id);
+        var result = await sut.GetByIdAsync(id, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Value);
@@ -69,12 +69,12 @@ public class ProductServiceTests : TestsBase
     public async Task Update_Should_Return_User_Error_If_Id_Is_Not_Found ()
     {
         var updateDto = Fixture.Create<ProductUpdateDto>();
-        _productRepoMock.GetByIdAsync(updateDto.Id)
+        _productRepoMock.GetByIdAsync(updateDto.Id, CancellationToken.None)
             .Returns(Task.FromResult(null as Product));
 
         var sut = new ProductService(Resources, _uowMock);
 
-        var result = await sut.UpdateAsync(updateDto);
+        var result = await sut.UpdateAsync(updateDto, CancellationToken.None);
 
         Assert.True(result.IsFailure);
         Assert.Equal(string.Format("Element with Id={0} does not exists.", updateDto.Id), result.Error);
@@ -88,14 +88,14 @@ public class ProductServiceTests : TestsBase
         var updatedName = Fixture.Create<string>();
         var carrot = _productFakes.Carrot;
         var water = _productFakes.Water;
-        _productMock.UpdateAsync(Arg.Is(updatedName), Arg.Any<IResources>(), Arg.Any<IUnitOfWork>())
+        _productMock.UpdateAsync(Arg.Is(updatedName), Arg.Any<IResources>(), Arg.Any<IUnitOfWork>(), Arg.Any<CancellationToken>())
             .Returns(Result.Success(water));
-        _productRepoMock.GetByIdAsync(Arg.Is(id))
+        _productRepoMock.GetByIdAsync(Arg.Is(id), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(carrot));
         var sut = new ProductService(Resources, _uowMock);
 
         //Act
-        var result = await sut.UpdateAsync(new ProductUpdateDto() { Id = id, Name = updatedName });
+        var result = await sut.UpdateAsync(new ProductUpdateDto() { Id = id, Name = updatedName }, CancellationToken.None);
 
         //Assert
         Assert.True(result.IsSuccess);
@@ -106,11 +106,11 @@ public class ProductServiceTests : TestsBase
     public async Task Delete_Should_Return_User_Error_If_Id_Is_Not_Found ()
     {
         var notExistingId = Fixture.Create<Guid>();
-        _productRepoMock.GetByIdAsync(Arg.Is(notExistingId))
+        _productRepoMock.GetByIdAsync(Arg.Is(notExistingId), CancellationToken.None)
             .Returns(Task.FromResult(null as Product));
         var sut = new ProductService(Resources, _uowMock);
 
-        var result = await sut.DeleteAsync(notExistingId);
+        var result = await sut.DeleteAsync(notExistingId, CancellationToken.None);
 
         Assert.True(result.IsFailure);
         Assert.Equal(string.Format("Element with Id={0} does not exists.", notExistingId), result.Error);
@@ -120,14 +120,14 @@ public class ProductServiceTests : TestsBase
     public async Task Delete_Should_Succseed_If_Id_Is_Found ()
     {
         var id = Fixture.Create<Guid>();
-        _productRepoMock.GetByIdAsync(Arg.Is(id))
+        _productRepoMock.GetByIdAsync(Arg.Is(id), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(_productMock));
-        _dishRepoMock.GetAsync(Arg.Any<Expression<Func<Dish, bool>>>(), null)
+        _dishRepoMock.GetAsync(Arg.Any<CancellationToken>(), Arg.Any<Expression<Func<Dish, bool>>>(), null)
             .Returns(Task.FromResult(new Dish[0] as IReadOnlyCollection<Dish>));
 
         var sut = new ProductService(Resources, _uowMock);
 
-        var result = await sut.DeleteAsync(id);
+        var result = await sut.DeleteAsync(id, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
     }
@@ -136,15 +136,15 @@ public class ProductServiceTests : TestsBase
     public async Task Delete_Should_Fail_If_Product_Is_In_Use ()
     {
         var id = Fixture.Create<Guid>();
-        _productRepoMock.GetByIdAsync(id)
+        _productRepoMock.GetByIdAsync(id, CancellationToken.None)
             .Returns(Task.FromResult(_productMock));
         var dishMock = Substitute.For<Dish>();
-        _dishRepoMock.GetAsync(Arg.Any<Expression<Func<Dish, bool>>>(), null)
+        _dishRepoMock.GetAsync(Arg.Any<CancellationToken>(), Arg.Any<Expression<Func<Dish, bool>>>(), null)
             .Returns(Task.FromResult(new Dish[] { dishMock } as IReadOnlyCollection<Dish>));
 
         var sut = new ProductService(Resources, _uowMock);
 
-        var result = await sut.DeleteAsync(id);
+        var result = await sut.DeleteAsync(id, CancellationToken.None);
 
         Assert.True(result.IsFailure);
         Assert.Equal($"{Resources.CommonTerms.Product} can't be deleted, because it is still being used.", result.Error);

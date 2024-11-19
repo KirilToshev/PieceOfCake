@@ -8,7 +8,7 @@ public interface IUnitOfWork : IDisposable
     IMenuRepository MenuRepository { get; }
     IMealOfTheDayTypeRepository MealOfTheDayTypeRepository { get; }
 
-    Task<int> SaveAsync ();
+    Task<int> SaveAsync (CancellationToken cancellationToken);
 
     //IGenericRepository<TEntity> GetRepositoryByType<TEntity>() where TEntity : Entity;
 }

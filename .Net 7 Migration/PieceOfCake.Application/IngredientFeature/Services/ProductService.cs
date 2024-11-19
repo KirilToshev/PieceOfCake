@@ -19,46 +19,47 @@ public class ProductService : BaseService<IProductRepository, Product>, IProduct
     {
     }
 
-    public async Task<IReadOnlyCollection<ProductGetDto>> GetAllAsync ()
+    public async Task<IReadOnlyCollection<ProductGetDto>> GetAllAsync (CancellationToken cancellationToken)
     {
-        var products = await Repository.GetAsync();
+        var products = await Repository.GetAsync(cancellationToken);
         return products.Select(p => p.MapToGetDto()).ToArray().AsReadOnly();
     }
 
-    public Task<Result<ProductGetDto>> GetByIdAsync (Guid id)
+    public Task<Result<ProductGetDto>> GetByIdAsync (Guid id, CancellationToken cancellationToken)
     {
-        return GetEntityAsync(id).Map(x => x.MapToGetDto());
+        return GetEntityAsync(id, cancellationToken).Map(x => x.MapToGetDto());
     }
 
-    public async Task<Result<ProductGetDto>> UpdateAsync (ProductUpdateDto updateDto)
+    public async Task<Result<ProductGetDto>> UpdateAsync (ProductUpdateDto updateDto, CancellationToken cancellationToken)
     {
-        return await GetEntityAsync(updateDto.Id)
-            .Bind(product => product.UpdateAsync(product.Name, I18N, UnitOfWork)
+        return await GetEntityAsync(updateDto.Id, cancellationToken)
+            .Bind(product => product.UpdateAsync(product.Name, I18N, UnitOfWork, cancellationToken)
             .Map(async product =>
             {
                 Repository.Update(product);
-                await SaveAsync();
+                await SaveAsync(cancellationToken);
                 return product.MapToGetDto();
             }));
     }
 
-    public Task<Result<ProductGetDto>> CreateAsync (ProductCreateDto createDto)
+    public Task<Result<ProductGetDto>> CreateAsync (ProductCreateDto createDto, CancellationToken cancellationToken)
     {
-        return Product.CreateAsync(createDto.Name, I18N, UnitOfWork)
+        return Product.CreateAsync(createDto.Name, I18N, UnitOfWork, cancellationToken)
             .Map(async product =>
             {
                 Repository.Insert(product);
-                await SaveAsync();
+                await SaveAsync(cancellationToken);
                 return product.MapToGetDto();
             });
     }
 
-    public async Task<Result> DeleteAsync (Guid id)
+    public async Task<Result> DeleteAsync (Guid id, CancellationToken cancellationToken)
     {
-        return await GetEntityAsync(id)
+        return await GetEntityAsync(id, cancellationToken)
             .Bind(async product =>
             {
-                var products = await UnitOfWork.DishRepository.GetAsync(dish => dish.Ingredients.Any(i => i.Product.Id == product.Id));
+                var products = await UnitOfWork.DishRepository.GetAsync(cancellationToken,
+                    dish => dish.Ingredients.Any(i => i.Product.Id == product.Id));
                 var isProductInUse = products.Any();
 
                 if (isProductInUse)
@@ -66,7 +67,7 @@ public class ProductService : BaseService<IProductRepository, Product>, IProduct
                         .GenereteSentence(x => x.UserErrors.ItemIsInUse, x => x.CommonTerms.Product));
 
                 Repository.Delete(product);
-                await SaveAsync();
+                await SaveAsync(cancellationToken);
                 return Result.Success();
             });
     }

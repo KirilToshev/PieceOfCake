@@ -18,7 +18,7 @@ public class ProductFakes : NameFakes<Product>, IProductFakes
     public Product Water => Create(TestsConstants.Products.WATER);
     public Product Pepper => Create(TestsConstants.Products.PEPPER);
 
-    public override Func<string, IResources, IUnitOfWork, Task<Result<Product>>> CreateFunction => Product.CreateAsync;
+    public override Func<string, IResources, IUnitOfWork, CancellationToken, Task<Result<Product>>> CreateFunction => Product.CreateAsync;
 
     public override Expression<Func<Product, string>> CacheKey => x => x.Name;
 }

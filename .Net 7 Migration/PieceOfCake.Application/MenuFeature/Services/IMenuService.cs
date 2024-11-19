@@ -7,5 +7,5 @@ namespace PieceOfCake.Application.MenuFeature.Services;
 
 public interface IMenuService : ICreateAndUpdateService<MenuGetDto, MenuCreateDto, MenuUpdateDto>
 {    
-    Task<Result<Menu>> GenerateDishesList (Guid id);
+    Task<Result<Menu>> GenerateDishesListAsync (Guid id, CancellationToken cancellationToken);
 }

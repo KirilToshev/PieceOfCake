@@ -20,22 +20,20 @@ public class DishService : BaseService<IDishRepository, Dish>, IDishService
     {
     }
 
-    public async Task<Result<DishDto>> CreateAsync(DishCreateDto createDto)
+    public async Task<Result<DishDto>> CreateAsync(DishCreateDto createDto, CancellationToken cancellationToken)
     {
-        return await ValidateInputs(
-            createDto,
-            Dish.Create)
+        return await ValidateInputs(createDto, Dish.Create, cancellationToken)
             .Map(async dish =>
             {
                 UnitOfWork.DishRepository.Insert(dish);
-                await UnitOfWork.SaveAsync();
+                await UnitOfWork.SaveAsync(cancellationToken);
                 return dish.MapToGetDto();
             });
     }
 
-    public async Task<Result<DishDto>> UpdateAsync(DishUpdateDto updateDto)
+    public async Task<Result<DishDto>> UpdateAsync(DishUpdateDto updateDto, CancellationToken cancellationToken)
     {
-        return await GetEntityAsync(updateDto.Id)
+        return await GetEntityAsync(updateDto.Id, cancellationToken)
             .Bind(async dish =>
             {
                 var createDto = new DishCreateDto
@@ -46,31 +44,31 @@ public class DishService : BaseService<IDishRepository, Dish>, IDishService
                     MealOfTheDayTypes = updateDto.MealOfTheDayTypes,
                     IngredientsDtos = updateDto.IngredientsDtos
                 };
-                var result = await ValidateInputs(createDto, dish.Update)
+                var result = await ValidateInputs(createDto, dish.Update, cancellationToken)
                     .Tap(dish =>
                     {
                         Repository.Update(dish);
-                        UnitOfWork.SaveAsync();
+                        UnitOfWork.SaveAsync(cancellationToken);
                     })
                     .Map(dish => dish.MapToGetDto());
                 return result;
             });
     }
 
-    public async Task<IReadOnlyCollection<DishDto>> GetAllAsync()
+    public async Task<IReadOnlyCollection<DishDto>> GetAllAsync(CancellationToken cancellationToken)
     {
-        var dishes = await Repository.GetAsync();
+        var dishes = await Repository.GetAsync(cancellationToken);
         return dishes.Select(d => d.MapToGetDto()).ToArray().AsReadOnly();
     }
 
-    public async Task<Result<DishDto>> GetByIdAsync(Guid id)
+    public async Task<Result<DishDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await GetEntityAsync(id).Map(dish => dish.MapToGetDto());
+        return await GetEntityAsync(id, cancellationToken).Map(dish => dish.MapToGetDto());
     }
 
-    public async Task<Result> DeleteAsync(Guid id)
+    public async Task<Result> DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await GetEntityAsync(id)
+        return await GetEntityAsync(id, cancellationToken)
             .Tap(async dish =>
             {
                 if (dish.Menus.Any())
@@ -78,26 +76,27 @@ public class DishService : BaseService<IDishRepository, Dish>, IDishService
                     Result.Failure(I18N.GenereteSentence(x => x.UserErrors.ItemIsInUse, x => x.CommonTerms.Dish));
                 }
                 Repository.Delete(dish);
-                await UnitOfWork.SaveAsync();
+                await UnitOfWork.SaveAsync(cancellationToken);
             });
     }
     //TODO: Include Cancelation token to all async methods.
     private async Task<Result<Dish>> ValidateInputs(
         DishCreateDto createDto,
-        Func<string, string, byte, IEnumerable<MealOfTheDayType>, IEnumerable<Ingredient>, IResources, Result<Dish>> callbackCreateFunc)
+        Func<string, string, byte, IEnumerable<MealOfTheDayType>, IEnumerable<Ingredient>, IResources, Result<Dish>> callbackCreateFunc,
+        CancellationToken cancellationToken)
     {
         //TODO: Implement cacheing
         var measureUnitIds = createDto.IngredientsDtos.Select(x => x.MeasureUnitId).Distinct();
         var productIds = createDto.IngredientsDtos.Select(x => x.ProductId).Distinct();
         var mealTypeIds = createDto.MealOfTheDayTypes.Select(x => x.Id).Distinct();
 
-        //TODO: Make these tree call paralel. Task.WhenAll()
+        //TODO: Implement Specification pattern.
         var measureUnitEntities = await UnitOfWork.MeasureUnitRepository
-            .GetAsync(x => measureUnitIds.Contains(x.Id));
+            .GetAsync(cancellationToken,x => measureUnitIds.Contains(x.Id));
         var productEntities = await UnitOfWork.ProductRepository
-            .GetAsync(x => productIds.Contains(x.Id));
+            .GetAsync(cancellationToken, x => productIds.Contains(x.Id));
         var mealTypeEntities = await UnitOfWork.MealOfTheDayTypeRepository
-            .GetAsync(x => mealTypeIds.Contains(x.Id));
+            .GetAsync(cancellationToken, x => mealTypeIds.Contains(x.Id));
 
         var errors = new List<string>();
 

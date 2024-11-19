@@ -20,9 +20,9 @@ public abstract class BaseService<IRepository, TEntity> : IDisposable
 
     protected abstract IRepository Repository { get; }
 
-    protected async Task<Result<TEntity>> GetEntityAsync (Guid id)
+    protected async Task<Result<TEntity>> GetEntityAsync (Guid id, CancellationToken cancellationToken)
     {
-        var entity = await Repository.GetByIdAsync(id);
+        var entity = await Repository.GetByIdAsync(id, cancellationToken);
 
         if (entity == null)
             return Result.Failure<TEntity>(
@@ -31,9 +31,9 @@ public abstract class BaseService<IRepository, TEntity> : IDisposable
         return Result.Success(entity);
     }
 
-    public Task<int> SaveAsync()
+    public Task<int> SaveAsync(CancellationToken cancellationToken)
     {
-        return UnitOfWork.SaveAsync();
+        return UnitOfWork.SaveAsync(cancellationToken);
     }
 
     public void Dispose ()

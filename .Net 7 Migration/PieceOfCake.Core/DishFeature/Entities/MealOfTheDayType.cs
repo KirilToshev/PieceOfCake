@@ -20,13 +20,13 @@ public class MealOfTheDayType : GuidEntity
 
     public virtual Name Name { get; private set; }
 
-    public static async Task<Result<MealOfTheDayType>> Create (string? name, IResources resources, IUnitOfWork unitOfWork)
+    public static async Task<Result<MealOfTheDayType>> Create (string? name, IResources resources, IUnitOfWork unitOfWork, CancellationToken cancellationToken)
     {
         var nameResult = Name.Create(name, resources, x => x.CommonTerms.MealOfTheDayType, Constants.FIFTY);
         if (nameResult.IsFailure)
             return nameResult.ConvertFailure<MealOfTheDayType>();
 
-        var mealOfTheDayType = await unitOfWork.MealOfTheDayTypeRepository.FirstOrDefaultAsync(x => x.Name == name);
+        var mealOfTheDayType = await unitOfWork.MealOfTheDayTypeRepository.FirstOrDefaultAsync(cancellationToken, x => x.Name == name);
         if (mealOfTheDayType != null)
             return Result.Failure<MealOfTheDayType>(resources.GenereteSentence(x => x.UserErrors.NameAlreadyExists, x => mealOfTheDayType.Name));
 
@@ -34,9 +34,9 @@ public class MealOfTheDayType : GuidEntity
         return entity;
     }
 
-    public virtual async Task<Result<MealOfTheDayType>> Update (string? name, IResources resources, IUnitOfWork unitOfWork)
+    public virtual async Task<Result<MealOfTheDayType>> Update (string? name, IResources resources, IUnitOfWork unitOfWork, CancellationToken cancellationToken)
     {
-        var mealOfTheDayTypeResult = await Create(name, resources, unitOfWork);
+        var mealOfTheDayTypeResult = await Create(name, resources, unitOfWork, cancellationToken);
         if (mealOfTheDayTypeResult.IsFailure)
             return mealOfTheDayTypeResult.ConvertFailure<MealOfTheDayType>();
 
