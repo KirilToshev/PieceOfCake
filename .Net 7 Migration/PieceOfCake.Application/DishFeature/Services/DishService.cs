@@ -137,7 +137,7 @@ public class DishService : BaseService<IDishRepository, Dish>, IDishService
             var measureUnit = measureUnitEntities.First(mu => mu.Id == ingredientDto.MeasureUnitId);
             var product = productEntities.First(product => product.Id == ingredientDto.ProductId);
 
-            var ingredientResult = Ingredient.Create(ingredientDto.Quantity, measureUnit!, product!, I18N);
+            var ingredientResult = Ingredient.Create(ingredientDto.Quantity, measureUnit, product, I18N);
             if(ingredientResult.IsFailure)
             {
                 errors.Add(ingredientResult.Error);

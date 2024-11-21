@@ -8,5 +8,5 @@ public record DishCreateDto
     public required string Description { get; init; }
     public required byte ServingSize { get; init; }
     public IEnumerable<MealOfTheDayTypeDto> MealOfTheDayTypes { get; init; } = new List<MealOfTheDayTypeDto>();
-    public IEnumerable<AddIngredientDto> IngredientsDtos { get; init; } = new List<AddIngredientDto>();
+    public IEnumerable<IngredientCreateDto> IngredientsDtos { get; init; } = new List<IngredientCreateDto>();
 }

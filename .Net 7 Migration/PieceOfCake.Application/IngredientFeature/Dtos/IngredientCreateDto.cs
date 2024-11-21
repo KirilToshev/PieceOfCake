@@ -1,6 +1,6 @@
 ﻿namespace PieceOfCake.Application.IngredientFeature.Dtos;
 
-public record AddIngredientDto
+public record IngredientCreateDto
 {
     public required float Quantity { get; init; }
 

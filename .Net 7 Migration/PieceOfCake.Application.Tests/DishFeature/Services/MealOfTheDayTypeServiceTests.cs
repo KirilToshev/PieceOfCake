@@ -10,7 +10,7 @@ using PieceOfCake.Core.MenuFeature.Entities;
 using PieceOfCake.Tests.Common.Fakes.Interfaces;
 using System.Linq.Expressions;
 
-namespace PieceOfCake.Application.Tests.IngredientFeature.Services;
+namespace PieceOfCake.Application.Tests.DishFeature.Services;
 
 public class MealOfTheDayTypeServiceTests : TestsBase
 {
@@ -31,7 +31,7 @@ public class MealOfTheDayTypeServiceTests : TestsBase
         _uowMock.DishRepository.Returns(_dishRepoMock);
         _uowMock.MenuRepository.Returns(_menuRepoMock);
         _mealOfTheDayTypeRepoMock.FirstOrDefaultAsync(
-            Arg.Any<CancellationToken>(), 
+            Arg.Any<CancellationToken>(),
             Arg.Any<Expression<Func<MealOfTheDayType, bool>>>())
             .Returns(Task.FromResult(null as MealOfTheDayType));
         _mealOfTheDayTypeMock = Substitute.For<MealOfTheDayType>();
@@ -39,7 +39,7 @@ public class MealOfTheDayTypeServiceTests : TestsBase
     }
 
     [Fact]
-    public async Task Get_Should_Return_User_Error_If_Id_Is_Not_Found ()
+    public async Task Get_Should_Return_User_Error_If_Id_Is_Not_Found()
     {
         var notExistingId = Fixture.Create<Guid>();
         _mealOfTheDayTypeRepoMock.GetByIdAsync(Arg.Is(notExistingId), Arg.Any<CancellationToken>())
@@ -116,7 +116,7 @@ public class MealOfTheDayTypeServiceTests : TestsBase
 
 
     [Fact]
-    public async Task Update_Should_Return_User_Error_If_Id_Is_Not_Found ()
+    public async Task Update_Should_Return_User_Error_If_Id_Is_Not_Found()
     {
         var notExistingId = Fixture.Create<Guid>();
         _mealOfTheDayTypeRepoMock.GetByIdAsync(notExistingId, CancellationToken.None)
@@ -133,7 +133,7 @@ public class MealOfTheDayTypeServiceTests : TestsBase
     }
 
     [Fact]
-    public async Task Update_Should_Succseed_If_Id_Is_Found ()
+    public async Task Update_Should_Succseed_If_Id_Is_Found()
     {
         //Arrange
         var id = Fixture.Create<Guid>();
@@ -157,7 +157,7 @@ public class MealOfTheDayTypeServiceTests : TestsBase
     }
 
     [Fact]
-    public async Task Delete_Should_Return_User_Error_If_Id_Is_Not_Found ()
+    public async Task Delete_Should_Return_User_Error_If_Id_Is_Not_Found()
     {
         var notExistingId = Fixture.Create<Guid>();
         _mealOfTheDayTypeRepoMock.GetByIdAsync(Arg.Is(notExistingId), CancellationToken.None)
@@ -189,7 +189,7 @@ public class MealOfTheDayTypeServiceTests : TestsBase
         _mealOfTheDayTypeRepoMock.GetByIdAsync(id, CancellationToken.None)
             .Returns(Task.FromResult(_mealOfTheDayTypeMock));
         _dishRepoMock.GetAsync(Arg.Any<CancellationToken>(), Arg.Any<Expression<Func<Dish, bool>>>(), null)
-            .Returns(Task.FromResult( dishes as IReadOnlyCollection<Dish>));
+            .Returns(Task.FromResult(dishes as IReadOnlyCollection<Dish>));
         _menuRepoMock.GetAsync(Arg.Any<CancellationToken>(), Arg.Any<Expression<Func<Menu, bool>>>(), null)
             .Returns(Task.FromResult(menus as IReadOnlyCollection<Menu>));
         var sut = new MealOfTheDayTypeService(Resources, _uowMock);
@@ -203,7 +203,7 @@ public class MealOfTheDayTypeServiceTests : TestsBase
     }
 
     [Fact]
-    public async Task Delete_Should_Succseed_If_Id_Is_Found ()
+    public async Task Delete_Should_Succseed_If_Id_Is_Found()
     {
         var id = Fixture.Create<Guid>();
         _mealOfTheDayTypeRepoMock.GetByIdAsync(id, CancellationToken.None)
