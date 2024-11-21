@@ -36,7 +36,7 @@ public class MealOfTheDayTypeService :
     public Task<Result<MealOfTheDayTypeDto>> UpdateAsync (MealOfTheDayTypeUpdateDto mealOfTheDayTypeUpdateDto, CancellationToken cancellationToken)
     {
         return GetEntityAsync(mealOfTheDayTypeUpdateDto.Id, cancellationToken)
-            .Bind(mt => mt.Update(mealOfTheDayTypeUpdateDto.Name, I18N, UnitOfWork, cancellationToken)
+            .Bind(mt => mt.UpdateAsync(mealOfTheDayTypeUpdateDto.Name, I18N, UnitOfWork, cancellationToken)
             .Map(async mealOfTheDayType =>
             {
                 Repository.Update(mealOfTheDayType);

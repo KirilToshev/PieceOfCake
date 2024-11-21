@@ -4,6 +4,6 @@ using PieceOfCake.Application.IngredientFeature.Dtos;
 namespace PieceOfCake.Application.IngredientFeature.Services;
 
 public interface IMeasureUnitService : 
-    ICreateAndUpdateService<MeasureUnitGetDto, MeasureUnitCreateDto, MeasureUnitUpdateDto>
+    ICreateAndUpdateService<MeasureUnitGetDto, MealOfTheDayTypeCreateDto, MeasureUnitUpdateDto>
 {
 }

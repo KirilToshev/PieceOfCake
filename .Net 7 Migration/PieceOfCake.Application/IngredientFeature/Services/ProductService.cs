@@ -33,7 +33,7 @@ public class ProductService : BaseService<IProductRepository, Product>, IProduct
     public async Task<Result<ProductGetDto>> UpdateAsync (ProductUpdateDto updateDto, CancellationToken cancellationToken)
     {
         return await GetEntityAsync(updateDto.Id, cancellationToken)
-            .Bind(product => product.UpdateAsync(product.Name, I18N, UnitOfWork, cancellationToken)
+            .Bind(product => product.UpdateAsync(updateDto.Name, I18N, UnitOfWork, cancellationToken)
             .Map(async product =>
             {
                 Repository.Update(product);

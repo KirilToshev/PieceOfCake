@@ -92,7 +92,7 @@ public class MealOfTheDayTypeTests : TestsBase
             .ReturnsAsync(mealType.Value);
 
         //Act
-        var result = await mealType.Value.Update(updatedName, Resources, _uowMock.Object, CancellationToken.None);
+        var result = await mealType.Value.UpdateAsync(updatedName, Resources, _uowMock.Object, CancellationToken.None);
 
         Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"{Resources.CommonTerms.MealOfTheDayType} must have name."));
@@ -109,7 +109,7 @@ public class MealOfTheDayTypeTests : TestsBase
             .ReturnsAsync(mealType.Value);
 
         //Act
-        var result = await mealType.Value.Update(Fixture.CreateStringOfLength(Constants.FIFTY + 1), Resources, _uowMock.Object, CancellationToken.None);
+        var result = await mealType.Value.UpdateAsync(Fixture.CreateStringOfLength(Constants.FIFTY + 1), Resources, _uowMock.Object, CancellationToken.None);
 
         Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"{Resources.CommonTerms.MealOfTheDayType} name should not exceed {Constants.FIFTY} symbols."));
@@ -126,7 +126,7 @@ public class MealOfTheDayTypeTests : TestsBase
             .ReturnsAsync(mealType.Value);
 
         //Act
-        var result = await mealType.Value.Update(name, Resources, _uowMock.Object, CancellationToken.None);
+        var result = await mealType.Value.UpdateAsync(name, Resources, _uowMock.Object, CancellationToken.None);
 
         //Assert
         Assert.That(result.IsFailure);
@@ -142,7 +142,7 @@ public class MealOfTheDayTypeTests : TestsBase
         var updatedName = Fixture.CreateStringOfLength(Constants.TWO);
 
         //Act
-        var result = await measureUnit.Value.Update(updatedName, Resources, _uowMock.Object, CancellationToken.None);
+        var result = await measureUnit.Value.UpdateAsync(updatedName, Resources, _uowMock.Object, CancellationToken.None);
 
         //Assert
         Assert.That(result.IsSuccess);

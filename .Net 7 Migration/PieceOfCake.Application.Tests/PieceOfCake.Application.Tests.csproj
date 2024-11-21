@@ -35,7 +35,6 @@
 
   <ItemGroup>
     <Folder Include="MenuFeature\Services\" />
-    <Folder Include="DishFeature\Services\" />
   </ItemGroup>
 
 </Project>

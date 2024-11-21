@@ -65,6 +65,52 @@ public class MeasureUnitServiceTests : TestsBase
     }
 
     [Fact]
+    public async Task GetAll_Should_Return_Two_Products()
+    {
+        var litter = _measureUnitFakes.Litter;
+        var kg = _measureUnitFakes.Kg;
+        _measureUnitRepoMock.GetAsync(Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(new MeasureUnit[] { litter, kg } as IReadOnlyCollection<MeasureUnit>));
+
+        var sut = new MeasureUnitService(Resources, _uowMock);
+
+        var result = await sut.GetAllAsync(CancellationToken.None);
+
+        Assert.True(result.Count == 2);
+        Assert.Collection(result,
+            product1 =>
+            {
+                Assert.Equal(litter.Id, product1.Id);
+                Assert.Equal(litter.Name.Value, product1.Name);
+            },
+            product2 =>
+            {
+                Assert.Equal(kg.Id, product2.Id);
+                Assert.Equal(kg.Name.Value, product2.Name);
+            });
+    }
+
+
+    [Fact]
+    public async Task Create_Should_Succseed_If_Data_Is_Valid()
+    {
+        //Arrange
+        var createDto = Fixture.Create<MealOfTheDayTypeCreateDto>();
+
+        var sut = new MeasureUnitService(Resources, _uowMock);
+
+        //Act
+        var result = await sut.CreateAsync(createDto, CancellationToken.None);
+
+        //Assert
+        _measureUnitRepoMock.Received(1).Insert(Arg.Any<MeasureUnit>());
+        _uowMock.Received(1).SaveAsync(Arg.Any<CancellationToken>());
+        Assert.True(result.IsSuccess);
+        Assert.Equal(createDto.Name, result.Value.Name);
+    }
+
+
+    [Fact]
     public async Task Update_Should_Return_User_Error_If_Id_Is_Not_Found ()
     {
         var notExistingId = Fixture.Create<Guid>();
@@ -75,6 +121,8 @@ public class MeasureUnitServiceTests : TestsBase
 
         var result = await sut.UpdateAsync(new MeasureUnitUpdateDto() { Id = notExistingId, Name = Fixture.Create<string>() }, CancellationToken.None);
 
+        _measureUnitRepoMock.DidNotReceiveWithAnyArgs().Insert(default);
+        await _uowMock.DidNotReceiveWithAnyArgs().SaveAsync(default);
         Assert.True(result.IsFailure);
         Assert.Equal($"Element with Id={notExistingId} does not exists.", result.Error);
     }
@@ -97,6 +145,8 @@ public class MeasureUnitServiceTests : TestsBase
         var result = await sut.UpdateAsync(new MeasureUnitUpdateDto() { Id = id, Name = updatedName }, CancellationToken.None);
 
         //Assert
+        _measureUnitRepoMock.Received(1).Update(Arg.Any<MeasureUnit>());
+        await _uowMock.Received(1).SaveAsync(Arg.Any<CancellationToken>());
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Value);
     }
@@ -109,8 +159,31 @@ public class MeasureUnitServiceTests : TestsBase
 
         var result = await sut.DeleteAsync(notExistingId, CancellationToken.None);
 
+        _measureUnitRepoMock.DidNotReceiveWithAnyArgs().Delete(default);
+        await _uowMock.DidNotReceiveWithAnyArgs().SaveAsync(default);
         Assert.True(result.IsFailure);
         Assert.Equal(string.Format("Element with Id={0} does not exists.", notExistingId), result.Error);
+    }
+
+
+    [Fact]
+    public async Task Delete_Should_Fail_If_MeasureUnit_Is_In_Use()
+    {
+        var id = Fixture.Create<Guid>();
+        _measureUnitRepoMock.GetByIdAsync(id, CancellationToken.None)
+            .Returns(Task.FromResult(_measureUnitMock));
+        var dishMock = Substitute.For<Dish>();
+        _dishRepoMock.GetAsync(Arg.Any<CancellationToken>(), Arg.Any<Expression<Func<Dish, bool>>>(), null)
+            .Returns(Task.FromResult(new Dish[] { dishMock } as IReadOnlyCollection<Dish>));
+
+        var sut = new MeasureUnitService(Resources, _uowMock);
+
+        var result = await sut.DeleteAsync(id, CancellationToken.None);
+
+        _measureUnitRepoMock.DidNotReceiveWithAnyArgs().Delete(default);
+        await _uowMock.DidNotReceiveWithAnyArgs().SaveAsync(default);
+        Assert.True(result.IsFailure);
+        Assert.Equal($"{Resources.CommonTerms.MeasureUnit} can't be deleted, because it is still being used.", result.Error);
     }
 
     [Fact]
@@ -126,24 +199,8 @@ public class MeasureUnitServiceTests : TestsBase
 
         var result = await sut.DeleteAsync(id, CancellationToken.None);
 
+        _measureUnitRepoMock.Received(1).Delete(Arg.Any<MeasureUnit>());
+        await _uowMock.Received(1).SaveAsync(Arg.Any<CancellationToken>());
         Assert.True(result.IsSuccess);
-    }
-
-    [Fact]
-    public async Task Delete_Should_Fail_If_MeasureUnit_Is_In_Use ()
-    {
-        var id = Fixture.Create<Guid>();
-        _measureUnitRepoMock.GetByIdAsync(id, CancellationToken.None)
-            .Returns(Task.FromResult(_measureUnitMock));
-        var dishMock = Substitute.For<Dish>();
-        _dishRepoMock.GetAsync(Arg.Any<CancellationToken>(), Arg.Any<Expression<Func<Dish, bool>>>(), null)
-            .Returns(Task.FromResult(new Dish[] { dishMock } as IReadOnlyCollection<Dish>));
-
-        var sut = new MeasureUnitService(Resources, _uowMock);
-
-        var result = await sut.DeleteAsync(id, CancellationToken.None);
-
-        Assert.True(result.IsFailure);
-        Assert.Equal($"{Resources.CommonTerms.MeasureUnit} can't be deleted, because it is still being used.", result.Error);
     }
 }

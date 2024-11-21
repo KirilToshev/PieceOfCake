@@ -34,7 +34,7 @@ public class MealOfTheDayType : GuidEntity
         return entity;
     }
 
-    public virtual async Task<Result<MealOfTheDayType>> Update (string? name, IResources resources, IUnitOfWork unitOfWork, CancellationToken cancellationToken)
+    public virtual async Task<Result<MealOfTheDayType>> UpdateAsync (string? name, IResources resources, IUnitOfWork unitOfWork, CancellationToken cancellationToken)
     {
         var mealOfTheDayTypeResult = await Create(name, resources, unitOfWork, cancellationToken);
         if (mealOfTheDayTypeResult.IsFailure)
