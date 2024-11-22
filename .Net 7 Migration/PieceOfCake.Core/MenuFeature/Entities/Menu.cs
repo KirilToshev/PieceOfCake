@@ -13,6 +13,8 @@ namespace PieceOfCake.Core.MenuFeature.Entities;
 
 public class Menu : GuidEntity
 {
+    private IEnumerable<Dish> _dishes;
+
     protected Menu ()
     {
 
@@ -48,6 +50,8 @@ public class Menu : GuidEntity
             .Aggregate((curr, next) => { curr.AddRange(next); return curr; })
             .GroupBy(kvPair => kvPair.Id)
             .ToDictionary(x => x.Key, x => x.Count());
+
+    public virtual IReadOnlyCollection<Dish> Dishes => _dishes.ToList().AsReadOnly();
 
     public static Result<Menu> Create (
         DateTime startDate,
@@ -107,6 +111,11 @@ public class Menu : GuidEntity
 
         if (result.IsSuccess)
             Calendar = result.Value;
+
+        var dishesIds = Calendar.SelectMany(ci => ci.MealOfTheDayTypes.SelectMany(mt => mt.Dishes))
+                                .Select(dish => dish.Id).Distinct();
+
+        _dishes = dishes.Where(dish => dishesIds.Contains(dish.Id));
 
         return result;
     }

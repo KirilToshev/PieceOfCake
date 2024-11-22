@@ -1,17 +1,14 @@
 using AutoFixture;
-using CSharpFunctionalExtensions;
 using NSubstitute;
 using PieceOfCake.Application.DishFeature.Dtos;
 using PieceOfCake.Application.DishFeature.Services;
 using PieceOfCake.Application.IngredientFeature.Dtos;
 using PieceOfCake.Core.Common.Persistence;
-using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.DishFeature.Entities;
 using PieceOfCake.Core.DishFeature.Enumerations;
 using PieceOfCake.Core.IngredientFeature.Entities;
 using PieceOfCake.Core.MenuFeature.Entities;
 using PieceOfCake.Tests.Common;
-using PieceOfCake.Tests.Common.Fakes;
 using PieceOfCake.Tests.Common.Fakes.Interfaces;
 using System.Linq.Expressions;
 
@@ -37,12 +34,12 @@ public class DishServiceTests : TestsBase
         _productRepoMock = Substitute.For<IProductRepository>();
         _dishRepoMock = Substitute.For<IDishRepository>();
         _menuRepoMock = Substitute.For<IMenuRepository>();
+        
         _uowMock.MealOfTheDayTypeRepository.Returns(_mealOfTheDayTypeRepoMock);
         _uowMock.MeasureUnitRepository.Returns(_measureUnitRepoMock);
         _uowMock.ProductRepository.Returns(_productRepoMock);
         _uowMock.DishRepository.Returns(_dishRepoMock);
         _uowMock.MenuRepository.Returns(_menuRepoMock);
-
 
         _dishFakes = GetRequiredService<IDishFakes>();
         _mealOfTheDayTypeFakes = GetRequiredService<IMealOfTheDayTypeFakes>();
@@ -52,6 +49,10 @@ public class DishServiceTests : TestsBase
             Arg.Any<CancellationToken>(),
             Arg.Any<Expression<Func<Dish, bool>>>())
             .Returns(Task.FromResult(null as Dish));
+
+        _menuRepoMock.FirstOrDefaultAsync(Arg.Any<CancellationToken>(),
+            Arg.Any<Expression<Func<Menu, bool>>>(), null)
+            .Returns(Task.FromResult<Menu?>(null as Menu));
     }
 
     [Fact]
@@ -147,11 +148,7 @@ public class DishServiceTests : TestsBase
             Name = Fixture.Create<string>(),
             Description = Fixture.Create<string>(),
             ServingSize = 3,
-            MealOfTheDayTypes = [new MealOfTheDayTypeDto
-            {
-                Id = breakfast.Id, 
-                Name = breakfast.Name 
-            }],
+            MealOfTheDayTypeIds = [breakfast.Id],
             IngredientsDtos = [new IngredientCreateDto
             {
                 Quantity = 2,
@@ -164,14 +161,14 @@ public class DishServiceTests : TestsBase
             Arg.Any<Expression<Func<MeasureUnit, bool>>>())
             .Returns(Task.FromResult(new MeasureUnit[] 
             { 
-                _ingredientFakes.Two_Kilogram_Of_Peppers.MeasureUnit 
+                kg
             } as IReadOnlyCollection<MeasureUnit>));
 
         _productRepoMock.GetAsync(Arg.Any<CancellationToken>(),
             Arg.Any<Expression<Func<Product, bool>>>())
             .Returns(Task.FromResult(new Product[]
             {
-                _ingredientFakes.Two_Kilogram_Of_Peppers.Product
+                pepper
             } as IReadOnlyCollection<Product>));
 
         _mealOfTheDayTypeRepoMock.GetAsync(Arg.Any<CancellationToken>(),
@@ -195,113 +192,424 @@ public class DishServiceTests : TestsBase
         Assert.Equal(DishState.Draft.ToString() , result.Value.DishState);
     }
 
+    [Fact]
+    public async Task Create_Should_Return_Error_If_Ingredients_Are_Invalid()
+    {
+        //Arrange
+        var invalidMeasureUnitId = Fixture.Create<Guid>();
+        var invalidProductId = Fixture.Create<Guid>();
+        var invalidMealOfTheDayTypeId = Fixture.Create<Guid>();
+        var breakfast = _mealOfTheDayTypeFakes.Breakfast;
+        var pepper = _ingredientFakes.Two_Kilogram_Of_Peppers.Product;
+        var kg = _ingredientFakes.Two_Kilogram_Of_Peppers.MeasureUnit;
+        var createDto = new DishCreateDto
+        {
+            Name = Fixture.Create<string>(),
+            Description = Fixture.Create<string>(),
+            ServingSize = 3,
+            MealOfTheDayTypeIds = [invalidMealOfTheDayTypeId],
+            IngredientsDtos = [new IngredientCreateDto
+            {
+                Quantity = 2,
+                MeasureUnitId = invalidMeasureUnitId,
+                ProductId = invalidProductId
+            }]
+        };
 
-    //[Fact]
-    //public async Task Update_Should_Return_User_Error_If_Id_Is_Not_Found()
-    //{
-    //    var notExistingId = Fixture.Create<Guid>();
-    //    _mealOfTheDayTypeRepoMock.GetByIdAsync(notExistingId, CancellationToken.None)
-    //        .Returns(Task.FromResult(null as MealOfTheDayType));
+        _measureUnitRepoMock.GetAsync(Arg.Any<CancellationToken>(),
+            Arg.Any<Expression<Func<MeasureUnit, bool>>>())
+            .Returns(Task.FromResult(new MeasureUnit[]
+            {
+                kg
+            } as IReadOnlyCollection<MeasureUnit>));
 
-    //    var sut = new MealOfTheDayTypeService(Resources, _uowMock);
+        _productRepoMock.GetAsync(Arg.Any<CancellationToken>(),
+            Arg.Any<Expression<Func<Product, bool>>>())
+            .Returns(Task.FromResult(new Product[]
+            {
+                pepper
+            } as IReadOnlyCollection<Product>));
 
-    //    var result = await sut.UpdateAsync(new MealOfTheDayTypeUpdateDto() { Id = notExistingId, Name = Fixture.Create<string>() }, CancellationToken.None);
+        _mealOfTheDayTypeRepoMock.GetAsync(Arg.Any<CancellationToken>(),
+            Arg.Any<Expression<Func<MealOfTheDayType, bool>>>())
+            .Returns(Task.FromResult(new MealOfTheDayType[]
+            {
+                breakfast
+            } as IReadOnlyCollection<MealOfTheDayType>));
 
-    //    _mealOfTheDayTypeRepoMock.DidNotReceiveWithAnyArgs().Insert(default);
-    //    await _uowMock.DidNotReceiveWithAnyArgs().SaveAsync(default);
-    //    Assert.True(result.IsFailure);
-    //    Assert.Equal($"Element with Id={notExistingId} does not exists.", result.Error);
-    //}
+        var expectedError = $"Element with Id={invalidMeasureUnitId} does not exists.; " +
+                            $"Element with Id={invalidProductId} does not exists.; " +
+                            $"Element with Id={invalidMealOfTheDayTypeId} does not exists.";
 
-    //[Fact]
-    //public async Task Update_Should_Succseed_If_Id_Is_Found()
-    //{
-    //    //Arrange
-    //    var id = Fixture.Create<Guid>();
-    //    var updatedName = Fixture.Create<string>();
-    //    var breakfast = _mealOfTheDayTypeFakes.Breakfast;
-    //    var dinner = _mealOfTheDayTypeFakes.Dinner;
-    //    _mealOfTheDayTypeMock.UpdateAsync(Arg.Is(updatedName), Arg.Any<IResources>(), Arg.Any<IUnitOfWork>(), Arg.Any<CancellationToken>())
-    //        .Returns(Result.Success(dinner));
-    //    _mealOfTheDayTypeRepoMock.GetByIdAsync(Arg.Is(id), Arg.Any<CancellationToken>())
-    //        .Returns(Task.FromResult(breakfast));
-    //    var sut = new MealOfTheDayTypeService(Resources, _uowMock);
+        //Act
+        var sut = new DishService(Resources, _uowMock);
+        var result = await sut.CreateAsync(createDto, CancellationToken.None);
 
-    //    //Act
-    //    var result = await sut.UpdateAsync(new MealOfTheDayTypeUpdateDto() { Id = id, Name = updatedName }, CancellationToken.None);
+        //Assert
+        _dishRepoMock.DidNotReceiveWithAnyArgs().Insert(default);
+        _uowMock.DidNotReceiveWithAnyArgs().SaveAsync(default);
+        
+        Assert.True(result.IsFailure);
+        Assert.Equal(expectedError, result.Error);
+    }
 
-    //    //Assert
-    //    _mealOfTheDayTypeRepoMock.Received(1).Update(Arg.Any<MealOfTheDayType>());
-    //    await _uowMock.Received(1).SaveAsync(Arg.Any<CancellationToken>());
-    //    Assert.True(result.IsSuccess);
-    //    Assert.NotNull(result.Value);
-    //}
+    [Fact]
+    public async Task Create_Should_Return_Error_If_Ingredient_Quantity_Is_Invalid()
+    {
+        //Arrange
+        var invalidQuantity = -2;
+        var breakfast = _mealOfTheDayTypeFakes.Breakfast;
+        var pepper = _ingredientFakes.Two_Kilogram_Of_Peppers.Product;
+        var kg = _ingredientFakes.Two_Kilogram_Of_Peppers.MeasureUnit;
+        var createDto = new DishCreateDto
+        {
+            Name = Fixture.Create<string>(),
+            Description = Fixture.Create<string>(),
+            ServingSize = 3,
+            MealOfTheDayTypeIds = [breakfast.Id],
+            IngredientsDtos = [new IngredientCreateDto
+            {
+                Quantity = invalidQuantity,
+                MeasureUnitId = kg.Id,
+                ProductId = pepper.Id
+            },
+            new IngredientCreateDto
+            {
+                Quantity = invalidQuantity,
+                MeasureUnitId = kg.Id,
+                ProductId = pepper.Id
+            }]
+        };
 
-    //[Fact]
-    //public async Task Delete_Should_Return_User_Error_If_Id_Is_Not_Found()
-    //{
-    //    var notExistingId = Fixture.Create<Guid>();
-    //    _mealOfTheDayTypeRepoMock.GetByIdAsync(Arg.Is(notExistingId), CancellationToken.None)
-    //        .Returns(Task.FromResult(null as MealOfTheDayType));
-    //    var sut = new MealOfTheDayTypeService(Resources, _uowMock);
+        _measureUnitRepoMock.GetAsync(Arg.Any<CancellationToken>(),
+            Arg.Any<Expression<Func<MeasureUnit, bool>>>())
+            .Returns(Task.FromResult(new MeasureUnit[]
+            {
+                kg
+            } as IReadOnlyCollection<MeasureUnit>));
 
-    //    var result = await sut.DeleteAsync(notExistingId, CancellationToken.None);
+        _productRepoMock.GetAsync(Arg.Any<CancellationToken>(),
+            Arg.Any<Expression<Func<Product, bool>>>())
+            .Returns(Task.FromResult(new Product[]
+            {
+                pepper
+            } as IReadOnlyCollection<Product>));
 
-    //    _mealOfTheDayTypeRepoMock.DidNotReceiveWithAnyArgs().Delete(default);
-    //    await _uowMock.DidNotReceiveWithAnyArgs().SaveAsync(default);
-    //    Assert.True(result.IsFailure);
-    //    Assert.Equal(string.Format("Element with Id={0} does not exists.", notExistingId), result.Error);
-    //}
+        _mealOfTheDayTypeRepoMock.GetAsync(Arg.Any<CancellationToken>(),
+            Arg.Any<Expression<Func<MealOfTheDayType, bool>>>())
+            .Returns(Task.FromResult(new MealOfTheDayType[]
+            {
+                breakfast
+            } as IReadOnlyCollection<MealOfTheDayType>));
 
-    //public static IEnumerable<object[]> TestGetPersonItemsData =>
-    //    new List<object[]>
-    //    {
-    //        new object[] { new Dish[] { Substitute.For<Dish>() }, new Menu[0] },
-    //        new object[] { new Dish[0], new Menu[] { Substitute.For<Menu>() } },
-    //    };
+        var expectedError = $"Quantity value must be grater than zero.; " +
+                            $"Quantity value must be grater than zero.";
 
-    //[Theory]
-    //[MemberData(nameof(TestGetPersonItemsData))]
-    //public async Task Delete_Should_Fail_If_MealOfTheDayType_Is_In_Use(
-    //    IEnumerable<Dish> dishes,
-    //    IEnumerable<Menu> menus)
-    //{
-    //    var id = Fixture.Create<Guid>();
-    //    _mealOfTheDayTypeRepoMock.GetByIdAsync(id, CancellationToken.None)
-    //        .Returns(Task.FromResult(_mealOfTheDayTypeMock));
-    //    _dishRepoMock.GetAsync(Arg.Any<CancellationToken>(), Arg.Any<Expression<Func<Dish, bool>>>(), null)
-    //        .Returns(Task.FromResult(dishes as IReadOnlyCollection<Dish>));
-    //    _menuRepoMock.GetAsync(Arg.Any<CancellationToken>(), Arg.Any<Expression<Func<Menu, bool>>>(), null)
-    //        .Returns(Task.FromResult(menus as IReadOnlyCollection<Menu>));
-    //    var sut = new MealOfTheDayTypeService(Resources, _uowMock);
+        //Act
+        var sut = new DishService(Resources, _uowMock);
+        var result = await sut.CreateAsync(createDto, CancellationToken.None);
 
-    //    var result = await sut.DeleteAsync(id, CancellationToken.None);
+        //Assert
+        _dishRepoMock.DidNotReceiveWithAnyArgs().Insert(default);
+        _uowMock.DidNotReceiveWithAnyArgs().SaveAsync(default);
 
-    //    _mealOfTheDayTypeRepoMock.DidNotReceiveWithAnyArgs().Delete(default);
-    //    await _uowMock.DidNotReceiveWithAnyArgs().SaveAsync(default);
-    //    Assert.True(result.IsFailure);
-    //    Assert.Equal($"{Resources.CommonTerms.MealOfTheDayType} can't be deleted, because it is still being used.", result.Error);
-    //}
+        Assert.True(result.IsFailure);
+        Assert.Equal(expectedError, result.Error);
+    }
 
-    //[Fact]
-    //public async Task Delete_Should_Succseed_If_Id_Is_Found()
-    //{
-    //    var id = Fixture.Create<Guid>();
-    //    _mealOfTheDayTypeRepoMock.GetByIdAsync(id, CancellationToken.None)
-    //        .Returns(Task.FromResult(_mealOfTheDayTypeMock));
+    [Fact]
+    public async Task Create_Should_Return_Error_If_Ingredient_Are_Not_Unique()
+    {
+        //Arrange
+        var breakfast = _mealOfTheDayTypeFakes.Breakfast;
+        var pepper = _ingredientFakes.Two_Kilogram_Of_Peppers.Product;
+        var kg = _ingredientFakes.Two_Kilogram_Of_Peppers.MeasureUnit;
+        var createDto = new DishCreateDto
+        {
+            Name = Fixture.Create<string>(),
+            Description = Fixture.Create<string>(),
+            ServingSize = 3,
+            MealOfTheDayTypeIds = [breakfast.Id],
+            IngredientsDtos = [new IngredientCreateDto
+            {
+                Quantity = 1,
+                MeasureUnitId = kg.Id,
+                ProductId = pepper.Id
+            },
+            new IngredientCreateDto
+            {
+                Quantity = 2,
+                MeasureUnitId = kg.Id,
+                ProductId = pepper.Id
+            }]
+        };
 
-    //    _dishRepoMock.GetAsync(Arg.Any<CancellationToken>(), Arg.Any<Expression<Func<Dish, bool>>>(), null)
-    //        .Returns(Task.FromResult(new Dish[0] as IReadOnlyCollection<Dish>));
+        _measureUnitRepoMock.GetAsync(Arg.Any<CancellationToken>(),
+            Arg.Any<Expression<Func<MeasureUnit, bool>>>())
+            .Returns(Task.FromResult(new MeasureUnit[]
+            {
+                kg
+            } as IReadOnlyCollection<MeasureUnit>));
 
-    //    _menuRepoMock.GetAsync(Arg.Any<CancellationToken>(), Arg.Any<Expression<Func<Menu, bool>>>(), null)
-    //        .Returns(Task.FromResult(new Menu[0] as IReadOnlyCollection<Menu>));
+        _productRepoMock.GetAsync(Arg.Any<CancellationToken>(),
+            Arg.Any<Expression<Func<Product, bool>>>())
+            .Returns(Task.FromResult(new Product[]
+            {
+                pepper
+            } as IReadOnlyCollection<Product>));
 
-    //    var sut = new MealOfTheDayTypeService(Resources, _uowMock);
+        _mealOfTheDayTypeRepoMock.GetAsync(Arg.Any<CancellationToken>(),
+            Arg.Any<Expression<Func<MealOfTheDayType, bool>>>())
+            .Returns(Task.FromResult(new MealOfTheDayType[]
+            {
+                breakfast
+            } as IReadOnlyCollection<MealOfTheDayType>));
 
-    //    var result = await sut.DeleteAsync(id, CancellationToken.None);
+        var expectedError = $"There should be no product duplicates in the current dish. " +
+            $"Check your products in the ingredients list.";
 
-    //    _mealOfTheDayTypeRepoMock.Received(1).Delete(Arg.Any<MealOfTheDayType>());
-    //    await _uowMock.Received(1).SaveAsync(Arg.Any<CancellationToken>());
-    //    Assert.True(result.IsSuccess);
-    //}
+        //Act
+        var sut = new DishService(Resources, _uowMock);
+        var result = await sut.CreateAsync(createDto, CancellationToken.None);
+
+        //Assert
+        _dishRepoMock.DidNotReceiveWithAnyArgs().Insert(default);
+        _uowMock.DidNotReceiveWithAnyArgs().SaveAsync(default);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal(expectedError, result.Error);
+    }
+
+    [Fact]
+    public async Task Update_Should_Succseed_If_Data_Is_Valid()
+    {
+        //Arrange
+        var dinnerDish = _dishFakes.Dinner();
+        var breakfast = _mealOfTheDayTypeFakes.Breakfast;
+        var pepper = _ingredientFakes.Two_Kilogram_Of_Peppers.Product;
+        var kg = _ingredientFakes.Two_Kilogram_Of_Peppers.MeasureUnit;
+        var updateDto = new DishUpdateDto
+        {
+            Id = dinnerDish.Id,
+            Name = Fixture.Create<string>(),
+            Description = Fixture.Create<string>(),
+            ServingSize = 3,
+            MealOfTheDayTypeIds = [breakfast.Id],
+            IngredientsDtos = [new IngredientCreateDto
+            {
+                Quantity = 2,
+                MeasureUnitId = kg.Id,
+                ProductId = pepper.Id
+            }]
+        };
+
+        _measureUnitRepoMock.GetAsync(Arg.Any<CancellationToken>(),
+            Arg.Any<Expression<Func<MeasureUnit, bool>>>())
+            .Returns(Task.FromResult(new MeasureUnit[]
+            {
+                kg
+            } as IReadOnlyCollection<MeasureUnit>));
+
+        _productRepoMock.GetAsync(Arg.Any<CancellationToken>(),
+            Arg.Any<Expression<Func<Product, bool>>>())
+            .Returns(Task.FromResult(new Product[]
+            {
+                pepper
+            } as IReadOnlyCollection<Product>));
+
+        _mealOfTheDayTypeRepoMock.GetAsync(Arg.Any<CancellationToken>(),
+            Arg.Any<Expression<Func<MealOfTheDayType, bool>>>())
+            .Returns(Task.FromResult(new MealOfTheDayType[]
+            {
+                breakfast
+            } as IReadOnlyCollection<MealOfTheDayType>));
+
+        _dishRepoMock.GetByIdAsync(
+            Arg.Is(updateDto.Id),
+            Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(dinnerDish));
+
+        //Act
+        var sut = new DishService(Resources, _uowMock);
+        var result = await sut.UpdateAsync(updateDto, CancellationToken.None);
+
+        //Assert
+        _dishRepoMock.Received(1).Update(Arg.Any<Dish>());
+        _uowMock.Received(1).SaveAsync(Arg.Any<CancellationToken>());
+        Assert.True(result.IsSuccess);
+        Assert.Equal(updateDto.Name, result.Value.Name);
+        Assert.Equal(updateDto.Description, result.Value.Description);
+        Assert.Equal(updateDto.ServingSize, result.Value.ServingSize);
+        Assert.Equal(DishState.Draft.ToString(), result.Value.DishState);
+        Assert.Collection(result.Value.MealOfTheDayTypes,
+            mealType =>
+            {
+                Assert.Equal(updateDto.MealOfTheDayTypeIds.First(), mealType.Id);
+                Assert.Equal(breakfast.Name, mealType.Name);
+            });
+        Assert.Collection(result.Value.Ingredients,
+            ingredient =>
+            {
+                var expectedIngredient = updateDto.IngredientsDtos.First();
+                Assert.Equal(expectedIngredient.Quantity, ingredient.Quantity);
+                Assert.Equal(expectedIngredient.ProductId, ingredient.Product.Id);
+                Assert.Equal(expectedIngredient.MeasureUnitId, ingredient.MeasureUnit.Id);
+            });
+    }
+
+    [Fact]
+    public async Task Update_Should_Return_Error_If_Id_Not_Found()
+    {
+        //Arrange
+        var invalidDishId = Fixture.Create<Guid>();
+        var breakfast = _mealOfTheDayTypeFakes.Breakfast;
+        var pepper = _ingredientFakes.Two_Kilogram_Of_Peppers.Product;
+        var kg = _ingredientFakes.Two_Kilogram_Of_Peppers.MeasureUnit;
+        var updateDto = new DishUpdateDto
+        {
+            Id = invalidDishId,
+            Name = Fixture.Create<string>(),
+            Description = Fixture.Create<string>(),
+            ServingSize = 3,
+            MealOfTheDayTypeIds = [breakfast.Id],
+            IngredientsDtos = [new IngredientCreateDto
+            {
+                Quantity = 2,
+                MeasureUnitId = kg.Id,
+                ProductId = pepper.Id
+            }]
+        };
+
+        _dishRepoMock.GetByIdAsync(
+            Arg.Is(updateDto.Id),
+            Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(null as Dish));
+
+        //Act
+        var sut = new DishService(Resources, _uowMock);
+        var result = await sut.UpdateAsync(updateDto, CancellationToken.None);
+
+        //Assert
+        _dishRepoMock.DidNotReceiveWithAnyArgs().Update(default);
+        _uowMock.DidNotReceiveWithAnyArgs().SaveAsync(default);
+        Assert.True(result.IsFailure);
+        Assert.Equal($"Element with Id={updateDto.Id} does not exists.", result.Error);
+    }
+
+
+    [Fact]
+    public async Task Update_Should_Return_Error_If_Ingredients_Are_Invalid()
+    {
+        //Arrange
+        var invalidMeasureUnitId = Fixture.Create<Guid>();
+        var invalidProductId = Fixture.Create<Guid>();
+        var invalidMealOfTheDayTypeId = Fixture.Create<Guid>();
+        var breakfast = _mealOfTheDayTypeFakes.Breakfast;
+        var pepper = _ingredientFakes.Two_Kilogram_Of_Peppers.Product;
+        var kg = _ingredientFakes.Two_Kilogram_Of_Peppers.MeasureUnit;
+        var updateDto = new DishUpdateDto
+        {
+            Id = Fixture.Create<Guid>(),
+            Name = Fixture.Create<string>(),
+            Description = Fixture.Create<string>(),
+            ServingSize = 3,
+            MealOfTheDayTypeIds = [invalidMealOfTheDayTypeId],
+            IngredientsDtos = [new IngredientCreateDto
+            {
+                Quantity = 2,
+                MeasureUnitId = invalidMeasureUnitId,
+                ProductId = invalidProductId
+            }]
+        };
+
+        _measureUnitRepoMock.GetAsync(Arg.Any<CancellationToken>(),
+            Arg.Any<Expression<Func<MeasureUnit, bool>>>())
+            .Returns(Task.FromResult(new MeasureUnit[]
+            {
+                kg
+            } as IReadOnlyCollection<MeasureUnit>));
+
+        _productRepoMock.GetAsync(Arg.Any<CancellationToken>(),
+            Arg.Any<Expression<Func<Product, bool>>>())
+            .Returns(Task.FromResult(new Product[]
+            {
+                pepper
+            } as IReadOnlyCollection<Product>));
+
+        _mealOfTheDayTypeRepoMock.GetAsync(Arg.Any<CancellationToken>(),
+            Arg.Any<Expression<Func<MealOfTheDayType, bool>>>())
+            .Returns(Task.FromResult(new MealOfTheDayType[]
+            {
+                breakfast
+            } as IReadOnlyCollection<MealOfTheDayType>));
+
+        _dishRepoMock.GetByIdAsync(
+            Arg.Is(updateDto.Id),
+            Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(_dishFakes.Dinner()));
+
+        var expectedError = $"Element with Id={invalidMeasureUnitId} does not exists.; " +
+                            $"Element with Id={invalidProductId} does not exists.; " +
+                            $"Element with Id={invalidMealOfTheDayTypeId} does not exists.";
+
+        //Act
+        var sut = new DishService(Resources, _uowMock);
+        var result = await sut.UpdateAsync(updateDto, CancellationToken.None);
+
+        //Assert
+        _dishRepoMock.DidNotReceiveWithAnyArgs().Update(default);
+        _uowMock.DidNotReceiveWithAnyArgs().SaveAsync(default);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal(expectedError, result.Error);
+    }
+
+    [Fact]
+    public async Task Delete_Should_Return_Error_If_Id_Is_Not_Found()
+    {
+        var notExistingId = Fixture.Create<Guid>();
+        _dishRepoMock.GetByIdAsync(Arg.Is(notExistingId), CancellationToken.None)
+            .Returns(Task.FromResult(null as Dish));
+        var sut = new DishService(Resources, _uowMock);
+        var result = await sut.DeleteAsync(notExistingId, CancellationToken.None);
+
+        _dishRepoMock.DidNotReceiveWithAnyArgs().Delete(default);
+        await _uowMock.DidNotReceiveWithAnyArgs().SaveAsync(default);
+        Assert.True(result.IsFailure);
+        Assert.Equal($"Element with Id={notExistingId} does not exists.", result.Error);
+    }
+
+    [Fact]
+    public async Task Delete_Should_Return_Error_If_Dish_Is_In_Use()
+    {
+        var id = Fixture.Create<Guid>();
+        _dishRepoMock.GetByIdAsync(Arg.Is(id), CancellationToken.None)
+            .Returns(Task.FromResult(_dishFakes.Breakfast()));
+        _menuRepoMock.FirstOrDefaultAsync(Arg.Any<CancellationToken>(),
+            Arg.Any<Expression<Func<Menu, bool>>>(), null)
+            .Returns(Task.FromResult<Menu?>(Substitute.For<Menu>()));
+
+        var sut = new DishService(Resources, _uowMock);
+        var result = await sut.DeleteAsync(id, CancellationToken.None);
+
+        _dishRepoMock.DidNotReceiveWithAnyArgs().Delete(default);
+        await _uowMock.DidNotReceiveWithAnyArgs().SaveAsync(default);
+        Assert.True(result.IsFailure);
+        Assert.Equal($"{Resources.CommonTerms.Dish} can't be deleted, because it is still being used.", result.Error);
+    }
+
+    [Fact]
+    public async Task Delete_Should_Succseed_If_Id_Is_Found()
+    {
+        var id = Fixture.Create<Guid>();
+        _dishRepoMock.GetByIdAsync(Arg.Is(id), CancellationToken.None)
+            .Returns(Task.FromResult(_dishFakes.Breakfast()));
+
+        var sut = new DishService(Resources, _uowMock);
+        var result = await sut.DeleteAsync(id, CancellationToken.None);
+
+        _dishRepoMock.Received(1).Delete(Arg.Any<Dish>());
+        await _uowMock.Received(1).SaveAsync(Arg.Any<CancellationToken>());
+        Assert.True(result.IsSuccess);
+    }
 }

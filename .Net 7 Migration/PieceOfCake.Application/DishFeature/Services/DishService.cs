@@ -36,15 +36,7 @@ public class DishService : BaseService<IDishRepository, Dish>, IDishService
         return await GetEntityAsync(updateDto.Id, cancellationToken)
             .Bind(async dish =>
             {
-                var createDto = new DishCreateDto
-                {
-                    Name = updateDto.Name,
-                    ServingSize = updateDto.ServingSize,
-                    Description = updateDto.Description,
-                    MealOfTheDayTypes = updateDto.MealOfTheDayTypes,
-                    IngredientsDtos = updateDto.IngredientsDtos
-                };
-                var result = await ValidateInputs(createDto, dish.Update, cancellationToken)
+                var result = await ValidateInputs(updateDto, dish.Update, cancellationToken)
                     .Tap(dish =>
                     {
                         Repository.Update(dish);
@@ -69,17 +61,20 @@ public class DishService : BaseService<IDishRepository, Dish>, IDishService
     public async Task<Result> DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
         return await GetEntityAsync(id, cancellationToken)
-            .Tap(async dish =>
+            .Bind(async dish =>
             {
-                if (dish.Menus.Any())
-                {
-                    Result.Failure(I18N.GenereteSentence(x => x.UserErrors.ItemIsInUse, x => x.CommonTerms.Dish));
-                }
+                var usedInMenu = await UnitOfWork.MenuRepository
+                                    .FirstOrDefaultAsync(cancellationToken, 
+                                        menu => menu.Dishes.Contains(dish), null);
+                if(usedInMenu is not null)
+                    return Result.Failure(I18N.GenereteSentence(x => x.UserErrors.ItemIsInUse, x => x.CommonTerms.Dish));
+                
                 Repository.Delete(dish);
                 await UnitOfWork.SaveAsync(cancellationToken);
+                return Result.Success();
             });
     }
-    //TODO: Include Cancelation token to all async methods.
+
     private async Task<Result<Dish>> ValidateInputs(
         DishCreateDto createDto,
         Func<string, string, byte, IEnumerable<MealOfTheDayType>, IEnumerable<Ingredient>, IResources, Result<Dish>> callbackCreateFunc,
@@ -88,11 +83,11 @@ public class DishService : BaseService<IDishRepository, Dish>, IDishService
         //TODO: Implement cacheing
         var measureUnitIds = createDto.IngredientsDtos.Select(x => x.MeasureUnitId).Distinct();
         var productIds = createDto.IngredientsDtos.Select(x => x.ProductId).Distinct();
-        var mealTypeIds = createDto.MealOfTheDayTypes.Select(x => x.Id).Distinct();
+        var mealTypeIds = createDto.MealOfTheDayTypeIds.Distinct();
 
         //TODO: Implement Specification pattern.
         var measureUnitEntities = await UnitOfWork.MeasureUnitRepository
-            .GetAsync(cancellationToken,x => measureUnitIds.Contains(x.Id));
+            .GetAsync(cancellationToken, x => measureUnitIds.Contains(x.Id));
         var productEntities = await UnitOfWork.ProductRepository
             .GetAsync(cancellationToken, x => productIds.Contains(x.Id));
         var mealTypeEntities = await UnitOfWork.MealOfTheDayTypeRepository
@@ -100,28 +95,28 @@ public class DishService : BaseService<IDishRepository, Dish>, IDishService
 
         var errors = new List<string>();
 
-        if(measureUnitEntities.Count() < measureUnitIds.Count())
+        var invalidMeasureUnitIds = measureUnitIds.Except(measureUnitEntities.Select(x => x.Id));
+        if(invalidMeasureUnitIds.Any())
         {
-            var invalidIds = measureUnitIds.Except(measureUnitEntities.Select(x => x.Id));
             errors.Add(I18N.GenereteSentence(
-                    x => x.UserErrors.IdNotFound,
-                    x => string.Join("; ", invalidIds)));
+                x => x.UserErrors.IdNotFound,
+                x => string.Join("; ", invalidMeasureUnitIds)));
         }
-
-        if(productEntities.Count() < productIds.Count())
+        
+        var invalidProductIds = productIds.Except(productEntities.Select(x => x.Id));
+        if(invalidProductIds.Any())
         {
-            var invalidIds = productIds.Except(productEntities.Select(x => x.Id));
             errors.Add(I18N.GenereteSentence(
-                    x => x.UserErrors.IdNotFound,
-                    x => string.Join("; ", invalidIds)));
+                x => x.UserErrors.IdNotFound,
+                x => string.Join("; ", invalidProductIds)));
         }
-
-        if(mealTypeEntities.Count() < mealTypeIds.Count())
+        
+        var invalidMealTypeIds = mealTypeIds.Except(mealTypeEntities.Select(x => x.Id));
+        if(invalidMealTypeIds.Any())
         {
-            var invalidIds = mealTypeIds.Except(mealTypeEntities.Select(x => x.Id));
             errors.Add(I18N.GenereteSentence(
-                    x => x.UserErrors.IdNotFound,
-                    x => string.Join("; ", invalidIds)));
+                x => x.UserErrors.IdNotFound,
+                x => string.Join("; ", invalidMealTypeIds)));
         }
 
         if(errors.Any())
@@ -130,7 +125,7 @@ public class DishService : BaseService<IDishRepository, Dish>, IDishService
         var ingredients = new List<Ingredient>(20);
 
         var mappedMealOfTheDayTypes = mealTypeEntities
-            .IntersectBy(createDto.MealOfTheDayTypes.Select(x => x.Id), x => x.Id);
+            .IntersectBy(createDto.MealOfTheDayTypeIds, x => x.Id);
 
         foreach(var ingredientDto in createDto.IngredientsDtos)
         {
@@ -146,6 +141,9 @@ public class DishService : BaseService<IDishRepository, Dish>, IDishService
 
             ingredients.Add(ingredientResult.Value);
         }
+
+        if(errors.Any())
+            return Result.Failure<Dish>(string.Join("; ", errors));
 
         return callbackCreateFunc(
             createDto.Name,

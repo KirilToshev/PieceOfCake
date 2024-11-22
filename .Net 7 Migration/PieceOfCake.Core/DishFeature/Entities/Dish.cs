@@ -41,9 +41,9 @@ public class Dish : GuidEntity
 
     public States.DishState DishState { get; protected set; }
 
-    public virtual IReadOnlyCollection<Ingredient> Ingredients { get => _ingredients.ToList().AsReadOnly(); }
+    public virtual IReadOnlyCollection<Ingredient> Ingredients => _ingredients.ToList().AsReadOnly();
 
-    public virtual IReadOnlyCollection<Menu> Menus { get => _menus.ToList().AsReadOnly(); }
+    public virtual IReadOnlyCollection<Menu> Menus => _menus.ToList().AsReadOnly();
 
     public static Result<Dish> Create (
         string name,
@@ -63,8 +63,8 @@ public class Dish : GuidEntity
         if (servingSize < 1)
             return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.ServingSizeMustBeGraterThanOne));
 
-        //if (servingSize > byte.MaxValue)
-        //    return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.ServingSizeMustBeLessThanByteLimit, x => $"{byte.MaxValue}"));
+        if (servingSize > byte.MaxValue)
+            return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.ServingSizeMustBeLessThanByteLimit, x => $"{byte.MaxValue}"));
 
         if (description.Length > Constants.TEN_THOUSAND)
             return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.DescriptionExceedsMaxLength, x => x.CommonTerms.Dish, x => $"{Constants.TEN_THOUSAND}"));
