@@ -1,6 +1,8 @@
-﻿namespace PieceOfCake.Application.DishFeature.Dtos;
+﻿using PieceOfCake.Application.Common.Dtos;
 
-public record MealOfTheDayTypeCalendarDto : MealOfTheDayTypeDto
+namespace PieceOfCake.Application.DishFeature.Dtos;
+
+public record MealOfTheDayTypeCalendarDto : IdNameDto<Guid>
 {
     public required IEnumerable<DishInCalenderDto> Dishes { get; init; }
 }

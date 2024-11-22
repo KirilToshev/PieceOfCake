@@ -66,7 +66,7 @@ public class DishServiceTests : TestsBase
         var result = await sut.GetByIdAsync(notExistingId, CancellationToken.None);
 
         Assert.True(result.IsFailure);
-        Assert.Equal(string.Format("Element with Id={0} does not exists.", notExistingId), result.Error);
+        Assert.Equal($"Element with Id={notExistingId} does not exists.", result.Error);
     }
 
     [Fact]

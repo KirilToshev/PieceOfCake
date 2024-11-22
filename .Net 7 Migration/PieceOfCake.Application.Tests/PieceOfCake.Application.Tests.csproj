@@ -33,8 +33,4 @@
     <ProjectReference Include="..\PieceOfCake.Tests.Common\PieceOfCake.Tests.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="MenuFeature\Services\" />
-  </ItemGroup>
-
 </Project>

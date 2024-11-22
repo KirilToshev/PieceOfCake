@@ -63,8 +63,8 @@ public class Dish : GuidEntity
         if (servingSize < 1)
             return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.ServingSizeMustBeGraterThanOne));
 
-        if (servingSize > byte.MaxValue)
-            return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.ServingSizeMustBeLessThanByteLimit, x => $"{byte.MaxValue}"));
+        if (servingSize >= byte.MaxValue)
+            return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.ServingSizeMustBeLessThanByteLimit, x => $"{byte.MaxValue - 1}"));
 
         if (description.Length > Constants.TEN_THOUSAND)
             return Result.Failure<Dish>(resources.GenereteSentence(x => x.UserErrors.DescriptionExceedsMaxLength, x => x.CommonTerms.Dish, x => $"{Constants.TEN_THOUSAND}"));

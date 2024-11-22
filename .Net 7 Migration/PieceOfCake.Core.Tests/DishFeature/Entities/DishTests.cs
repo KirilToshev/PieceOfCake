@@ -127,6 +127,23 @@ public class DishTests : TestsBase
     }
 
     [Test]
+    public void Create_Should_Return_User_Error_If_Number_Of_Servings_Is_GreatOrEqual_To_255()
+    {
+        var validDish = _dishFakes.Create();
+
+        var dishResult = Dish.Create(
+            name: validDish.Name,
+            description: validDish.Description,
+            servingSize: byte.MaxValue,
+            mealOfTheDayTypes: validDish.MealOfTheDayTypes,
+            ingredients: validDish.Ingredients,
+            Resources);
+
+        Assert.That(dishResult.IsFailure);
+        Assert.That(dishResult.Error, Is.EqualTo($"Dish can not have more than {byte.MaxValue - 1} servings."));
+    }
+
+    [Test]
     public void Create_Should_Return_User_Error_If_MealOfTheDayTypes_Is_Empty ()
     {
         var validDish = _dishFakes.Create();

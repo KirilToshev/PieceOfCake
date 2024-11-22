@@ -85,8 +85,8 @@ public class DefaultMenuCalculationStrategyTests : TestsBase
     /// D|1.Person 1                   |1.Person 1                   |1.Person 1                   |
     /// a|  breakfastDish              |  lunchDish                  |  dinnerDish                 |
     /// y|2.Person 2                   |2.Person 2                   |2.Person 2                   |
-    /// 1|  lunchAndDinnerDish3Servings|  lunchDish                  |  dinnerDish                 |
-    /// -|------------Lunch------------|------------Lunch------------|-----------Dinner------------|
+    /// 1|  breakfastDish              |  lunchDish                  |  dinnerDish                 |
+    /// -|----------Breakfast----------|------------Lunch------------|-----------Dinner------------|
     /// D|1.Person 1                   |1.Person 1                   |1.Person 1                   |
     /// a|  breakfastDish              |  lunchDish                  |  dinnerDish                 |
     /// y|2.Person 2                   |2.Person 2                   |2.Person 2                   |
