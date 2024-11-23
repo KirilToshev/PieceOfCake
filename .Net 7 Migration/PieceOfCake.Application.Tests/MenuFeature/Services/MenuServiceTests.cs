@@ -1,14 +1,11 @@
-﻿
-using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using AutoFixture;
 using NSubstitute;
+using PieceOfCake.Application.MenuFeature.Dtos;
 using PieceOfCake.Application.MenuFeature.Services;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.DishFeature.Entities;
-using PieceOfCake.Core.MenuFeature.Calendar;
 using PieceOfCake.Core.MenuFeature.Entities;
-using PieceOfCake.Core.MenuFeature.Enumerations;
 using PieceOfCake.Tests.Common.Fakes.Interfaces;
 
 namespace PieceOfCake.Application.Tests.MenuFeature.Services;
@@ -49,7 +46,7 @@ public class MenuServiceTests : TestsBase
     }
 
     [Fact]
-    public async Task Get_Should_Return_User_Error_If_Id_Is_Not_Found()
+    public async Task Get_Should_Return_Error_If_Id_Is_Not_Found()
     {
         //Arrange
         var unknownId = Fixture.Create<Guid>();
@@ -115,5 +112,188 @@ public class MenuServiceTests : TestsBase
                 Assert.Equal(exptectedDish.Id, dishResult.Id);
                 Assert.Equal(exptectedDish.Name, dishResult.Name);
             });
+    }
+
+    [Fact]
+    public async Task Create_Should_Return_Error_If_Data_Is_Invalid()
+    {
+        //Arrange
+        var createDto = new MenuCreateDto
+        {
+            StartDate = DateTime.Now,
+            EndDate = DateTime.Now.AddDays(1),
+            NumberOfPeople = 1,
+            MealOfTheDayTypes = []
+        };
+
+        //Act
+        var sut = new MenuService(Resources, _uowMock);
+        var result = await sut.CreateAsync(createDto, CancellationToken.None);
+
+        //Assert
+        Assert.True(result.IsFailure);
+        Assert.Equal($"It is impossible to have a menu without at least one meal type.", result.Error);
+        _menuRepoMock.DidNotReceiveWithAnyArgs().Insert(default);
+        await _uowMock.DidNotReceiveWithAnyArgs().SaveAsync(default);
+    }
+
+    [Fact]
+    public async Task Create_Should_Succseed_If_Data_Is_Valid()
+    {
+        //Arrange
+        var createDto = new MenuCreateDto
+        {
+            StartDate = DateTime.Now,
+            EndDate = DateTime.Now.AddDays(1),
+            NumberOfPeople = 1,
+            MealOfTheDayTypes = [_mealOfTheDayTypeFakes.Breakfast.Id]
+        };
+
+        _mealOfTheDayTypeRepoMock.GetAsync(
+            Arg.Any<CancellationToken>(),
+            Arg.Any<Expression<Func<MealOfTheDayType, bool>>>())
+            .Returns(Task.FromResult(new MealOfTheDayType[] { _mealOfTheDayTypeFakes.Breakfast }
+            as IReadOnlyCollection<MealOfTheDayType>));
+
+        //Act
+        var sut = new MenuService(Resources, _uowMock);
+        var result = await sut.CreateAsync(createDto, CancellationToken.None);
+
+        //Assert
+        _menuRepoMock.Received(1).Insert(Arg.Any<Menu>());
+        await _uowMock.Received(1).SaveAsync(default);
+        Assert.True(result.IsSuccess);
+        var resultDto = result.Value;
+        Assert.Equal(DateOnly.FromDateTime(createDto.StartDate),  resultDto.StartDate);
+        Assert.Equal(DateOnly.FromDateTime(createDto.EndDate),  resultDto.EndDate);
+        Assert.Equal(2,  resultDto.DaysDifference);
+        Assert.Equal(createDto.NumberOfPeople,  resultDto.NumberOfPeople);
+        Assert.Collection(resultDto.MealOfTheDayTypes,
+            mt =>
+            {
+                Assert.Equal(_mealOfTheDayTypeFakes.Breakfast.Id, mt.Id);
+                Assert.Equal(_mealOfTheDayTypeFakes.Breakfast.Name, mt.Name);
+            });
+    }
+
+    [Fact]
+    public async Task Update_Should_Return_Error_If_Id_Is_Not_Found()
+    {
+        //Arrange
+        var unknownId = Fixture.Create<Guid>();
+        var updateDto = new MenuUpdateDto
+        {
+            Id = unknownId,
+            StartDate = DateTime.Now,
+            EndDate = DateTime.Now.AddDays(1),
+            NumberOfPeople = 1,
+            MealOfTheDayTypes = [_mealOfTheDayTypeFakes.Breakfast.Id]
+        };
+        _menuRepoMock.GetByIdAsync(Arg.Is(unknownId), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(null as Menu));
+
+        //Act
+        var sut = new MenuService(Resources, _uowMock);
+        var result = await sut.UpdateAsync(updateDto, CancellationToken.None);
+
+        //Assert
+        _menuRepoMock.DidNotReceiveWithAnyArgs().Insert(default);
+        await _uowMock.DidNotReceiveWithAnyArgs().SaveAsync(default);
+        Assert.True(result.IsFailure);
+        Assert.Equal($"Element with Id={unknownId} does not exists.", result.Error);
+    }
+
+    [Fact]
+    public async Task Update_Should_Succseed_If_Data_Is_Valid()
+    {
+        //Arrange
+        var updateDto = new MenuUpdateDto
+        {
+            Id = Guid.NewGuid(),
+            StartDate = DateTime.Now,
+            EndDate = DateTime.Now.AddDays(1),
+            NumberOfPeople = 1,
+            MealOfTheDayTypes = [_mealOfTheDayTypeFakes.Breakfast.Id]
+        };
+
+        var menuFake = Menu.Create(
+            startDate: updateDto.StartDate.AddDays(-1),
+            endDate: updateDto.EndDate.AddDays(-1),
+            numberOfPeople: 2,
+            mealOfTheDayTypes: [_mealOfTheDayTypeFakes.Dinner],
+            Resources).Value;
+
+        _menuRepoMock
+            .GetByIdAsync(Arg.Is(updateDto.Id), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(menuFake));
+
+        _mealOfTheDayTypeRepoMock.GetAsync(
+            Arg.Any<CancellationToken>(),
+            Arg.Any<Expression<Func<MealOfTheDayType, bool>>>())
+            .Returns(Task.FromResult(new MealOfTheDayType[] { _mealOfTheDayTypeFakes.Breakfast }
+            as IReadOnlyCollection<MealOfTheDayType>));
+
+        //Act
+        var sut = new MenuService(Resources, _uowMock);
+        var result = await sut.UpdateAsync(updateDto, CancellationToken.None);
+
+        //Assert
+        await _menuRepoMock.Received(1)
+            .GetByIdAsync(Arg.Is(updateDto.Id), Arg.Any<CancellationToken>());
+        _menuRepoMock.Received(1).Update(Arg.Any<Menu>());
+        await _uowMock.Received(1).SaveAsync(default);
+        Assert.True(result.IsSuccess);
+        var resultDto = result.Value;
+        Assert.Equal(DateOnly.FromDateTime(updateDto.StartDate), resultDto.StartDate);
+        Assert.Equal(DateOnly.FromDateTime(updateDto.EndDate), resultDto.EndDate);
+        Assert.Equal(2, resultDto.DaysDifference);
+        Assert.Equal(updateDto.NumberOfPeople, resultDto.NumberOfPeople);
+        Assert.Collection(resultDto.MealOfTheDayTypes,
+            mt =>
+            {
+                Assert.Equal(_mealOfTheDayTypeFakes.Breakfast.Id, mt.Id);
+                Assert.Equal(_mealOfTheDayTypeFakes.Breakfast.Name, mt.Name);
+            });
+    }
+
+    [Fact]
+    public async Task Delete_Should_Return_Error_If_Id_Is_Not_Found()
+    {
+        //Arrange
+        var unknownId = Fixture.Create<Guid>();
+        _menuRepoMock.GetByIdAsync(Arg.Is(unknownId), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(null as Menu));
+
+        //Act
+        var sut = new MenuService(Resources, _uowMock);
+        var result = await sut.DeleteAsync(unknownId, CancellationToken.None);
+
+        //Assert
+        _menuRepoMock.DidNotReceiveWithAnyArgs().Delete(default);
+        await _uowMock.DidNotReceiveWithAnyArgs().SaveAsync(default);
+        Assert.True(result.IsFailure);
+        Assert.Equal($"Element with Id={unknownId} does not exists.", result.Error);
+    }
+
+    [Fact]
+    public async Task Delete_Should_Succseed_If_Id_Is_Found()
+    {
+        //Arrange
+        var id = Fixture.Create<Guid>();
+
+        _menuRepoMock
+            .GetByIdAsync(Arg.Is(id), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(Substitute.For<Menu>()));
+
+        //Act
+        var sut = new MenuService(Resources, _uowMock);
+        var result = await sut.DeleteAsync(id, CancellationToken.None);
+
+        //Assert
+        await _menuRepoMock.Received(1)
+            .GetByIdAsync(Arg.Is(id), Arg.Any<CancellationToken>());
+        _menuRepoMock.Received(1).Delete(Arg.Any<Menu>());
+        await _uowMock.Received(1).SaveAsync(default);
+        Assert.True(result.IsSuccess);
     }
 }

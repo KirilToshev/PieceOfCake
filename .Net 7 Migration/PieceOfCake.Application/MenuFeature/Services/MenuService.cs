@@ -1,6 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
 using PieceOfCake.Application.Common.Services;
-using PieceOfCake.Application.DishFeature.Dtos;
 using PieceOfCake.Application.MenuFeature.Dtos;
 using PieceOfCake.Application.MenuFeature.Dtos.Mapping;
 using PieceOfCake.Core.Common.Persistence;
@@ -54,7 +53,7 @@ public class MenuService : BaseService<IMenuRepository, Menu>, IMenuService
                 Repository.Insert(menu);
                 await UnitOfWork.SaveAsync(cancellationToken);
                 return menu.MapToGetDto(
-                    Enumerable.Empty<MealOfTheDayType>(),
+                    mealTypes,
                     Enumerable.Empty<Dish>());
             });
     }
@@ -79,7 +78,7 @@ public class MenuService : BaseService<IMenuRepository, Menu>, IMenuService
                 Repository.Update(updatedMenu);
                 await UnitOfWork.SaveAsync(cancellationToken);
                 return updatedMenu.MapToGetDto(
-                    Enumerable.Empty<MealOfTheDayType>(),
+                    mealTypes,
                     Enumerable.Empty<Dish>());
             });
     }
@@ -111,11 +110,10 @@ public class MenuService : BaseService<IMenuRepository, Menu>, IMenuService
         return menuResult.Value;
     }
 
-    private Task<IReadOnlyCollection<MealOfTheDayType>> GetRelatedMealOfTheDayTypes(IEnumerable<MealOfTheDayTypeDto> mealOfTheDayTypeDtos, CancellationToken cancellationToken)
+    private Task<IReadOnlyCollection<MealOfTheDayType>> GetRelatedMealOfTheDayTypes(IEnumerable<Guid> mealOfTheDayTypeDtos, CancellationToken cancellationToken)
     {
         return UnitOfWork.MealOfTheDayTypeRepository
-            .GetAsync(cancellationToken, mt => mealOfTheDayTypeDtos.Select(m => m.Id)
-            .Contains(mt.Id));
+            .GetAsync(cancellationToken, mt => mealOfTheDayTypeDtos.Contains(mt.Id));
     }
 
     private async Task<(

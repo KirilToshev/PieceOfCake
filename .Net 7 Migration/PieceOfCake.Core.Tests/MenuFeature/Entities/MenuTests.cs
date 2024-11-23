@@ -53,7 +53,7 @@ public class MenuTests : TestsBase
 
         Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"It is impossible to have a menu without at " +
-            $"least one serving per day."));
+            $"least one meal type."));
     }
 
     [Test]
@@ -153,7 +153,7 @@ public class MenuTests : TestsBase
 
         Assert.That(result.IsFailure);
         Assert.That(result.Error, Is.EqualTo($"It is impossible to have a menu without at " +
-            $"least one serving per day."));
+            $"least one meal type."));
     }
 
     [Test]

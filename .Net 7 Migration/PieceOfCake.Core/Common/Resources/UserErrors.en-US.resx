@@ -151,7 +151,7 @@
     <value>Menu should have one or more people.</value>
   </data>
   <data name="MenuMustHaveAtLeastOneServing" xml:space="preserve">
-    <value>It is impossible to have a menu without at least one serving per day.</value>
+    <value>It is impossible to have a menu without at least one meal type.</value>
   </data>
   <data name="NameAlreadyExists" xml:space="preserve">
     <value>An entity with name {0} already exist.</value>
