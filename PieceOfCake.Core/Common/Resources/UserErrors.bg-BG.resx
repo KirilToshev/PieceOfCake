@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="DescriptionExceedsMaxLength" xml:space="preserve">
+    <value>Описанието на {0} трябва да бъде не по-малко от {1} символа.</value>
+  </data>
+  <data name="DescriptionIsMandatory" xml:space="preserve">
+    <value>Описанието на {0} е задължително.</value>
+  </data>
+  <data name="DishMustHaveIngredients" xml:space="preserve">
+    <value>Ястието трябва да има едина или повече съставки.</value>
+  </data>
+  <data name="DishMustHaveMenuOfTheDayType" xml:space="preserve">
+    <value>Ястието трябва да има поне един тип хранене от деня. (Закуска, обяд, вечеря ... )</value>
+  </data>
+  <data name="EndDateIsMandatory" xml:space="preserve">
+    <value>Крайна дата е задължителна.</value>
+  </data>
+  <data name="IdNotFound" xml:space="preserve">
+    <value>Елемент с идентификационен номер={0} не съществува.</value>
+  </data>
+  <data name="IngredientAlreadyExists" xml:space="preserve">
+    <value>Ястието не трябва да съдържа дуплицирани продукти. Моля проверете продуктите от списъка със съставките.</value>
+  </data>
+  <data name="InvalidStateTransition" xml:space="preserve">
+    <value>Преминаване от състояние {0} към състояние {1} е невалидно.</value>
+  </data>
+  <data name="ItemIsInUse" xml:space="preserve">
+    <value>{0} не може да бъде изтрит поради съществуваща употреба.</value>
+  </data>
+  <data name="MealOfTheDayTypeAlreadyExists" xml:space="preserve">
+    <value>Типовете на хранене от деня трябва да бъдат уникални.</value>
+  </data>
+  <data name="MenuMustHaveAtleastOnePerson" xml:space="preserve">
+    <value>Менюто трябва да е съставено за един или повече човека.</value>
+  </data>
+  <data name="MenuMustHaveAtLeastOneServing" xml:space="preserve">
+    <value>Невъзможно е създаване на меню без минимум една порция за ден.</value>
+  </data>
+  <data name="NameAlreadyExists" xml:space="preserve">
+    <value>Запис с име {0} вече съществува.</value>
+  </data>
+  <data name="NameBelowMinLength" xml:space="preserve">
+    <value>Името на {0} трябва да бъде не по-малко от {1} символа.</value>
+  </data>
+  <data name="NameExceedsMaxLength" xml:space="preserve">
+    <value>Името на {0} не трябва да надвишава {1} символа.</value>
+  </data>
+  <data name="NameIsMandatory" xml:space="preserve">
+    <value>{0} трябва има да име.</value>
+  </data>
+  <data name="NotEnoughDishesOfMenuType" xml:space="preserve">
+    <value>Не съществуват достатъчен брой ястия от тип {0} за създаването на вашето меню.</value>
+  </data>
+  <data name="PeriodStartDateLaterThanEndDate" xml:space="preserve">
+    <value>Стартовата дата {0} на времевия период трябва да е по-малка от крайната {1}</value>
+  </data>
+  <data name="QuantityMustBeGraterThanZero" xml:space="preserve">
+    <value>Количеството трябва да надвишава 0.</value>
+  </data>
+  <data name="SequenceContainsNoElements" xml:space="preserve">
+    <value>Съдържанието на колекцията е празно.</value>
+  </data>
+  <data name="ServingSizeMustBeGraterThanOne" xml:space="preserve">
+    <value>Ястието трябва да има поне една порция.</value>
+  </data>
+  <data name="ServingSizeMustBeLessThanByteLimit" xml:space="preserve">
+    <value>Ястието не може да превишава {0} порции.</value>
+  </data>
+  <data name="StartDateIsMandatory" xml:space="preserve">
+    <value>Стартова дата е задължителна.</value>
+  </data>
+</root>
