@@ -1,6 +1,8 @@
-﻿namespace PieceOfCake.Application.IngredientFeature.Dtos;
+﻿using PieceOfCake.Application.Common.Dtos;
 
-public record IngredientDto
+namespace PieceOfCake.Application.IngredientFeature.Dtos;
+
+public record IngredientDto : IdDto<Guid>
 {
     public required float Quantity { get; init; }
     public required MeasureUnitGetDto MeasureUnit { get; init; }

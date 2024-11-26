@@ -8,6 +8,7 @@ public static class IngredientMapping
     {
         return new IngredientDto
         {
+            Id = ingredient.Id,
             Quantity = ingredient.Quantity,
             Product = ingredient.Product.MapToGetDto(),
             MeasureUnit = ingredient.MeasureUnit.MapToGetDto()
