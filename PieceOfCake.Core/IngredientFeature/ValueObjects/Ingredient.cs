@@ -8,6 +8,11 @@ namespace PieceOfCake.Core.IngredientFeature.ValueObjects;
 
 public class Ingredient : GuidEntity
 {
+    private Ingredient()
+    {
+        
+    }
+
     protected Ingredient (
         float quantity,
         MeasureUnit measureUnit,

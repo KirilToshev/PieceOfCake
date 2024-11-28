@@ -4,7 +4,7 @@ using PieceOfCake.Core.IngredientFeature.ValueObjects;
 
 namespace PieceOfCake.DAL.EntityConfiguration;
 
-public class IngredientConfiguration() 
+public class IngredientDbConfiguration() 
     : IEntityTypeConfiguration<Ingredient>
 {
     public void Configure(EntityTypeBuilder<Ingredient> builder)

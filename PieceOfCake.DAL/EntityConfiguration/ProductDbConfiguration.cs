@@ -6,12 +6,11 @@ using PieceOfCake.Core.Common.ValueObjects;
 using PieceOfCake.Core.IngredientFeature.Entities;
 
 namespace PieceOfCake.DAL.EntityConfiguration;
-public class MeasureUnitConfiguration(IResources resources) 
-    : IEntityTypeConfiguration<MeasureUnit>
+public class ProductDbConfiguration(IResources resources) : IEntityTypeConfiguration<Product>
 {
-    public void Configure(EntityTypeBuilder<MeasureUnit> builder)
+    public void Configure(EntityTypeBuilder<Product> builder)
     {
-        builder.ToTable("MeasureUnits");
+        builder.ToTable("Products");
         builder.HasKey(x => x.Id); 
         builder.Property(x => x.Id).ValueGeneratedNever();
 

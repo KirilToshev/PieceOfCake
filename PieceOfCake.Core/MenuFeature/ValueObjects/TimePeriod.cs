@@ -6,6 +6,10 @@ namespace PieceOfCake.Core.MenuFeature.ValueObjects;
 
 public class TimePeriod : ValueObject<TimePeriod>, IEnumerable<DateOnly>
 {
+    private TimePeriod()
+    {
+    }
+
     private TimePeriod (DateTime startDate, DateTime endDate)
     {
         StartDate = DateOnly.FromDateTime(startDate);

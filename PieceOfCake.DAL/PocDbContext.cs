@@ -19,13 +19,17 @@ public class PocDbContext(DbContextOptions<PocDbContext> options, IResources res
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        new MealOfTheDayTypeConfiguration(resources)
+        new MealOfTheDayTypeDbConfiguration(resources)
             .Configure(modelBuilder.Entity<MealOfTheDayType>());
-        new ProductConfiguration(resources)
+        new ProductDbConfiguration(resources)
             .Configure(modelBuilder.Entity<Product>());
-        new MeasureUnitConfiguration(resources)
+        new MeasureUnitDbConfiguration(resources)
             .Configure(modelBuilder.Entity<MeasureUnit>());
-        new IngredientConfiguration()
+        new IngredientDbConfiguration()
             .Configure(modelBuilder.Entity<Ingredient>());
+        new DishDbConfiguration(resources)
+            .Configure(modelBuilder.Entity<Dish>());
+        new MenuDbConfiguration()
+            .Configure(modelBuilder.Entity<Menu>());
     }
 }

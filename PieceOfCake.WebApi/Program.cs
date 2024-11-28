@@ -1,7 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddLocalization();
+builder.Services.AddSingleton<IResources, Resources>();
 
 // Add services to the container.
 var sqlConnectionString =

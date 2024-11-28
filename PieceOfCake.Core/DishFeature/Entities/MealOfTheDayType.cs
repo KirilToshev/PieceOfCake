@@ -4,6 +4,7 @@ using PieceOfCake.Core.Common.Entities;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
 using PieceOfCake.Core.Common.ValueObjects;
+using PieceOfCake.Core.MenuFeature.Entities;
 
 namespace PieceOfCake.Core.DishFeature.Entities;
 public class MealOfTheDayType : GuidEntity
@@ -18,7 +19,11 @@ public class MealOfTheDayType : GuidEntity
         Name = name;
     }
 
-    public virtual Name Name { get; private set; }
+    public Name Name { get; private set; }
+
+    public virtual IEnumerable<Dish> Dishes { get; private set; } = Enumerable.Empty<Dish> ();
+
+    public IEnumerable<Menu> Menus { get; private set; } = Enumerable.Empty<Menu> ();
 
     public static async Task<Result<MealOfTheDayType>> Create (string? name, IResources resources, IUnitOfWork unitOfWork, CancellationToken cancellationToken)
     {
@@ -34,7 +39,7 @@ public class MealOfTheDayType : GuidEntity
         return entity;
     }
 
-    public virtual async Task<Result<MealOfTheDayType>> UpdateAsync (string? name, IResources resources, IUnitOfWork unitOfWork, CancellationToken cancellationToken)
+    public async Task<Result<MealOfTheDayType>> UpdateAsync (string? name, IResources resources, IUnitOfWork unitOfWork, CancellationToken cancellationToken)
     {
         var mealOfTheDayTypeResult = await Create(name, resources, unitOfWork, cancellationToken);
         if (mealOfTheDayTypeResult.IsFailure)

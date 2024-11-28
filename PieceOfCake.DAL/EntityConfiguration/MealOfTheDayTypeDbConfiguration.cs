@@ -6,7 +6,7 @@ using PieceOfCake.Core.Common.ValueObjects;
 using PieceOfCake.Core.DishFeature.Entities;
 
 namespace PieceOfCake.DAL.EntityConfiguration;
-public class MealOfTheDayTypeConfiguration(IResources resources) 
+public class MealOfTheDayTypeDbConfiguration(IResources resources) 
     : IEntityTypeConfiguration<MealOfTheDayType>
 {
     public void Configure(EntityTypeBuilder<MealOfTheDayType> builder)
