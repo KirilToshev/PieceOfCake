@@ -140,13 +140,14 @@ public class MealOfTheDayTypeServiceTests : TestsBase
         var updatedName = Fixture.Create<string>();
         var breakfast = _mealOfTheDayTypeFakes.Breakfast;
         var dinner = _mealOfTheDayTypeFakes.Dinner;
-        _mealOfTheDayTypeMock.UpdateAsync(Arg.Is(updatedName), Arg.Any<IResources>(), Arg.Any<IUnitOfWork>(), Arg.Any<CancellationToken>())
-            .Returns(Result.Success(dinner));
+        
         _mealOfTheDayTypeRepoMock.GetByIdAsync(Arg.Is(id), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(breakfast));
-        var sut = new MealOfTheDayTypeService(Resources, _uowMock);
+        _mealOfTheDayTypeMock.UpdateAsync(Arg.Is(updatedName), Arg.Any<IResources>(), Arg.Any<IUnitOfWork>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(Result.Success(dinner)));
 
         //Act
+        var sut = new MealOfTheDayTypeService(Resources, _uowMock);
         var result = await sut.UpdateAsync(new MealOfTheDayTypeUpdateDto() { Id = id, Name = updatedName }, CancellationToken.None);
 
         //Assert

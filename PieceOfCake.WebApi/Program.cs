@@ -1,19 +1,15 @@
 using Microsoft.EntityFrameworkCore;
-using PieceOfCake.Core.Common.Resources;
-using PieceOfCake.DAL;
+using PieceOfCake.WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddLocalization();
-builder.Services.AddSingleton<IResources, Resources>();
+builder.Services.AddServiceRegistration();
 
-// Add services to the container.
 var sqlConnectionString =
     builder.Configuration.GetConnectionString("SqlDatabase")
         ?? throw new InvalidOperationException("Connection string" + "'SqlDatabase' not found.");
-
-builder.Services.AddDbContext<PocDbContext>(options =>
-    options.UseSqlServer(sqlConnectionString));
+builder.Services.AddDatabase(sqlConnectionString);
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

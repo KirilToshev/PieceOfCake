@@ -25,7 +25,7 @@ public class MealOfTheDayType : GuidEntity
 
     public IEnumerable<Menu> Menus { get; private set; } = Enumerable.Empty<Menu> ();
 
-    public static async Task<Result<MealOfTheDayType>> Create (string? name, IResources resources, IUnitOfWork unitOfWork, CancellationToken cancellationToken)
+    public static async Task<Result<MealOfTheDayType>> Create (string name, IResources resources, IUnitOfWork unitOfWork, CancellationToken cancellationToken)
     {
         var nameResult = Name.Create(name, resources, x => x.CommonTerms.MealOfTheDayType, Constants.FIFTY);
         if (nameResult.IsFailure)
@@ -39,7 +39,8 @@ public class MealOfTheDayType : GuidEntity
         return entity;
     }
 
-    public async Task<Result<MealOfTheDayType>> UpdateAsync (string? name, IResources resources, IUnitOfWork unitOfWork, CancellationToken cancellationToken)
+    //TODO: Methods are virtual only for NSubstitute to be able to mock them. Find a better solution!
+    public virtual async Task<Result<MealOfTheDayType>> UpdateAsync (string name, IResources resources, IUnitOfWork unitOfWork, CancellationToken cancellationToken)
     {
         var mealOfTheDayTypeResult = await Create(name, resources, unitOfWork, cancellationToken);
         if (mealOfTheDayTypeResult.IsFailure)

@@ -35,6 +35,7 @@ public class Product : GuidEntity
         return Result.Success(entity);
     }
 
+    //TODO: Methods are virtual only for NSubstitute to be able to mock them. Find a better solution!
     public virtual async Task<Result<Product>> UpdateAsync (string name, IResources resources, IUnitOfWork unitOfWork, CancellationToken cancellationToken)
     {
         var productResult = await CreateAsync(name, resources, unitOfWork, cancellationToken);
