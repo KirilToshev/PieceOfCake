@@ -5,8 +5,8 @@ namespace PieceOfCake.Application.DishFeature.Services;
 
 public interface IMealOfTheDayTypeService : 
     ICreateAndUpdateService<
-        MealOfTheDayTypeDto,
-        MealOfTheDayTypeCreateDto,
-        MealOfTheDayTypeUpdateDto>
+        MealOfTheDayTypeCoreDto,
+        MealOfTheDayTypeCreateCoreDto,
+        MealOfTheDayTypeUpdateCoreDto>
 {
 }

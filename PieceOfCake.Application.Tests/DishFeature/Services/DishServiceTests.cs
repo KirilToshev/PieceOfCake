@@ -143,13 +143,13 @@ public class DishServiceTests : TestsBase
         var breakfast = _mealOfTheDayTypeFakes.Breakfast;
         var pepper = _ingredientFakes.Two_Kilogram_Of_Peppers.Product;
         var kg = _ingredientFakes.Two_Kilogram_Of_Peppers.MeasureUnit;
-        var createDto = new DishCreateDto
+        var createDto = new DishCreateCoreDto
         {
             Name = Fixture.Create<string>(),
             Description = Fixture.Create<string>(),
             ServingSize = 3,
             MealOfTheDayTypeIds = [breakfast.Id],
-            IngredientsDtos = [new IngredientCreateDto
+            IngredientsDtos = [new IngredientCreateCoreDto
             {
                 Quantity = 2,
                 MeasureUnitId = kg.Id,
@@ -202,13 +202,13 @@ public class DishServiceTests : TestsBase
         var breakfast = _mealOfTheDayTypeFakes.Breakfast;
         var pepper = _ingredientFakes.Two_Kilogram_Of_Peppers.Product;
         var kg = _ingredientFakes.Two_Kilogram_Of_Peppers.MeasureUnit;
-        var createDto = new DishCreateDto
+        var createDto = new DishCreateCoreDto
         {
             Name = Fixture.Create<string>(),
             Description = Fixture.Create<string>(),
             ServingSize = 3,
             MealOfTheDayTypeIds = [invalidMealOfTheDayTypeId],
-            IngredientsDtos = [new IngredientCreateDto
+            IngredientsDtos = [new IngredientCreateCoreDto
             {
                 Quantity = 2,
                 MeasureUnitId = invalidMeasureUnitId,
@@ -261,19 +261,19 @@ public class DishServiceTests : TestsBase
         var breakfast = _mealOfTheDayTypeFakes.Breakfast;
         var pepper = _ingredientFakes.Two_Kilogram_Of_Peppers.Product;
         var kg = _ingredientFakes.Two_Kilogram_Of_Peppers.MeasureUnit;
-        var createDto = new DishCreateDto
+        var createDto = new DishCreateCoreDto
         {
             Name = Fixture.Create<string>(),
             Description = Fixture.Create<string>(),
             ServingSize = 3,
             MealOfTheDayTypeIds = [breakfast.Id],
-            IngredientsDtos = [new IngredientCreateDto
+            IngredientsDtos = [new IngredientCreateCoreDto
             {
                 Quantity = invalidQuantity,
                 MeasureUnitId = kg.Id,
                 ProductId = pepper.Id
             },
-            new IngredientCreateDto
+            new IngredientCreateCoreDto
             {
                 Quantity = invalidQuantity,
                 MeasureUnitId = kg.Id,
@@ -324,19 +324,19 @@ public class DishServiceTests : TestsBase
         var breakfast = _mealOfTheDayTypeFakes.Breakfast;
         var pepper = _ingredientFakes.Two_Kilogram_Of_Peppers.Product;
         var kg = _ingredientFakes.Two_Kilogram_Of_Peppers.MeasureUnit;
-        var createDto = new DishCreateDto
+        var createDto = new DishCreateCoreDto
         {
             Name = Fixture.Create<string>(),
             Description = Fixture.Create<string>(),
             ServingSize = 3,
             MealOfTheDayTypeIds = [breakfast.Id],
-            IngredientsDtos = [new IngredientCreateDto
+            IngredientsDtos = [new IngredientCreateCoreDto
             {
                 Quantity = 1,
                 MeasureUnitId = kg.Id,
                 ProductId = pepper.Id
             },
-            new IngredientCreateDto
+            new IngredientCreateCoreDto
             {
                 Quantity = 2,
                 MeasureUnitId = kg.Id,
@@ -388,14 +388,14 @@ public class DishServiceTests : TestsBase
         var breakfast = _mealOfTheDayTypeFakes.Breakfast;
         var pepper = _ingredientFakes.Two_Kilogram_Of_Peppers.Product;
         var kg = _ingredientFakes.Two_Kilogram_Of_Peppers.MeasureUnit;
-        var updateDto = new DishUpdateDto
+        var updateDto = new DishUpdateCoreDto
         {
             Id = dinnerDish.Id,
             Name = Fixture.Create<string>(),
             Description = Fixture.Create<string>(),
             ServingSize = 3,
             MealOfTheDayTypeIds = [breakfast.Id],
-            IngredientsDtos = [new IngredientCreateDto
+            IngredientsDtos = [new IngredientCreateCoreDto
             {
                 Quantity = 2,
                 MeasureUnitId = kg.Id,
@@ -465,14 +465,14 @@ public class DishServiceTests : TestsBase
         var breakfast = _mealOfTheDayTypeFakes.Breakfast;
         var pepper = _ingredientFakes.Two_Kilogram_Of_Peppers.Product;
         var kg = _ingredientFakes.Two_Kilogram_Of_Peppers.MeasureUnit;
-        var updateDto = new DishUpdateDto
+        var updateDto = new DishUpdateCoreDto
         {
             Id = invalidDishId,
             Name = Fixture.Create<string>(),
             Description = Fixture.Create<string>(),
             ServingSize = 3,
             MealOfTheDayTypeIds = [breakfast.Id],
-            IngredientsDtos = [new IngredientCreateDto
+            IngredientsDtos = [new IngredientCreateCoreDto
             {
                 Quantity = 2,
                 MeasureUnitId = kg.Id,
@@ -507,14 +507,14 @@ public class DishServiceTests : TestsBase
         var breakfast = _mealOfTheDayTypeFakes.Breakfast;
         var pepper = _ingredientFakes.Two_Kilogram_Of_Peppers.Product;
         var kg = _ingredientFakes.Two_Kilogram_Of_Peppers.MeasureUnit;
-        var updateDto = new DishUpdateDto
+        var updateDto = new DishUpdateCoreDto
         {
             Id = Fixture.Create<Guid>(),
             Name = Fixture.Create<string>(),
             Description = Fixture.Create<string>(),
             ServingSize = 3,
             MealOfTheDayTypeIds = [invalidMealOfTheDayTypeId],
-            IngredientsDtos = [new IngredientCreateDto
+            IngredientsDtos = [new IngredientCreateCoreDto
             {
                 Quantity = 2,
                 MeasureUnitId = invalidMeasureUnitId,

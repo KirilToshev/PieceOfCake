@@ -2,6 +2,6 @@
 
 namespace PieceOfCake.Application.IngredientFeature.Dtos;
 
-public record MeasureUnitUpdateDto : IdNameDto<Guid>
+public record ProductUpdateCoreDto : IdNameCoreDto<Guid>
 {
 }

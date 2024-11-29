@@ -4,9 +4,9 @@ using PieceOfCake.Core.DishFeature.Entities;
 namespace PieceOfCake.Application.DishFeature.Dtos.Mapping;
 public static class DishMapping
 {
-    public static DishDto MapToGetDto(this Dish entity)
+    public static DishCoreDto MapToGetDto(this Dish entity)
     {
-        return new DishDto
+        return new DishCoreDto
         {
             Id = entity.Id,
             Name = entity.Name,

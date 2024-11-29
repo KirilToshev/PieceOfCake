@@ -2,6 +2,7 @@
 
 namespace PieceOfCake.Application.DishFeature.Dtos;
 
-public record MealOfTheDayTypeUpdateDto : IdNameDto<Guid>
+public record DishInCalenderCoreDto : IdNameCoreDto<Guid>
 {
+
 }

@@ -1,6 +1,6 @@
 ﻿namespace PieceOfCake.Application.MenuFeature.Dtos;
 
-public record MenuCreateDto
+public record MenuCreateCoreDto
 {
     public required DateTime StartDate { get; init; }
     public required DateTime EndDate { get; init; }

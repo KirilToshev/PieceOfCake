@@ -2,6 +2,6 @@
 
 namespace PieceOfCake.Application.DishFeature.Dtos;
 
-public record MealOfTheDayTypeDto : IdNameDto<Guid>
+public record MealOfTheDayTypeCoreDto : IdNameCoreDto<Guid>
 {
 }

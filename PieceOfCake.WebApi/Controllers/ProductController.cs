@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PieceOfCake.DTOs.IngredientFeature;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -9,13 +10,17 @@ public class ProductController : ControllerBase
 {
     // GET: <ProductController>
     [HttpGet]
-    public IEnumerable<string> Get()
+    [ProducesResponseType<IEnumerable<ProductGetDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public string[] Get()
     {
         return new string[] { "value1", "value2" };
     }
 
     // GET <ProductController>/5
     [HttpGet("{id}")]
+    [ProducesResponseType<ProductGetDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public string Get(int id)
     {
         return "value";

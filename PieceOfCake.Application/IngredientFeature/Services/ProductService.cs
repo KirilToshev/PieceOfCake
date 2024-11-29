@@ -19,18 +19,18 @@ public class ProductService : BaseService<IProductRepository, Product>, IProduct
     {
     }
 
-    public async Task<IReadOnlyCollection<ProductGetDto>> GetAllAsync (CancellationToken cancellationToken)
+    public async Task<IReadOnlyCollection<ProductGetCoreDto>> GetAllAsync (CancellationToken cancellationToken)
     {
         var products = await Repository.GetAsync(cancellationToken);
         return products.Select(p => p.MapToGetDto()).ToArray().AsReadOnly();
     }
 
-    public Task<Result<ProductGetDto>> GetByIdAsync (Guid id, CancellationToken cancellationToken)
+    public Task<Result<ProductGetCoreDto>> GetByIdAsync (Guid id, CancellationToken cancellationToken)
     {
         return GetEntityAsync(id, cancellationToken).Map(x => x.MapToGetDto());
     }
 
-    public async Task<Result<ProductGetDto>> UpdateAsync (ProductUpdateDto updateDto, CancellationToken cancellationToken)
+    public async Task<Result<ProductGetCoreDto>> UpdateAsync (ProductUpdateCoreDto updateDto, CancellationToken cancellationToken)
     {
         return await GetEntityAsync(updateDto.Id, cancellationToken)
             .Bind(product => product.UpdateAsync(updateDto.Name, I18N, UnitOfWork, cancellationToken)
@@ -42,7 +42,7 @@ public class ProductService : BaseService<IProductRepository, Product>, IProduct
             }));
     }
 
-    public Task<Result<ProductGetDto>> CreateAsync (ProductCreateDto createDto, CancellationToken cancellationToken)
+    public Task<Result<ProductGetCoreDto>> CreateAsync (ProductCreateCoreDto createDto, CancellationToken cancellationToken)
     {
         return Product.CreateAsync(createDto.Name, I18N, UnitOfWork, cancellationToken)
             .Map(async product =>

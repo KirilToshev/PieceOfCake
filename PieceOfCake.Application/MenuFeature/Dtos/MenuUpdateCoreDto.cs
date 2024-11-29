@@ -1,6 +1,6 @@
 ﻿namespace PieceOfCake.Application.MenuFeature.Dtos;
 
-public record MenuUpdateDto : MenuCreateDto
+public record MenuUpdateCoreDto : MenuCreateCoreDto
 {
     public required Guid Id { get; init; }
 }

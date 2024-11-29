@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\PieceOfCake.DTOs\PieceOfCake.DTOs.csproj" />
     <ProjectReference Include="..\PieceOfCake.Application\PieceOfCake.Application.csproj" />
     <ProjectReference Include="..\PieceOfCake.DAL\PieceOfCake.DAL.csproj" />
   </ItemGroup>

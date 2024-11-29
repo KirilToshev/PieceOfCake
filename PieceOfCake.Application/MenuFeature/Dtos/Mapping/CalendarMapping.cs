@@ -6,24 +6,24 @@ namespace PieceOfCake.Application.MenuFeature.Dtos.Mapping;
 
 public static class CalendarMapping
 {
-    public static CalendarItemDto MapToDto(this CalendarItem calendar, 
+    public static CalendarItemCoreDto MapToDto(this CalendarItem calendar, 
         IEnumerable<MealOfTheDayType> mealOfTheDayTypesList,
         IEnumerable<Dish> dishesList)
     {
         var mealTypes = mealOfTheDayTypesList.ToDictionary(x => x.Id);
         var dishes = dishesList.ToDictionary(x => x.Id);
-        return new CalendarItemDto
+        return new CalendarItemCoreDto
         {
             Date = calendar.Date,
             MealOfTheDayTypeDtos = calendar.MealOfTheDayTypes.Select(mt =>
             {
-                return new MealOfTheDayTypeCalendarDto
+                return new MealOfTheDayTypeCalendarCoreDto
                 {
                     Id = mt.Id,
                     Name = mealTypes[mt.Id].Name,
                     Dishes = mt.Dishes.Select(d =>
                     {
-                        return new DishInCalenderDto
+                        return new DishInCalenderCoreDto
                         {
                             Id = d.Id,
                             Name = dishes[d.Id].Name

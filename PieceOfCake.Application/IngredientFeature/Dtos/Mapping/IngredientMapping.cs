@@ -4,9 +4,9 @@ namespace PieceOfCake.Application.IngredientFeature.Dtos.Mapping;
 
 public static class IngredientMapping
 {
-    public static IngredientDto MapToGetDto(this Ingredient ingredient)
+    public static IngredientCoreDto MapToGetDto(this Ingredient ingredient)
     {
-        return new IngredientDto
+        return new IngredientCoreDto
         {
             Id = ingredient.Id,
             Quantity = ingredient.Quantity,

@@ -4,9 +4,9 @@ namespace PieceOfCake.Application.IngredientFeature.Dtos.Mapping;
 
 public static class MeasureUnitMapping
 {
-    public static MeasureUnitGetDto MapToGetDto (this MeasureUnit measureUnit)
+    public static MeasureUnitGetCoreDto MapToGetDto (this MeasureUnit measureUnit)
     {
-        return new MeasureUnitGetDto
+        return new MeasureUnitGetCoreDto
         {
             Id = measureUnit.Id,
             Name = measureUnit.Name

@@ -100,7 +100,7 @@ public class MealOfTheDayTypeServiceTests : TestsBase
     public async Task Create_Should_Succseed_If_Data_Is_Valid()
     {
         //Arrange
-        var createDto = Fixture.Create<MealOfTheDayTypeCreateDto>();
+        var createDto = Fixture.Create<MealOfTheDayTypeCreateCoreDto>();
 
         var sut = new MealOfTheDayTypeService(Resources, _uowMock);
 
@@ -124,7 +124,7 @@ public class MealOfTheDayTypeServiceTests : TestsBase
 
         var sut = new MealOfTheDayTypeService(Resources, _uowMock);
 
-        var result = await sut.UpdateAsync(new MealOfTheDayTypeUpdateDto() { Id = notExistingId, Name = Fixture.Create<string>() }, CancellationToken.None);
+        var result = await sut.UpdateAsync(new MealOfTheDayTypeUpdateCoreDto() { Id = notExistingId, Name = Fixture.Create<string>() }, CancellationToken.None);
 
         _mealOfTheDayTypeRepoMock.DidNotReceiveWithAnyArgs().Insert(default);
         await _uowMock.DidNotReceiveWithAnyArgs().SaveAsync(default);
@@ -148,7 +148,7 @@ public class MealOfTheDayTypeServiceTests : TestsBase
 
         //Act
         var sut = new MealOfTheDayTypeService(Resources, _uowMock);
-        var result = await sut.UpdateAsync(new MealOfTheDayTypeUpdateDto() { Id = id, Name = updatedName }, CancellationToken.None);
+        var result = await sut.UpdateAsync(new MealOfTheDayTypeUpdateCoreDto() { Id = id, Name = updatedName }, CancellationToken.None);
 
         //Assert
         _mealOfTheDayTypeRepoMock.Received(1).Update(Arg.Any<MealOfTheDayType>());

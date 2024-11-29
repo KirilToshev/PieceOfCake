@@ -95,7 +95,7 @@ public class MeasureUnitServiceTests : TestsBase
     public async Task Create_Should_Succseed_If_Data_Is_Valid()
     {
         //Arrange
-        var createDto = Fixture.Create<MealOfTheDayTypeCreateDto>();
+        var createDto = Fixture.Create<MealOfTheDayTypeCreateCoreDto>();
 
         var sut = new MeasureUnitService(Resources, _uowMock);
 
@@ -119,7 +119,7 @@ public class MeasureUnitServiceTests : TestsBase
 
         var sut = new MeasureUnitService(Resources, _uowMock);
 
-        var result = await sut.UpdateAsync(new MeasureUnitUpdateDto() { Id = notExistingId, Name = Fixture.Create<string>() }, CancellationToken.None);
+        var result = await sut.UpdateAsync(new MeasureUnitUpdateCoreDto() { Id = notExistingId, Name = Fixture.Create<string>() }, CancellationToken.None);
 
         _measureUnitRepoMock.DidNotReceiveWithAnyArgs().Insert(default);
         await _uowMock.DidNotReceiveWithAnyArgs().SaveAsync(default);
@@ -142,7 +142,7 @@ public class MeasureUnitServiceTests : TestsBase
         var sut = new MeasureUnitService(Resources, _uowMock);
 
         //Act
-        var result = await sut.UpdateAsync(new MeasureUnitUpdateDto() { Id = id, Name = updatedName }, CancellationToken.None);
+        var result = await sut.UpdateAsync(new MeasureUnitUpdateCoreDto() { Id = id, Name = updatedName }, CancellationToken.None);
 
         //Assert
         _measureUnitRepoMock.Received(1).Update(Arg.Any<MeasureUnit>());

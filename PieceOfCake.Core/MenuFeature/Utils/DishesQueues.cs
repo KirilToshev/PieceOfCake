@@ -36,8 +36,9 @@ public class DishesQueues
         IEnumerable<MealOfTheDayType> mealTypes,
         IResources resources)
     {
-        var dishesQueues = dishes.Select(x => x.MealOfTheDayTypes)
-            .Aggregate((curr, next) => curr.Union(next))
+        var dishesQueues = dishes
+            .SelectMany(x => x.MealOfTheDayTypes)
+            .Distinct()
             .ToDictionary(key => key,
             value => new Queue<Dish>(dishes
                 .Where(x => x.MealOfTheDayTypes

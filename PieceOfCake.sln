@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PieceOfCake.WebApi", "Piece
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{89A2574A-A6B5-4739-9E0E-74F39031AB45}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PieceOfCake.DTOs", "..\PieceOfCake.DTOs\PieceOfCake.DTOs.csproj", "{19625744-9FF4-45C5-9AEE-761DC8DECD1F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{89A2574A-A6B5-4739-9E0E-74F39031AB45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89A2574A-A6B5-4739-9E0E-74F39031AB45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89A2574A-A6B5-4739-9E0E-74F39031AB45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19625744-9FF4-45C5-9AEE-761DC8DECD1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19625744-9FF4-45C5-9AEE-761DC8DECD1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19625744-9FF4-45C5-9AEE-761DC8DECD1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19625744-9FF4-45C5-9AEE-761DC8DECD1F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -86,6 +92,7 @@ Global
 		{3606EAF7-2EDB-43B9-BB46-F3E9649430B2} = {A1B09FBF-581B-4C40-8B30-122D2463793F}
 		{D3546EBE-105F-4DEA-AEAE-09A1ACB2EA80} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{F61240CC-E12C-4ED0-8D2C-1CD1B17055D3} = {52D621D0-FBBC-4EA2-B67B-685CBE63DFE9}
+		{19625744-9FF4-45C5-9AEE-761DC8DECD1F} = {52D621D0-FBBC-4EA2-B67B-685CBE63DFE9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6FFE177B-1A5E-4368-A27E-C3AC5876E697}

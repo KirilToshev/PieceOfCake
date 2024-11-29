@@ -38,7 +38,7 @@ public class MenuService : BaseService<IMenuRepository, Menu>, IMenuService
         return menuResult.Value.MapToGetDto(data.mealTypes, data.dishes);
     }
 
-    public async Task<Result<MenuGetDto>> CreateAsync(MenuCreateDto createDto, CancellationToken cancellationToken)
+    public async Task<Result<MenuGetDto>> CreateAsync(MenuCreateCoreDto createDto, CancellationToken cancellationToken)
     {
         //TODO: Implement Specification pattern and reuse it in update method.
         var mealTypes = await GetRelatedMealOfTheDayTypes(createDto.MealOfTheDayTypes, cancellationToken);
@@ -58,7 +58,7 @@ public class MenuService : BaseService<IMenuRepository, Menu>, IMenuService
             });
     }
 
-    public async Task<Result<MenuGetDto>> UpdateAsync (MenuUpdateDto updateDto, CancellationToken cancellationToken)
+    public async Task<Result<MenuGetDto>> UpdateAsync (MenuUpdateCoreDto updateDto, CancellationToken cancellationToken)
     {
         var menuResult = await GetEntityAsync(updateDto.Id, cancellationToken);
         if (menuResult.IsFailure)

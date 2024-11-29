@@ -95,7 +95,7 @@ public class ProductServiceTests : TestsBase
     public async Task Create_Should_Succseed_If_Data_Is_Valid()
     {
         //Arrange
-        var createDto = Fixture.Create<ProductCreateDto>();
+        var createDto = Fixture.Create<ProductCreateCoreDto>();
 
         var sut = new ProductService(Resources, _uowMock);
 
@@ -112,7 +112,7 @@ public class ProductServiceTests : TestsBase
     [Fact]
     public async Task Update_Should_Return_User_Error_If_Id_Is_Not_Found ()
     {
-        var updateDto = Fixture.Create<ProductUpdateDto>();
+        var updateDto = Fixture.Create<ProductUpdateCoreDto>();
         _productRepoMock.GetByIdAsync(updateDto.Id, CancellationToken.None)
             .Returns(Task.FromResult(null as Product));
 
@@ -137,7 +137,7 @@ public class ProductServiceTests : TestsBase
         _productRepoMock.GetByIdAsync(Arg.Is(carrot.Id), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(carrot));
         var sut = new ProductService(Resources, _uowMock);
-        var updateDto = new ProductUpdateDto() { Id = carrot.Id, Name = water.Name };
+        var updateDto = new ProductUpdateCoreDto() { Id = carrot.Id, Name = water.Name };
 
         //Act
         var result = await sut.UpdateAsync(updateDto, CancellationToken.None);

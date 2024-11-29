@@ -22,18 +22,18 @@ public class MealOfTheDayTypeService :
     {
     }
 
-    public async Task<IReadOnlyCollection<MealOfTheDayTypeDto>> GetAllAsync (CancellationToken cancellationToken)
+    public async Task<IReadOnlyCollection<MealOfTheDayTypeCoreDto>> GetAllAsync (CancellationToken cancellationToken)
     {
         var mealTypes = await Repository.GetAsync(cancellationToken);
         return mealTypes.Select(x => x.MapToGetDto()).ToArray().AsReadOnly();
     }
 
-    public Task<Result<MealOfTheDayTypeDto>> GetByIdAsync (Guid id, CancellationToken cancellationToken)
+    public Task<Result<MealOfTheDayTypeCoreDto>> GetByIdAsync (Guid id, CancellationToken cancellationToken)
     {
         return GetEntityAsync(id, cancellationToken).Map(x => x.MapToGetDto());
     }
 
-    public Task<Result<MealOfTheDayTypeDto>> UpdateAsync (MealOfTheDayTypeUpdateDto mealOfTheDayTypeUpdateDto, CancellationToken cancellationToken)
+    public Task<Result<MealOfTheDayTypeCoreDto>> UpdateAsync (MealOfTheDayTypeUpdateCoreDto mealOfTheDayTypeUpdateDto, CancellationToken cancellationToken)
     {
         return GetEntityAsync(mealOfTheDayTypeUpdateDto.Id, cancellationToken)
             .Bind(mt => mt.UpdateAsync(mealOfTheDayTypeUpdateDto.Name, I18N, UnitOfWork, cancellationToken)
@@ -44,7 +44,7 @@ public class MealOfTheDayTypeService :
                 return mealOfTheDayType.MapToGetDto();
             }));
     }
-    public Task<Result<MealOfTheDayTypeDto>> CreateAsync (MealOfTheDayTypeCreateDto mealOfTheDayTypeCreateDto, CancellationToken cancellationToken)
+    public Task<Result<MealOfTheDayTypeCoreDto>> CreateAsync (MealOfTheDayTypeCreateCoreDto mealOfTheDayTypeCreateDto, CancellationToken cancellationToken)
     {
         return MealOfTheDayType.Create(mealOfTheDayTypeCreateDto.Name, I18N, UnitOfWork, cancellationToken)
             .Map(async x =>

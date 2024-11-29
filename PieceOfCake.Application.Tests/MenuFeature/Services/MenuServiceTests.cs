@@ -118,7 +118,7 @@ public class MenuServiceTests : TestsBase
     public async Task Create_Should_Return_Error_If_Data_Is_Invalid()
     {
         //Arrange
-        var createDto = new MenuCreateDto
+        var createDto = new MenuCreateCoreDto
         {
             StartDate = DateTime.Now,
             EndDate = DateTime.Now.AddDays(1),
@@ -141,7 +141,7 @@ public class MenuServiceTests : TestsBase
     public async Task Create_Should_Succseed_If_Data_Is_Valid()
     {
         //Arrange
-        var createDto = new MenuCreateDto
+        var createDto = new MenuCreateCoreDto
         {
             StartDate = DateTime.Now,
             EndDate = DateTime.Now.AddDays(1),
@@ -181,7 +181,7 @@ public class MenuServiceTests : TestsBase
     {
         //Arrange
         var unknownId = Fixture.Create<Guid>();
-        var updateDto = new MenuUpdateDto
+        var updateDto = new MenuUpdateCoreDto
         {
             Id = unknownId,
             StartDate = DateTime.Now,
@@ -207,7 +207,7 @@ public class MenuServiceTests : TestsBase
     public async Task Update_Should_Succseed_If_Data_Is_Valid()
     {
         //Arrange
-        var updateDto = new MenuUpdateDto
+        var updateDto = new MenuUpdateCoreDto
         {
             Id = Guid.NewGuid(),
             StartDate = DateTime.Now,

@@ -20,7 +20,7 @@ public class DishService : BaseService<IDishRepository, Dish>, IDishService
     {
     }
 
-    public async Task<Result<DishDto>> CreateAsync(DishCreateDto createDto, CancellationToken cancellationToken)
+    public async Task<Result<DishCoreDto>> CreateAsync(DishCreateCoreDto createDto, CancellationToken cancellationToken)
     {
         return await ValidateInputs(createDto, Dish.Create, cancellationToken)
             .Map(async dish =>
@@ -31,7 +31,7 @@ public class DishService : BaseService<IDishRepository, Dish>, IDishService
             });
     }
 
-    public async Task<Result<DishDto>> UpdateAsync(DishUpdateDto updateDto, CancellationToken cancellationToken)
+    public async Task<Result<DishCoreDto>> UpdateAsync(DishUpdateCoreDto updateDto, CancellationToken cancellationToken)
     {
         return await GetEntityAsync(updateDto.Id, cancellationToken)
             .Bind(async dish =>
@@ -47,13 +47,13 @@ public class DishService : BaseService<IDishRepository, Dish>, IDishService
             });
     }
 
-    public async Task<IReadOnlyCollection<DishDto>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<IReadOnlyCollection<DishCoreDto>> GetAllAsync(CancellationToken cancellationToken)
     {
         var dishes = await Repository.GetAsync(cancellationToken);
         return dishes.Select(d => d.MapToGetDto()).ToArray().AsReadOnly();
     }
 
-    public async Task<Result<DishDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Result<DishCoreDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return await GetEntityAsync(id, cancellationToken).Map(dish => dish.MapToGetDto());
     }
@@ -76,7 +76,7 @@ public class DishService : BaseService<IDishRepository, Dish>, IDishService
     }
 
     private async Task<Result<Dish>> ValidateInputs(
-        DishCreateDto createDto,
+        DishCreateCoreDto createDto,
         Func<string, string, byte, IEnumerable<MealOfTheDayType>, IEnumerable<Ingredient>, IResources, Result<Dish>> callbackCreateFunc,
         CancellationToken cancellationToken)
     {
