@@ -1,6 +1,9 @@
-@PieceOfCake.WebApi_HostAddress = https://localhost:8081
+@webApi_HostAddress = https://localhost:8081
 
-GET {{PieceOfCake.WebApi_HostAddress}}/weatherforecast/
+GET {{webApi_HostAddress}}/product/
 Accept: application/json
+
+
+GET {{webApi_HostAddress}}/product/{{$guid}}
 
 ###

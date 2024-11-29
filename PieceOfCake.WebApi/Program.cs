@@ -1,10 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using PieceOfCake.WebApi;
+using PieceOfCake.WebApi.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddLocalization();
 builder.Services.AddServiceRegistration();
+builder.Services.AddAutoMapper();
 
 var sqlConnectionString =
     builder.Configuration.GetConnectionString("SqlDatabase")
@@ -21,6 +22,10 @@ var app = builder.Build();
 if(app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "Piece Of Cake Api");
+    });
 }
 
 app.UseHttpsRedirection();

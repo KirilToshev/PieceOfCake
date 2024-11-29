@@ -1,46 +1,66 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using PieceOfCake.Application.IngredientFeature.Dtos;
+using PieceOfCake.Application.IngredientFeature.Services;
 using PieceOfCake.DTOs.IngredientFeature;
+using IResult = Microsoft.AspNetCore.Http.IResult;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace PieceOfCake.WebApi.Controllers;
 [Route("[controller]")]
 [ApiController]
-public class ProductController : ControllerBase
+public class ProductController(
+    IMapper mapper,
+    IProductService productService) : ControllerBase
 {
     // GET: <ProductController>
-    [HttpGet]
+    [HttpGet(Name = "Get")]
     [ProducesResponseType<IEnumerable<ProductGetDto>>(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public string[] Get()
+    public async Task<ActionResult<ProductGetDto>> GetAsync(CancellationToken cancellationToken)
     {
-        return new string[] { "value1", "value2" };
+        var products = await productService.GetAllAsync(cancellationToken);
+        return mapper.Map<ProductGetDto>(products);
     }
 
     // GET <ProductController>/5
     [HttpGet("{id}")]
     [ProducesResponseType<ProductGetDto>(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public string Get(int id)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IResult> Get(Guid id, CancellationToken cancellationToken)
     {
-        return "value";
+        var product = await productService.GetByIdAsync(id, cancellationToken);
+        return product.ConvertToHttpResult(p => mapper.Map<ProductGetDto>(p));   
     }
 
     // POST <ProductController>
     [HttpPost]
-    public void Post([FromBody] string value)
+    [ProducesResponseType<ProductGetDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IResult> Post([FromBody] ProductCreateDto product, CancellationToken cancellationToken)
     {
+        var coreDto = mapper.Map<ProductCreateCoreDto>(product);
+        var productResult = await productService.CreateAsync(coreDto, cancellationToken);
+        return productResult.ConvertToHttpResult(p => mapper.Map<ProductGetDto>(p));
     }
 
     // PUT <ProductController>/5
     [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
+    public async Task<IResult> Put(
+        Guid id, 
+        [FromBody] ProductUpdateDto product, 
+        CancellationToken cancellationToken)
     {
+        var coreDto = mapper.Map<ProductUpdateCoreDto>(product);
+        var productResult = await productService.UpdateAsync(coreDto, cancellationToken);
+        return productResult.ConvertToHttpResult(p => mapper.Map<ProductGetDto>(p));
     }
 
     // DELETE <ProductController>/5
     [HttpDelete("{id}")]
-    public void Delete(int id)
+    public async Task<IResult> Delete(Guid id, CancellationToken cancellationToken)
     {
+        var result = await productService.DeleteAsync(id, cancellationToken);
+        return result.ConvertToHttpResult();
     }
 }
