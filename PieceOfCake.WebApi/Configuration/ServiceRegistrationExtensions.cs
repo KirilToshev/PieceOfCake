@@ -1,11 +1,9 @@
 ﻿using System.Reflection;
-using Microsoft.EntityFrameworkCore;
 using PieceOfCake.Application.DishFeature.Services;
 using PieceOfCake.Application.IngredientFeature.Services;
 using PieceOfCake.Application.MenuFeature.Services;
 using PieceOfCake.Core.Common.Persistence;
 using PieceOfCake.Core.Common.Resources;
-using PieceOfCake.DAL;
 using PieceOfCake.DAL.Repositories;
 using PieceOfCake.WebApi.Mapping;
 
@@ -33,14 +31,6 @@ public static class ServiceRegistrationExtensions
         services.AddScoped<IDishService, DishService>();
         services.AddScoped<IMenuService, MenuService>();
         #endregion
-
-        return services;
-    }
-
-    public static IServiceCollection AddDatabase(this IServiceCollection services, string connectionString)
-    {
-        services.AddDbContext<PocDbContext>(options =>
-            options.UseSqlServer(connectionString));
 
         return services;
     }

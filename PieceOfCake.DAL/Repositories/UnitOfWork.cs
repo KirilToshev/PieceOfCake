@@ -9,13 +9,18 @@ public class UnitOfWork : IUnitOfWork
 
     public UnitOfWork(
         PocDbContext context,
-        IMeasureUnitRepository MeasureUnitRepository,
-        IProductRepository ProductRepository,
-        IDishRepository DishRepository,
-        IMenuRepository MenuRepository,
-        IMealOfTheDayTypeRepository MealOfTheDayTypeRepository)
+        IMealOfTheDayTypeRepository mealOfTheDayTypeRepository,
+        IMeasureUnitRepository measureUnitRepository,
+        IProductRepository productRepository,
+        IDishRepository dishRepository,
+        IMenuRepository menuRepository)
     {
         _context = context;
+        MeasureUnitRepository = measureUnitRepository;
+        ProductRepository = productRepository;
+        DishRepository = dishRepository;
+        MenuRepository = menuRepository;
+        MealOfTheDayTypeRepository = mealOfTheDayTypeRepository;
     }
 
     public IMeasureUnitRepository MeasureUnitRepository { get; init; }

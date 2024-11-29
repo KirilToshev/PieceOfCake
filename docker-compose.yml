@@ -1,5 +1,6 @@
 services:
   pieceofcake.webapi:
+    container_name: pieceofcake.webapi
     image: ${DOCKER_REGISTRY-}pieceofcakewebapi
     build:
       context: .
@@ -9,6 +10,7 @@ services:
        - 8081:8081
 
   pieceofcake.database:
+    container_name: pieceofcake.database
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
        - ACCEPT_EULA=Y
@@ -17,4 +19,6 @@ services:
     ports:
        - 1433:1433
     volumes:
-       - ./sql_data/:/var/opt/mssql/ \
+       - sqldata:/var/opt/mssql
+volumes: 
+    sqldata:
