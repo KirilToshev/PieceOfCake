@@ -8,6 +8,10 @@ services:
     ports:
        - 8080:8080
        - 8081:8081
+    environment:
+        - SQL_ConnectionStrings=Server=pieceofcake.database,1433;Database=PieceOfCakeDb;User Id=sa;Password=Pass1234!;TrustServerCertificate=True;
+    depends_on:
+      - pieceofcake.database
 
   pieceofcake.database:
     container_name: pieceofcake.database

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Mvc;
 using PieceOfCake.Application.IngredientFeature.Dtos;
 using PieceOfCake.Application.IngredientFeature.Services;
@@ -17,10 +18,10 @@ public class ProductController(
     // GET: <ProductController>
     [HttpGet(Name = "Get")]
     [ProducesResponseType<IEnumerable<ProductGetDto>>(StatusCodes.Status200OK)]
-    public async Task<ActionResult<ProductGetDto>> GetAsync(CancellationToken cancellationToken)
+    public async Task<IResult> GetAsync(CancellationToken cancellationToken)
     {
         var products = await productService.GetAllAsync(cancellationToken);
-        return mapper.Map<ProductGetDto>(products);
+        return Results.Ok(mapper.Map<IEnumerable<ProductGetDto>>(products));
     }
 
     // GET <ProductController>/5

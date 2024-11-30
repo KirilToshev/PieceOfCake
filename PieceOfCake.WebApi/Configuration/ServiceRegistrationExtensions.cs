@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Microsoft.AspNetCore.Hosting;
 using PieceOfCake.Application.DishFeature.Services;
 using PieceOfCake.Application.IngredientFeature.Services;
 using PieceOfCake.Application.MenuFeature.Services;
@@ -37,7 +38,8 @@ public static class ServiceRegistrationExtensions
 
     public static IServiceCollection AddAutoMapper(this IServiceCollection services)
     {
-        services.AddAutoMapper(typeof(AutoMappingProfiles).GetTypeInfo().Assembly);
+
+        services.AddAutoMapper(typeof(Program));
         return services;
     }
 }
