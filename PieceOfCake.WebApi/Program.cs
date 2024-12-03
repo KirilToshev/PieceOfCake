@@ -1,9 +1,19 @@
+using Microsoft.AspNetCore.Localization;
+using PieceOfCake.Core.Common;
 using PieceOfCake.WebApi.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 builder.Services.AddLocalization();
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture(Common.SupportedLanguages[0]);
+    options.AddSupportedCultures(Common.SupportedLanguages);
+    options.AddSupportedUICultures(Common.SupportedLanguages);
+});
 builder.Services.AddServiceRegistration();
+
 builder.Services.AddAutoMapper();
 
 builder.ConfigureDatabase();
@@ -14,7 +24,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
-
+app.UseRequestLocalization();
 // Configure the HTTP request pipeline.
 app.UseSwaggerUI();
 

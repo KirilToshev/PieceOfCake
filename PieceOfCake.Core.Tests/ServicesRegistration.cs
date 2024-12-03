@@ -44,7 +44,7 @@ public class ServicesRegistration
         IServiceCollection services = new ServiceCollection();
         services.AddLogging();
         services.AddLocalization();
-        services.AddTransient<IResources, Resources>();
+        services.AddSingleton<IResources, Resources>();
 
         services.AddSingleton<IDishFakes, DishFakes>();
         services.AddSingleton<IIngredientFakes, IngredientFakes>();
