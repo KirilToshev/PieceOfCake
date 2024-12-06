@@ -15,7 +15,7 @@ public class ProductController(
     IProductService productService) : ControllerBase
 {
     // GET: <ProductController>
-    [HttpGet(Name = "Get")]
+    [HttpGet()]
     [ProducesResponseType<IEnumerable<ProductGetDto>>(StatusCodes.Status200OK)]
     public async Task<IResult> GetAsync(CancellationToken cancellationToken)
     {

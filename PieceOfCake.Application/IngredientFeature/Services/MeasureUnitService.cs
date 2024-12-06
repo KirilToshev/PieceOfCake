@@ -43,7 +43,7 @@ public class MeasureUnitService : BaseService<IMeasureUnitRepository, MeasureUni
             }));
     }
 
-    public Task<Result<MeasureUnitGetCoreDto>> CreateAsync (MealOfTheDayTypeCreateCoreDto createDto, CancellationToken cancellationToken)
+    public Task<Result<MeasureUnitGetCoreDto>> CreateAsync (MeasureUnitCreateCoreDto createDto, CancellationToken cancellationToken)
     {
         return MeasureUnit.CreateAsync(createDto.Name, I18N, UnitOfWork, cancellationToken)
             .Map(async x =>

@@ -1,6 +1,6 @@
 ﻿namespace PieceOfCake.Application.IngredientFeature.Dtos;
 
-public record MealOfTheDayTypeCreateCoreDto
+public record MeasureUnitCreateCoreDto
 {
     public required string Name { get; init; }
 }

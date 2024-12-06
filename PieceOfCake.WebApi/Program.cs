@@ -32,7 +32,7 @@ app.UseCors(PieceOfCake.WebApi.Configuration.ApplicationBuilderExtensions.CorsPo
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+// app.UseAuthorization();
 
 app.MapControllers();
 
@@ -44,3 +44,4 @@ app.Run();
 // TODO: Add Logger
 // TODO: Seed database
 // TODO: Add Cache
+// TODO: Options pattern
