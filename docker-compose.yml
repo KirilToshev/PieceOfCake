@@ -9,7 +9,8 @@ services:
        - 8080:8080
        - 8081:8081
     environment:
-        - SQL_ConnectionStrings=Server=pieceofcake.database,1433;Database=PieceOfCakeDb;User Id=sa;Password=Pass1234!;TrustServerCertificate=True;
+        - ConnectionStrings=Server=pieceofcake.database,1433;Database=PieceOfCakeDb;User Id=sa;Password=Pass1234!;TrustServerCertificate=True;
+        - ASPNETCORE_ENVIRONMENT=Production
     depends_on:
       - pieceofcake.database
 

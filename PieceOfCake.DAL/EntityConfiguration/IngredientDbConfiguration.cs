@@ -21,5 +21,6 @@ public class IngredientDbConfiguration()
          .OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(x => x.Dish)
          .WithMany(x => x.Ingredients);
+        builder.Navigation(x => x.Dish);
     }
 }

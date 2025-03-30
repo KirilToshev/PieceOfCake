@@ -149,7 +149,7 @@ public class DishServiceTests : TestsBase
             Description = Fixture.Create<string>(),
             ServingSize = 3,
             MealOfTheDayTypeIds = [breakfast.Id],
-            IngredientsDtos = [new IngredientCreateCoreDto
+            Ingredients = [new IngredientCreateCoreDto
             {
                 Quantity = 2,
                 MeasureUnitId = kg.Id,
@@ -208,7 +208,7 @@ public class DishServiceTests : TestsBase
             Description = Fixture.Create<string>(),
             ServingSize = 3,
             MealOfTheDayTypeIds = [invalidMealOfTheDayTypeId],
-            IngredientsDtos = [new IngredientCreateCoreDto
+            Ingredients = [new IngredientCreateCoreDto
             {
                 Quantity = 2,
                 MeasureUnitId = invalidMeasureUnitId,
@@ -267,7 +267,7 @@ public class DishServiceTests : TestsBase
             Description = Fixture.Create<string>(),
             ServingSize = 3,
             MealOfTheDayTypeIds = [breakfast.Id],
-            IngredientsDtos = [new IngredientCreateCoreDto
+            Ingredients = [new IngredientCreateCoreDto
             {
                 Quantity = invalidQuantity,
                 MeasureUnitId = kg.Id,
@@ -330,7 +330,7 @@ public class DishServiceTests : TestsBase
             Description = Fixture.Create<string>(),
             ServingSize = 3,
             MealOfTheDayTypeIds = [breakfast.Id],
-            IngredientsDtos = [new IngredientCreateCoreDto
+            Ingredients = [new IngredientCreateCoreDto
             {
                 Quantity = 1,
                 MeasureUnitId = kg.Id,
@@ -395,7 +395,7 @@ public class DishServiceTests : TestsBase
             Description = Fixture.Create<string>(),
             ServingSize = 3,
             MealOfTheDayTypeIds = [breakfast.Id],
-            IngredientsDtos = [new IngredientCreateCoreDto
+            Ingredients = [new IngredientCreateCoreDto
             {
                 Quantity = 2,
                 MeasureUnitId = kg.Id,
@@ -450,7 +450,7 @@ public class DishServiceTests : TestsBase
         Assert.Collection(result.Value.Ingredients,
             ingredient =>
             {
-                var expectedIngredient = updateDto.IngredientsDtos.First();
+                var expectedIngredient = updateDto.Ingredients.First();
                 Assert.Equal(expectedIngredient.Quantity, ingredient.Quantity);
                 Assert.Equal(expectedIngredient.ProductId, ingredient.Product.Id);
                 Assert.Equal(expectedIngredient.MeasureUnitId, ingredient.MeasureUnit.Id);
@@ -472,7 +472,7 @@ public class DishServiceTests : TestsBase
             Description = Fixture.Create<string>(),
             ServingSize = 3,
             MealOfTheDayTypeIds = [breakfast.Id],
-            IngredientsDtos = [new IngredientCreateCoreDto
+            Ingredients = [new IngredientCreateCoreDto
             {
                 Quantity = 2,
                 MeasureUnitId = kg.Id,
@@ -514,7 +514,7 @@ public class DishServiceTests : TestsBase
             Description = Fixture.Create<string>(),
             ServingSize = 3,
             MealOfTheDayTypeIds = [invalidMealOfTheDayTypeId],
-            IngredientsDtos = [new IngredientCreateCoreDto
+            Ingredients = [new IngredientCreateCoreDto
             {
                 Quantity = 2,
                 MeasureUnitId = invalidMeasureUnitId,

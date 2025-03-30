@@ -1,13 +1,9 @@
-﻿#pragma warning disable IDE0005 // Using directive is unnecessary.
-using System;
-#pragma warning restore IDE0005 // Using directive is unnecessary.
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
 namespace PieceOfCake.DAL.Migrations
-#pragma warning restore IDE0161 // Convert to file-scoped namespace
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

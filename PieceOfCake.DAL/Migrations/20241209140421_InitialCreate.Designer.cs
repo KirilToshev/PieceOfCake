@@ -12,7 +12,7 @@ using PieceOfCake.DAL;
 namespace PieceOfCake.DAL.Migrations
 {
     [DbContext(typeof(PocDbContext))]
-    [Migration("20241128103700_InitialCreate")]
+    [Migration("20241209140421_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

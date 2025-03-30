@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PieceOfCake.Application.DishFeature.Dtos;
 using PieceOfCake.Application.DishFeature.Services;
-using PieceOfCake.DTOs.IngredientFeature;
+using PieceOfCake.DTOs.DishFeature;
 using IResult = Microsoft.AspNetCore.Http.IResult;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860

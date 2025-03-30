@@ -4,6 +4,6 @@ GET {{webApi_HostAddress}}/product/
 Accept: application/json
 
 
-GET {{webApi_HostAddress}}/product/{{$guid}}
-
+GET {{webApi_HostAddress}}/product/3c2ca442-ce8b-49cc-8031-48b81e8a9b25
+Accept: application/json
 ###

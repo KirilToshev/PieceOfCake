@@ -81,8 +81,8 @@ public class DishService : BaseService<IDishRepository, Dish>, IDishService
         CancellationToken cancellationToken)
     {
         //TODO: Implement cacheing
-        var measureUnitIds = createDto.IngredientsDtos.Select(x => x.MeasureUnitId).Distinct();
-        var productIds = createDto.IngredientsDtos.Select(x => x.ProductId).Distinct();
+        var measureUnitIds = createDto.Ingredients.Select(x => x.MeasureUnitId).Distinct();
+        var productIds = createDto.Ingredients.Select(x => x.ProductId).Distinct();
         var mealTypeIds = createDto.MealOfTheDayTypeIds.Distinct();
 
         //TODO: Implement Specification pattern.
@@ -127,7 +127,7 @@ public class DishService : BaseService<IDishRepository, Dish>, IDishService
         var mappedMealOfTheDayTypes = mealTypeEntities
             .IntersectBy(createDto.MealOfTheDayTypeIds, x => x.Id);
 
-        foreach(var ingredientDto in createDto.IngredientsDtos)
+        foreach(var ingredientDto in createDto.Ingredients)
         {
             var measureUnit = measureUnitEntities.First(mu => mu.Id == ingredientDto.MeasureUnitId);
             var product = productEntities.First(product => product.Id == ingredientDto.ProductId);

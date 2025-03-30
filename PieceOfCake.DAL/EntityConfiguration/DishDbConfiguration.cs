@@ -29,9 +29,14 @@ public class DishDbConfiguration(IResources resources) : IEntityTypeConfiguratio
             .IsRequired()
             .HasMaxLength(byte.MaxValue);
 
-        builder.HasMany(x => x.Ingredients)
-            .WithOne(x => x.Dish)
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.Navigation(x => x.Ingredients)
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .HasField("_ingredients")
+            .AutoInclude(true);
+
+        //builder.HasMany(x => x.Ingredients)
+        //    .WithOne(x => x.Dish)
+        //    .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.MealOfTheDayTypes)
             .WithMany(x => x.Dishes);
