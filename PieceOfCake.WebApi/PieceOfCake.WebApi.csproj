@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
       <PrivateAssets>all</PrivateAssets>
@@ -23,9 +24,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\PieceOfCake.DTOs\PieceOfCake.DTOs.csproj" />
     <ProjectReference Include="..\PieceOfCake.Application\PieceOfCake.Application.csproj" />
     <ProjectReference Include="..\PieceOfCake.DAL\PieceOfCake.DAL.csproj" />
+    <ProjectReference Include="..\PieceOfCake.DTOs\PieceOfCake.DTOs.csproj" />
   </ItemGroup>
 
 </Project>

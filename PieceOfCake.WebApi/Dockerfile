@@ -14,6 +14,7 @@ COPY ["PieceOfCake.WebApi/PieceOfCake.WebApi.csproj", "PieceOfCake.WebApi/"]
 COPY ["PieceOfCake.Application/PieceOfCake.Application.csproj", "PieceOfCake.Application/"]
 COPY ["PieceOfCake.Core/PieceOfCake.Core.csproj", "PieceOfCake.Core/"]
 COPY ["PieceOfCake.DAL/PieceOfCake.DAL.csproj", "PieceOfCake.DAL/"]
+COPY ["PieceOfCake.DTOs/PieceOfCake.DTOs.csproj", "PieceOfCake.DTOs/"]
 RUN dotnet restore "./PieceOfCake.WebApi/PieceOfCake.WebApi.csproj"
 COPY . .
 WORKDIR "/src/PieceOfCake.WebApi"

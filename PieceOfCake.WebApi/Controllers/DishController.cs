@@ -14,7 +14,7 @@ public class DishController(
     IMapper mapper,
     IDishService dishService) : ControllerBase
 {
-    [HttpGet()]
+    [HttpGet(Endpoints.Dishes.GetAll)]
     [ProducesResponseType<IEnumerable<DishDto>>(StatusCodes.Status200OK)]
     public async Task<IResult> GetAsync(CancellationToken cancellationToken)
     {
@@ -22,16 +22,16 @@ public class DishController(
         return Results.Ok(mapper.Map<IEnumerable<DishDto>>(result));
     }
 
-    [HttpGet("{id}")]
+    [HttpGet(Endpoints.Dishes.Get)]
     [ProducesResponseType<DishDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IResult> Get(Guid id, CancellationToken cancellationToken)
+    public async Task<IResult> Get([FromRoute]Guid id, CancellationToken cancellationToken)
     {
         var result = await dishService.GetByIdAsync(id, cancellationToken);
         return result.ConvertToHttpResult(p => mapper.Map<DishDto>(p));   
     }
 
-    [HttpPost]
+    [HttpPost(Endpoints.Dishes.Create)]
     [ProducesResponseType<DishDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IResult> Post([FromBody] DishCreateDto createDto, CancellationToken cancellationToken)

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PieceOfCake.Application.IngredientFeature.Dtos;
 using PieceOfCake.Application.IngredientFeature.Services;
@@ -8,6 +9,8 @@ using IResult = Microsoft.AspNetCore.Http.IResult;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace PieceOfCake.WebApi.Controllers;
+
+[Authorize]
 [Route("[controller]")]
 [ApiController]
 public class ProductController(

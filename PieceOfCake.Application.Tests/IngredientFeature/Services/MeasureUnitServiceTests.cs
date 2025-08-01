@@ -95,7 +95,7 @@ public class MeasureUnitServiceTests : TestsBase
     public async Task Create_Should_Succseed_If_Data_Is_Valid()
     {
         //Arrange
-        var createDto = Fixture.Create<MealOfTheDayTypeCreateCoreDto>();
+        var createDto = Fixture.Create<MeasureUnitCreateCoreDto>();
 
         var sut = new MeasureUnitService(Resources, _uowMock);
 

@@ -10,6 +10,7 @@ public static class ServiceRegistrationExtensions
 {
     public static IServiceCollection AddServiceRegistration(this IServiceCollection services)
     {
+        //TODO: Move service registration in Application layer using Microsoft.Extensions.DependenciesInjection.Abstractions.
         services.AddSingleton<IResources, Resources>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -29,13 +30,6 @@ public static class ServiceRegistrationExtensions
         services.AddScoped<IMenuService, MenuService>();
         #endregion
 
-        return services;
-    }
-
-    public static IServiceCollection AddAutoMapper(this IServiceCollection services)
-    {
-
-        services.AddAutoMapper(typeof(Program));
         return services;
     }
 }

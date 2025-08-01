@@ -11,9 +11,9 @@ public static class ApplicationBuilderExtensions
     public static WebApplicationBuilder ConfigureDatabase(this WebApplicationBuilder builder)
     {
         var sqlConnectionString =
-            builder.Configuration.GetSection("ConnectionStrings")["SqlDatabase"]
-            ?? builder.Configuration["ConnectionStrings"]
-            ?? throw new InvalidOperationException("Connection string" + "'SqlDatabase' not found.");
+            builder.Configuration["ConnectionStrings"] //Tries to 
+            ?? builder.Configuration.GetSection("ConnectionStrings")["SqlDatabase"]
+            ?? throw new InvalidOperationException("Connection string" + " not found.");
 
         builder.Services.AddDbContext<PocDbContext>(options =>
             options.UseSqlServer(sqlConnectionString));
