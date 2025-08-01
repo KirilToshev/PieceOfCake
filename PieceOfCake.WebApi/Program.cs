@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.IdentityModel.Tokens;
 using PieceOfCake.Core.Common;
+using PieceOfCake.DAL;
 using PieceOfCake.WebApi.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -49,6 +50,7 @@ builder.Services.AddOpenApi();
 var app = builder.Build();
 app.UseRequestLocalization();
 // Configure the HTTP request pipeline.
+DbManagementService.MigrationInitialization(app);
 app.UseSwaggerUI();
 
 app.UseCors(PieceOfCake.WebApi.Configuration.ApplicationBuilderExtensions.CorsPolicyAllowAllOrigins);
