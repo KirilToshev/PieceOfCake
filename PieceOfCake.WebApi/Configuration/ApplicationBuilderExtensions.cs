@@ -11,7 +11,7 @@ public static class ApplicationBuilderExtensions
     public static WebApplicationBuilder ConfigureDatabase(this WebApplicationBuilder builder)
     {
         var sqlConnectionString =
-            builder.Configuration["ConnectionStrings"] //Tries to 
+            builder.Configuration["ConnectionStrings"]
             ?? builder.Configuration.GetSection("ConnectionStrings")["SqlDatabase"]
             ?? throw new InvalidOperationException("Connection string" + " not found.");
 

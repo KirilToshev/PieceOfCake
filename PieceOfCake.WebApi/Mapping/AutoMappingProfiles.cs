@@ -2,9 +2,11 @@
 using PieceOfCake.Application.Common.Dtos;
 using PieceOfCake.Application.DishFeature.Dtos;
 using PieceOfCake.Application.IngredientFeature.Dtos;
+using PieceOfCake.Application.MenuFeature.Dtos;
 using PieceOfCake.DTOs.Common;
 using PieceOfCake.DTOs.DishFeature;
 using PieceOfCake.DTOs.IngredientFeature;
+using PieceOfCake.DTOs.MenuFeature;
 
 namespace PieceOfCake.WebApi.Mapping;
 
@@ -25,6 +27,8 @@ public class AutoMappingProfiles : Profile
         CreateMap<DishCreateDto, DishCreateCoreDto>();
         CreateMap<DishUpdateDto, DishUpdateCoreDto>();
         CreateMap<IngredientCreateDto, IngredientCreateCoreDto>();
+        CreateMap<MenuCreateDto, MenuCreateCoreDto>();
+        CreateMap<MenuUpdateDto, MenuUpdateCoreDto>();
         #endregion
 
         #region Response mappings
@@ -33,6 +37,10 @@ public class AutoMappingProfiles : Profile
         CreateMap<MeasureUnitGetCoreDto, MeasureUnitGetDto>();
         CreateMap<MealOfTheDayTypeCoreDto, MealOfTheDayTypeGetDto>();
         CreateMap<DishCoreDto, DishDto>();
+        CreateMap<MenuGetCoreDto, MenuGetDto>();
+        CreateMap<CalendarItemCoreDto, CalendarItemDto>();
+        CreateMap<MealOfTheDayTypeCalendarCoreDto, MealOfTheDayTypeCalendarDto>();
+        CreateMap<DishInCalendarCoreDto, DishInCalendarDto>();
 
         #endregion
     }

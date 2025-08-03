@@ -3,7 +3,7 @@ using PieceOfCake.Application.DishFeature.Dtos;
 
 namespace PieceOfCake.Application.MenuFeature.Dtos;
 
-public record MenuGetDto : IdCoreDto<Guid>
+public record MenuGetCoreDto : IdCoreDto<Guid>
 {
     public required DateOnly StartDate { get; init; }
     public required DateOnly EndDate { get; init; }

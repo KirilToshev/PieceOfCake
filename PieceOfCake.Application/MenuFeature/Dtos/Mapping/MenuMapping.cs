@@ -6,11 +6,11 @@ namespace PieceOfCake.Application.MenuFeature.Dtos.Mapping;
 
 public static class MenuMapping
 {
-    public static MenuGetDto MapToGetDto(this Menu menu,
+    public static MenuGetCoreDto MapToGetDto(this Menu menu,
         IEnumerable<MealOfTheDayType> mealOfTheDayTypesList,
         IEnumerable<Dish> dishesList)
     {
-        return new MenuGetDto
+        return new MenuGetCoreDto
         {
             Id = menu.Id,
             StartDate = menu.Duration.StartDate,

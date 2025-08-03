@@ -23,7 +23,7 @@ public static class CalendarMapping
                     Name = mealTypes[mt.Id].Name,
                     Dishes = mt.Dishes.Select(d =>
                     {
-                        return new DishInCalenderCoreDto
+                        return new DishInCalendarCoreDto
                         {
                             Id = d.Id,
                             Name = dishes[d.Id].Name

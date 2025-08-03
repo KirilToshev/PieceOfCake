@@ -2,7 +2,7 @@
 
 namespace PieceOfCake.DTOs.DishFeature;
 
-public record DishInCalenderDto : IdNameDto<Guid>
+public record DishInCalendarDto : IdNameDto<Guid>
 {
 
 }

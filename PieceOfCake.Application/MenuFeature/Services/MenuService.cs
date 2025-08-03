@@ -20,7 +20,7 @@ public class MenuService : BaseService<IMenuRepository, Menu>, IMenuService
     {
     }
 
-    public async Task<IReadOnlyCollection<MenuGetDto>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<IReadOnlyCollection<MenuGetCoreDto>> GetAllAsync(CancellationToken cancellationToken)
     {
         var menus = await Repository.GetAsync(cancellationToken);
         var data = await GetMenuAdditionalData(cancellationToken, menus.ToArray());
@@ -29,16 +29,16 @@ public class MenuService : BaseService<IMenuRepository, Menu>, IMenuService
             .AsReadOnly();
     }
 
-    public async Task<Result<MenuGetDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Result<MenuGetCoreDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var menuResult = await GetEntityAsync(id, cancellationToken);
         if(menuResult.IsFailure)
-            return menuResult.ConvertFailure<MenuGetDto>();
+            return menuResult.ConvertFailure<MenuGetCoreDto>();
         var data = await GetMenuAdditionalData(cancellationToken, menuResult.Value);
         return menuResult.Value.MapToGetDto(data.mealTypes, data.dishes);
     }
 
-    public async Task<Result<MenuGetDto>> CreateAsync(MenuCreateCoreDto createDto, CancellationToken cancellationToken)
+    public async Task<Result<MenuGetCoreDto>> CreateAsync(MenuCreateCoreDto createDto, CancellationToken cancellationToken)
     {
         //TODO: Implement Specification pattern and reuse it in update method.
         var mealTypes = await GetRelatedMealOfTheDayTypes(createDto.MealOfTheDayTypes, cancellationToken);
@@ -58,11 +58,11 @@ public class MenuService : BaseService<IMenuRepository, Menu>, IMenuService
             });
     }
 
-    public async Task<Result<MenuGetDto>> UpdateAsync (MenuUpdateCoreDto updateDto, CancellationToken cancellationToken)
+    public async Task<Result<MenuGetCoreDto>> UpdateAsync (MenuUpdateCoreDto updateDto, CancellationToken cancellationToken)
     {
         var menuResult = await GetEntityAsync(updateDto.Id, cancellationToken);
         if (menuResult.IsFailure)
-            return menuResult.ConvertFailure<MenuGetDto>();
+            return menuResult.ConvertFailure<MenuGetCoreDto>();
         var menu = menuResult.Value;
         //TODO: Implement Specification pattern
         var mealTypes = await GetRelatedMealOfTheDayTypes(updateDto.MealOfTheDayTypes, cancellationToken);
@@ -93,21 +93,22 @@ public class MenuService : BaseService<IMenuRepository, Menu>, IMenuService
             });
     }
 
-    public async Task<Result<Menu>> GenerateDishesListAsync (Guid id, CancellationToken cancellationToken)
+    public async Task<Result<MenuGetCoreDto>> GenerateDishesListAsync(Guid id, CancellationToken cancellationToken)
     {
         var menuResult = await GetEntityAsync(id, cancellationToken);
         if (menuResult.IsFailure)
-            return menuResult;
+            return menuResult.ConvertFailure<MenuGetCoreDto>();
         var menu = menuResult.Value;
 
         var result = await menu.GenerateCalendar(UnitOfWork.DishRepository, I18N, cancellationToken);
         if (result.IsFailure)
-            return result.ConvertFailure<Menu>();
+            return result.ConvertFailure<MenuGetCoreDto>();
 
         Repository.Update(menuResult.Value);
         await UnitOfWork.SaveAsync(cancellationToken);
 
-        return menuResult.Value;
+        var data = await GetMenuAdditionalData(cancellationToken, menuResult.Value);
+        return menuResult.Value.MapToGetDto(data.mealTypes, data.dishes);
     }
 
     private Task<IReadOnlyCollection<MealOfTheDayType>> GetRelatedMealOfTheDayTypes(IEnumerable<Guid> mealOfTheDayTypeDtos, CancellationToken cancellationToken)

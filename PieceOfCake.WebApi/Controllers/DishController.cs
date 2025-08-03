@@ -8,6 +8,7 @@ using IResult = Microsoft.AspNetCore.Http.IResult;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace PieceOfCake.WebApi.Controllers;
+
 [Route("[controller]")]
 [ApiController]
 public class DishController(
@@ -41,7 +42,9 @@ public class DishController(
         return result.ConvertToHttpResult(p => mapper.Map<DishDto>(p));
     }
 
-    [HttpPut("{id}")]
+    [HttpPut(Endpoints.Dishes.Update)]
+    [ProducesResponseType<DishDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IResult> Put(
         Guid id, 
         [FromBody] DishUpdateDto updateDto, 
@@ -52,7 +55,9 @@ public class DishController(
         return result.ConvertToHttpResult(p => mapper.Map<DishDto>(p));
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete(Endpoints.Dishes.Delete)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         var result = await dishService.DeleteAsync(id, cancellationToken);
