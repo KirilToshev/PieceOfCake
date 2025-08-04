@@ -35,6 +35,8 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PieceOfCake.DTOs", "PieceOfCake.DTOs\PieceOfCake.DTOs.csproj", "{F0D57440-B9E4-71CD-08C1-FCD52973C9FC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PieceOfCake.DataSeed", "PieceOfCake.DataSeed\PieceOfCake.DataSeed.csproj", "{FBD53324-6FA5-480E-B496-0FF2E5D8A944}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{F0D57440-B9E4-71CD-08C1-FCD52973C9FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F0D57440-B9E4-71CD-08C1-FCD52973C9FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F0D57440-B9E4-71CD-08C1-FCD52973C9FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBD53324-6FA5-480E-B496-0FF2E5D8A944}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBD53324-6FA5-480E-B496-0FF2E5D8A944}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBD53324-6FA5-480E-B496-0FF2E5D8A944}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBD53324-6FA5-480E-B496-0FF2E5D8A944}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -93,6 +99,7 @@ Global
 		{D3546EBE-105F-4DEA-AEAE-09A1ACB2EA80} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{F61240CC-E12C-4ED0-8D2C-1CD1B17055D3} = {52D621D0-FBBC-4EA2-B67B-685CBE63DFE9}
 		{F0D57440-B9E4-71CD-08C1-FCD52973C9FC} = {52D621D0-FBBC-4EA2-B67B-685CBE63DFE9}
+		{FBD53324-6FA5-480E-B496-0FF2E5D8A944} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6FFE177B-1A5E-4368-A27E-C3AC5876E697}

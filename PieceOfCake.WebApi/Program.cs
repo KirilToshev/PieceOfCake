@@ -18,7 +18,11 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 });
 builder.Services.AddServiceRegistration();
 
-builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddAutoMapper(x => 
+{ 
+    
+},
+typeof(Program));
 
 builder.ConfigureDatabase();
 builder.ConfigureCors();
@@ -30,7 +34,7 @@ builder.Services.AddAuthentication(x =>
     x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(x =>
 {
-    x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    x.TokenValidationParameters = new TokenValidationParameters
     {
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(config["Jwt:Key"]!)),

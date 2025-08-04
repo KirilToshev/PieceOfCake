@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "PieceOfCake.DataSeed": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
